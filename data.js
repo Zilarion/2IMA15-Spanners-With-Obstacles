@@ -15,6 +15,11 @@ var data = {
 			id: 2,
 			x: 50,
 			y: 200
+		},
+		{
+			id: 2,
+			x: 10,
+			y: 33
 		}
 	],
 	obstacles: [
