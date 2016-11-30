@@ -1,0 +1,22 @@
+{
+  "name": "2ima15-spanners-with-obstacles",
+  "version": "1.0.0",
+  "description": "Computing t-spanners with obstacles",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zilarion/2IMA15-Spanners-With-Obstacles.git"
+  },
+  "author": "Ruud Andriessen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Zilarion/2IMA15-Spanners-With-Obstacles/issues"
+  },
+  "homepage": "https://github.com/Zilarion/2IMA15-Spanners-With-Obstacles#readme",
+  "dependencies": {
+    "d3": "^4.4.0"
+  }
+}
