@@ -7,10 +7,10 @@
   </head>
 
   <body>
-    <div id="mySVG"></div>
-    <script src="http://d3js.org/d3.v2.js"></script>
+    <div id="view"></div>
+    <script src="node_modules/d3/build/d3.js"></script>
     <script>
-      var svg = d3.select("#mySVG")
+      var svg = d3.select("#view")
         .append("svg")
         .attr("width", 200)
         .attr("height", 200)
