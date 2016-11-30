@@ -2,12 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>My first d3.js</title>
+    <title>Geometric spanners</title>
     <link href="style.css" rel="stylesheet">
   </head>
 
   <body>
     <div id="view"></div>
+    <div id="control">
+      <input id="tvalue" placeholder="t-spanner" value="1.1"></input>
+      <button onClick="updateSettings()">Recalculate</button>
+    </div>
     <script src="node_modules/d3/build/d3.js"></script>
     <script src="lib/binary-heap.js"></script>
     <script src="data.js" charset="utf-8"></script>

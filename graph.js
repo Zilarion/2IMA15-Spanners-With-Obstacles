@@ -6,11 +6,8 @@ class Node {
 		this.y = y;
 		this.graph = graph;
 	}
-	addEdge(target, weight) {
-		var newEdge = {source: this, target: target, weight: weight};
-		console.log("added edge: ", newEdge);
-		this.edges.push(newEdge);
-		this.graph.addEdge(newEdge)
+	addEdge(edge) {
+		this.edges.push(edge);
 	}
 }
 
@@ -32,16 +29,19 @@ class Graph {
 		console.log(this.nodes);
 	}
 
-	addNode(node) {
-		this.nodes[node_id] = node;
-	}
-	addEdge(edge) {
-		this.edges.push(edge);
+	addNode(id, x, y) {
+		this.nodes.push(new Node(id, x, y, this));
 	}
 
+	addEdge(source, target, weight) {
+		var newEdge = {source: source, target: target, weight: weight};
+		source.addEdge(newEdge)
+		target.addEdge(newEdge)
+		this.edges.push(newEdge);
+	}
+
+	// Shortest path using Dijkstra
 	shortestPath(start, goal) {
-		console.log('---------------');
-		console.log("Shortest path", {start: start, goal: goal});
 		var Q = new BinaryHeap(
 		  function(element) { return element.dist; },
 		  function(element) { return element.node.id; },
@@ -49,36 +49,39 @@ class Graph {
 		);
 
 		var dist = {};
-		var prev = {};
 
 		for (var key in this.nodes) {
 			var node = this.nodes[key];
 			if (node.id != start.id) {
-				console.log(node);
 				dist[node.id] = 99999999999;
 			} else {
 				dist[node.id] = 0;
 			}
-			Q.push({node: node, prev: null, dist: dist[node.id]});
+			Q.push({node: node, dist: dist[node.id]});
 		}
 
 		while (Q.size() != 0) {
 			var u = Q.pop().node;
 			for (var key in u.edges) {
 				var e = u.edges[key];
-				var v = e.target;
+				var v = e.target.id == u.id ? e.source : e.target;
 
 				var alt = dist[u.id] + e.weight;
 				if (alt < dist[v.id]) {
-					console.log("ALT ROUTE: ", alt)
 					dist[v.id] = alt;
-					prev[v.id] = u; 
 					Q.decreaseKey(v.id, alt);
 				}
 			}
 		}
-		console.log("Final dist: ", dist);
 		return dist[goal.id];
+	}
+
+	clearEdges() {
+		for (var key in this.nodes) {
+			var n = this.nodes[key];
+			n.edges = [];
+		}
+		this._edges = [];
 	}
 
 	set nodes(n) {
@@ -93,5 +96,11 @@ class Graph {
   }
   get edges() {
   	return this._edges;
+  }
+  toJson() {
+  	return {
+  		nodes: this.nodes,
+  		edges: this.edges
+  	}
   }
 }
