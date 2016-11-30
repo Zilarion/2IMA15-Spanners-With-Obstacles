@@ -22,7 +22,7 @@ function greedy_spanner(graph) {
 	node_pair = [];
 
 	for (var i in nodes) {
-			for (var j in nodes) {
+			for (var j = i; j < nodes.length; j++) {
 				if (i != j) {
 					var n1 = nodes[i];
 					var n2 = nodes[j];
@@ -35,7 +35,9 @@ function greedy_spanner(graph) {
 	console.log(node_pair);
 	for (var key in node_pair) {
 		var pair = node_pair[key];
-		var dist = graph.shortestPath(pair.n1, pair.n2);
+		var n1 = pair.n1;
+		var n2 = pair.n2;
+		var dist = graph.shortestPath(n1, n2);
 		if (dist > 1.5 * pair.dist) {
 			n1.addEdge(n2, pair.dist);
 		}

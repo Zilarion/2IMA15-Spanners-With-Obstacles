@@ -1,19 +1,23 @@
 class Node {
-	constructor(id, x, y) {
+	constructor(id, x, y, graph) {
 		this.id = id;
 		this.edges = []
 		this.x = x;
 		this.y = y;
+		this.graph = graph;
 	}
 	addEdge(target, weight) {
-		console.log("added edge: ", {target: target, weight: weight});
-		this.edges.push({target: target, weight: weight});
+		var newEdge = {source: this, target: target, weight: weight};
+		console.log("added edge: ", newEdge);
+		this.edges.push(newEdge);
+		this.graph.addEdge(newEdge)
 	}
 }
 
 class Graph {
 	constructor() {
 		this.nodes = [];
+		this.edges = [];
 	}
 
 	load(data) {
@@ -22,7 +26,7 @@ class Graph {
 
 		for (var key in data.nodes) {
 			var node = data.nodes[key];
-			this.nodes.push(new Node(node.id, node.x, node.y));
+			this.nodes.push(new Node(node.id, node.x, node.y, this));
 		}
 		console.log("loaded all data: ");
 		console.log(this.nodes);
@@ -30,6 +34,9 @@ class Graph {
 
 	addNode(node) {
 		this.nodes[node_id] = node;
+	}
+	addEdge(edge) {
+		this.edges.push(edge);
 	}
 
 	shortestPath(start, goal) {
@@ -61,9 +68,6 @@ class Graph {
 				var e = u.edges[key];
 				var v = e.target;
 
-				console.log(dist[u.id]);
-				console.log(e.weight);
-
 				var alt = dist[u.id] + e.weight;
 				if (alt < dist[v.id]) {
 					console.log("ALT ROUTE: ", alt)
@@ -82,5 +86,12 @@ class Graph {
   }
 	get nodes() {
     return this._nodes;
+  }
+
+  set edges(e) {
+  	this._edges = e;
+  }
+  get edges() {
+  	return this._edges;
   }
 }
