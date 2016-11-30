@@ -33,4 +33,11 @@ function greedy_spanner(graph) {
 
 	node_pair.sort(dynamicSort("dist"));
 	console.log(node_pair);
+	for (var key in node_pair) {
+		var pair = node_pair[key];
+		var dist = graph.shortestPath(pair.n1, pair.n2);
+		if (dist > 1.5 * pair.dist) {
+			n1.addEdge(n2, pair.dist);
+		}
+	}
 }
