@@ -1,7 +1,7 @@
 var settings = {
-	w: 1000,
-	h: 600,
-	t: 1.1
+	w: window.innerWidth - 20,
+	h: window.innerHeight - 60,
+	t: 5
 }
 
 var svg = d3.select("#view").append("svg").attr("width", settings.w).attr("height", settings.h).style("border", "1px solid black");
@@ -59,11 +59,11 @@ function update(data) {
 		.attr("x2", function (d) { return d.target.x; })
 		.attr("y2", function (d) { return d.target.y; })
 		.style("stroke", "grey" )
-    .attr( "opacity", 0 )
-		.transition()
-			.delay(function(d, i) { return i * 1 })
-    	.duration(1)
-    	.attr( "opacity", 1 );
+  //   .attr( "opacity", 0 )
+		// .transition()
+		// 	.delay(function(d, i) { return i * 10 })
+  //   	.duration(10)
+  //   	.attr( "opacity", 1 );
 }
 
 // greedy_spanner(g, 1.1);
@@ -94,3 +94,12 @@ function updateSettings() {
 	}
 	recalculate();
 }
+
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+for (var i = 0; i < 50; i++) {
+	g.addNode(g.nodes.length, getRandomArbitrary(0, settings.w), getRandomArbitrary(0, settings.h))
+}
+
