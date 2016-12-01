@@ -1,36 +1,60 @@
 define(['../core/Util'], function(Util) {
 	return function(start, goal) {
-    // The set of nodes already evaluated.
-		var closedSet = {}
-    // The set of currently discovered nodes still to be evaluated.
-    // Initially, only the start node is known.
+		var heuristic = Util.distance;
 
-		var openSet = new Heap(function(nodeA, nodeB) {
-			return nodeA.f - nodeB.f;
-    });
-		openSet.push(start);
-
-    // For each node, which node it can most efficiently be reached from.
-    // If a node can be reached from many nodes, cameFrom will eventually contain the
-    // most efficient previous step.
-		var cameFrom = {};
-
-		// For each node, the cost of getting from the start node to that node.
     var gScore = new Map();
-    // The cost of going from start to start is zero.
     gScore.set(start, 0);
-    // For each node, the total cost of getting from the start node to the goal
-    // by passing by that node. That value is partly known, partly heuristic.
     var fScore = new Map();
+    var hScore = new Map();
+    fScore.set(start, heuristic(start, goal));
+    var closed = new Map();
+    var opened = new Map();
 
-    // For the first node, that value is completely heuristic.
-    fScore.set(start, Util.distance(start,goal));
+    // Initially, only the start node is known
+		var openList = new Heap(function(nodeA, nodeB) {
+			return fScore[nodeA.id] - fScore[nodeB.id];
+    });
+		openList.push(start);
 
-		while (openSet.size() != 0) {
-			var current = openSet.pop().node;
-			if (current == goal)
-				return cameFrom;
+		while (!openList.empty()) {
+			var node = openList.pop();
+			closed.set(node.id, true);
 
+			if (node.id == goal.id) {
+				return gScore.get(goal.id);
+			}
+
+			var edges = node.edges;
+			for (var i = 0; i < edges.length; i++) {
+				var edge = edges[i];
+				var neighbor = edge.target.id == node.id ? edge.source : edge.target;
+
+				if (closed.has(neighbor.id)) {
+					continue;
+				}
+
+				var newWeight = gScore.get(node.id) + edge.weight;
+
+				// Check if this is a new node, or the new weight is less
+				if(!closed.has(neighbor.id) || newWeight < gScore.get(neighbor.id)) {
+					if(!hScore.has(neighbor.id)) {
+						hScore.set(neighbor.id, heuristic(neighbor, goal));
+					}
+
+					gScore.set(neighbor.id, newWeight);
+					fScore.set(neighbor.id, newWeight + hScore.get(neighbor.id));
+
+					if (!opened.has(neighbor.id)) {
+						openList.push(neighbor);
+						opened.set(neighbor.id, true);
+					} else {
+						openList.updateItem(neighbor);
+					}
+				}
+			}
 		}
+
+		// Fail
+		return 999999999999999;
 	}
 })

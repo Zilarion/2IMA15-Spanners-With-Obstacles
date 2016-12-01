@@ -23,8 +23,8 @@ define(['../core/Util', '../algorithms/Astar'], function(Util, astar){
 			var n2 = pair.n2;
 
 			// Find shortest path in current graph
-			var dist = astar(graph, n1, n2);
-
+			var dist = astar(n1, n2);
+			
 			// If this is to large, add this pair as edge
 			if (dist > t * pair.dist) {
 				graph.addEdge(n1, n2, pair.dist);
