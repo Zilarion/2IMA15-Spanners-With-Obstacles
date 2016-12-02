@@ -1,5 +1,5 @@
 define(['../core/Util', './Dijkstra'], function(Util, shortest){
-	return function greedy(graph, t) {
+	return function greedy(graph, t, obstacles) {
 		nodes = graph.nodes;
 		node_pairs = [];
 
@@ -27,7 +27,9 @@ define(['../core/Util', './Dijkstra'], function(Util, shortest){
 			
 			// If this is to large, add this pair as edge
 			if (dist > t * pair.dist) {
-				graph.addEdge(n1, n2, pair.dist);
+				if (Util.numIntersectLineSimplePolygon(obstacles[0], n1, n2) == 0){
+					graph.addEdge(n1, n2, pair.dist);
+				}
 			}
 		}
 	}

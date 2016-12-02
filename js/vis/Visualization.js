@@ -141,7 +141,7 @@ define(['../core/Graph', '../algorithms/Greedy', '../../data', '../core/Util'], 
 		  this.g.clearEdges();
 
 		  var t0 = performance.now();
-			greedy(this.g, this.settings.t);
+			greedy(this.g, this.settings.t, this.obstacles);
 			var t1 = performance.now();
 			lastRun = t1 - t0;
 		  this.update();
