@@ -1,4 +1,4 @@
-define(['../core/Graph', '../algorithms/Greedy', '../../data'], function(Graph, greedy, inputData) {
+define(['../core/Graph', '../algorithms/Greedy', '../../data', '../core/Util'], function(Graph, greedy, inputData, util) {
 	return {
 		init: function() {
 			this.settings = {
