@@ -112,7 +112,7 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 		updateSettings: function() {
 			tvalue = parseFloat(document.getElementById('tvalue').value);
 			if (tvalue != NaN && tvalue >= 1) {
-				settings.t = tvalue;
+				this.settings.t = tvalue;
 			}
 
 			this.recalculate();
