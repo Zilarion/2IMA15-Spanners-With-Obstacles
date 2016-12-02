@@ -1,5 +1,5 @@
-define(['../core/Util', '../algorithms/Astar'], function(Util, astar){
-	return function(graph, t) {
+define(['../core/Util', './Dijkstra'], function(Util, shortest){
+	return function greedy(graph, t) {
 		nodes = graph.nodes;
 		node_pairs = [];
 
@@ -23,7 +23,7 @@ define(['../core/Util', '../algorithms/Astar'], function(Util, astar){
 			var n2 = pair.n2;
 
 			// Find shortest path in current graph
-			var dist = astar(n1, n2);
+			var dist = shortest(n1, n2, graph);
 			
 			// If this is to large, add this pair as edge
 			if (dist > t * pair.dist) {

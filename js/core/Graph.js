@@ -27,6 +27,14 @@ define(['core/Node'], function(Node) {
 			target.addEdge(newEdge)
 			this.edges.push(newEdge);
 		}
+
+		totalWeight() {
+			var sum = 0;
+			for (var key in this.edges) {
+				sum += this.edges[key].weight
+			}
+			return sum;
+		}
 		
 		clearEdges() {
 			for (var key in this.nodes) {

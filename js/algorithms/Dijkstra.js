@@ -1,12 +1,11 @@
 define(function() {
-	return function(graph, start, goal) {
-			var Q = new Heap(
-			  function(element) { return element.dist; },
-			  function(element) { return element.node.id; },
-			  'dist'
-			);
+	return function(start, goal, graph) {
 
 			var dist = {};
+			var Q = new Heap(
+				function(nodeA, nodeB) {
+				return dist[nodeA] - dist[nodeB];
+	    });
 
 			for (var key in graph.nodes) {
 				var node = graph.nodes[key];
@@ -15,11 +14,11 @@ define(function() {
 				} else {
 					dist[node.id] = 0;
 				}
-				Q.push({node: node, dist: dist[node.id]});
+				Q.push(node);
 			}
 
-			while (Q.size() != 0) {
-				var u = Q.pop().node;
+			while (!Q.empty()) {
+				var u = Q.pop();
 				for (var key in u.edges) {
 					var e = u.edges[key];
 					var v = e.target.id == u.id ? e.source : e.target;
@@ -27,7 +26,7 @@ define(function() {
 					var alt = dist[u.id] + e.weight;
 					if (alt < dist[v.id]) {
 						dist[v.id] = alt;
-						Q.decreaseKey(v.id, alt);
+						Q.updateItem(v.id);
 					}
 				}
 			}

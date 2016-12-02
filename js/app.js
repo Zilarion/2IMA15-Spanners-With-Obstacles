@@ -1,10 +1,10 @@
 requirejs.config({
     //By default load any module IDs from js
-    baseUrl: 'js',
+    baseUrl: 'js'
 });
 
 // Start the main app logic.
 requirejs(['vis/Visualization', 'vis/Listeners'],
 function(vis, list) {
-	console.log(vis);
+	vis.init();
 });

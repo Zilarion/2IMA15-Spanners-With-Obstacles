@@ -7,11 +7,42 @@
   </head>
 
   <body>
+    <div id="container" class="svg-container">
+    </div>
     <div id="control">
-      <input id="tvalue" placeholder="t-spanner" value="1.1"></input>
+      <h4>Settings</h4>
+      <table>
+        <tr>
+          <td>t-value:</td>
+          <td><input id="tvalue" placeholder="t-value > 1" value="1.1"></input></td>
+        </tr>
+      </table>
+
+      <br />
+      <br />
       <button id="recalculate">Recalculate</button>
-    </div><br />
-    <div id="view"></div>
+    </div>
+    <div id="details">
+      <h4>Details</h4>
+      <table>
+        <tr>
+          <td>Number of nodes:</td>
+          <td id="d_nodes"></td>
+        </tr>
+        <tr>
+          <td>Number of edges:</td>
+          <td id="d_edges"></td>
+        </tr>
+        <tr>
+          <td>Total weight:</td>
+          <td id="d_weight"></td>
+        </tr>
+        <tr>
+          <td>Time to compute:</td>
+          <td id="d_time"></td>
+        </tr>
+      </table>
+    </div>
     <script src="node_modules/d3/build/d3.js"></script>
     <script src="node_modules/heap/lib/heap.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
