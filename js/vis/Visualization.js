@@ -1,10 +1,20 @@
-define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
+define(['../core/Graph', '../algorithms/Greedy', '../../data'], function(Graph, greedy, inputData) {
 	return {
 		init: function() {
 			this.settings = {
 				w: 1920,
 				h: 1080,
 				t: 1.1
+			}
+
+			var selector = document.getElementById('selectedObstacle');
+			for (var obs in inputData.obstacles){
+				if (!this.obstacles){
+					this.obstacles = inputData.obstacles[obs];
+				}
+				var opt = document.createElement("option");
+				opt.innerHTML = obs;
+				selector.appendChild(opt)
 			}
 
 			this.g = new Graph();
@@ -46,14 +56,15 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 			this.svg
 				.selectAll("line")
 				.remove();
+				
+			this.svg
+				.selectAll("polyline")
+				.remove();
 
 
 			//obstacles
-			data.obstacles = [
-				[{x:50,y:300}, {x:150,y:100}, {x:250,y:300}, {x:150, y:220}],
-			]
 			this.svg.selectAll("polyline")
-				.data(data.obstacles)
+				.data(this.obstacles)
 				.enter()
 				.append("polyline")
 				.attr("points", function(d){
@@ -63,7 +74,6 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 					}
 					//close loop
 					str += d[0].x + "," + d[0].y;
-					console.log(str);
 					return str;
 				})
 				.attr("stroke-width", "1px")
@@ -134,10 +144,17 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 		},
 
 		updateSettings: function() {
-			tvalue = parseFloat(document.getElementById('tvalue').value);
+			tvalue = parseFloat(document.getElementById('tvalue').value);	
+			selectedObstacle = document.getElementById('selectedObstacle').value;
+			newObstacles = inputData.obstacles[selectedObstacle];
+			if (newObstacles){
+				console.log("new obstacle", selectedObstacle, newObstacles);
+				this.obstacles = newObstacles;
+			}
 			if (tvalue != NaN && tvalue >= 1) {
 				this.settings.t = tvalue;
 			}
+
 
 			this.recalculate();
 		}

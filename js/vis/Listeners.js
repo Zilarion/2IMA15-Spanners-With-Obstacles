@@ -3,6 +3,11 @@ requirejs(['./vis/Visualization'], function(app) {
 		app.updateSettings();
 	  e.preventDefault();
 	});
+	
+	$('#selectedObstacle').on('change', function(e) {
+		app.updateSettings();
+	  e.preventDefault();
+	});
 
 	$(window).on("resize", function(e) {
 		var targetWidth = $("div#container").width();
