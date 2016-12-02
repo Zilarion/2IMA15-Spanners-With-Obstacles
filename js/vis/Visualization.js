@@ -47,6 +47,30 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 				.selectAll("line")
 				.remove();
 
+
+			//obstacles
+			data.obstacles = [
+				[{x:50,y:300}, {x:150,y:100}, {x:250,y:300}, {x:150, y:220}],
+			]
+			this.svg.selectAll("polyline")
+				.data(data.obstacles)
+				.enter()
+				.append("polyline")
+				.attr("points", function(d){
+					var str = "";
+					for (var i = 0; i < d.length; i++){
+						str += d[i].x + "," + d[i].y + " ";
+					}
+					//close loop
+					str += d[0].x + "," + d[0].y;
+					console.log(str);
+					return str;
+				})
+				.attr("stroke-width", "1px")
+				.attr("stroke", "rgb(100,100,100)")
+				.attr("fill", "rgb(220,220,220)");
+
+
 			var nodes = this.svg
 				.selectAll("circle")
 				.data(data.nodes)
