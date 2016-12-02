@@ -61,6 +61,10 @@ define(['../core/Graph', '../algorithms/Greedy', '../../data'], function(Graph, 
 				.selectAll("polyline")
 				.remove();
 
+			this.svg
+				.selectAll("text")
+				.remove();
+
 
 			//obstacles
 			this.svg.selectAll("polyline")
@@ -156,6 +160,11 @@ define(['../core/Graph', '../algorithms/Greedy', '../../data'], function(Graph, 
 			}
 
 
+			this.recalculate();
+		},
+
+		clearPoints: function(){
+			this.g.nodes = [];
 			this.recalculate();
 		}
 

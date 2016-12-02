@@ -3,7 +3,12 @@ requirejs(['./vis/Visualization'], function(app) {
 		app.updateSettings();
 	  e.preventDefault();
 	});
-	
+
+	$('#clearPoints').on('click', function(e) {
+		app.clearPoints();
+	  e.preventDefault();
+	});
+
 	$('#selectedObstacle').on('change', function(e) {
 		app.updateSettings();
 	  e.preventDefault();
