@@ -4,7 +4,7 @@ requirejs.config({
 });
 
 // Start the main app logic.
-requirejs(['vis/Visualization'],
-function(vis) {
+requirejs(['vis/Visualization', 'vis/Listeners'],
+function(vis, list) {
 	console.log(vis);
 });

@@ -1,6 +1,6 @@
 define(function() {
 	return function(graph, start, goal) {
-			var Q = new BinaryHeap(
+			var Q = new Heap(
 			  function(element) { return element.dist; },
 			  function(element) { return element.node.id; },
 			  'dist'
@@ -31,6 +31,6 @@ define(function() {
 					}
 				}
 			}
-			return dist;
+			return dist[goal.id];
 	}
 })

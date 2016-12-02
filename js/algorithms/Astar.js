@@ -41,6 +41,7 @@ define(['../core/Util'], function(Util) {
 						hScore.set(neighbor.id, heuristic(neighbor, goal));
 					}
 
+				console.log(newWeight);
 					gScore.set(neighbor.id, newWeight);
 					fScore.set(neighbor.id, newWeight + hScore.get(neighbor.id));
 

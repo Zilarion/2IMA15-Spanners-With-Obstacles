@@ -2,7 +2,7 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 	var settings = {
 		w: window.innerWidth - 20,
 		h: window.innerHeight - 60,
-		t: 5
+		t: 1.1
 	}
 
 	var g = new Graph();
@@ -68,10 +68,10 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 		  //   	.attr( "opacity", 1 );
 		},
 
-	 recalculate: function(graph) {
-		  graph.clearEdges();
-			greedy(graph, settings.t);
-		  this.update(graph);
+	 	recalculate: function() {
+		  g.clearEdges();
+			greedy(g, settings.t);
+		  this.update(g);
 		},
 
 		updateSettings: function() {
@@ -79,7 +79,7 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 			if (tvalue != NaN && tvalue >= 1) {
 				settings.t = tvalue;
 			}
-			recalculate();
+			this.recalculate();
 		}
 	}
 
@@ -94,12 +94,12 @@ define(['../core/Graph', '../algorithms/Greedy'], function(Graph, greedy) {
 	  result.recalculate(g);
 	});
 
-	return result;
-	// function getRandomArbitrary(min, max) {
-	//   return Math.random() * (max - min) + min;
-	// }
+	function getRandomArbitrary(min, max) {
+	  return Math.random() * (max - min) + min;
+	}
 
-	// for (var i = 0; i < 50; i++) {
-	// 	g.addNode(g.nodes.length, getRandomArbitrary(0, settings.w), getRandomArbitrary(0, settings.h))
-	// }
+	for (var i = 0; i < 50; i++) {
+		g.addNode(g.nodes.length, getRandomArbitrary(0, settings.w), getRandomArbitrary(0, settings.h))
+	}
+	return result;
 });
