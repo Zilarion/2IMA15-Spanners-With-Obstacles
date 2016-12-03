@@ -1,5 +1,5 @@
 define(['../core/Util', './Astar'], function(Util, shortest){
-	return function greedy(graph, t, obstacles) {
+	return function greedy(graph, t) {
 		nodes = graph.nodes;
 		node_pairs = [];
 
@@ -27,16 +27,7 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 			
 			// If this is to large, add this pair as edge
 			if (dist > t * pair.dist) {
-				var add = true;
-				for (var obs in obstacles){
-					if (Util.numIntersectLineSimplePolygon(obstacles[0], n1, n2) != 0){
-						add = false;
-						break;
-					}
-				}
-				if (add){
-					graph.addEdge(n1, n2, pair.dist);
-				}
+				graph.addEdge(n1, n2, pair.dist);
 			}
 		}
 	}
