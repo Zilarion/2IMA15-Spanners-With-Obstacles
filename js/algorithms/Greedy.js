@@ -1,4 +1,4 @@
-define(['../core/Util', './Dijkstra'], function(Util, shortest){
+define(['../core/Util', './Astar'], function(Util, shortest){
 	return function greedy(graph, t, obstacles) {
 		nodes = graph.nodes;
 		node_pairs = [];

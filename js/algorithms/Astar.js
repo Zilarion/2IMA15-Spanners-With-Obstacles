@@ -1,4 +1,4 @@
-requirejs(['./core/Util'], function(Util) {
+define(['../core/Util'], function(Util) {
 	return function calculate(start, goal, graph) {
 		var heuristic = Util.distance;
 
