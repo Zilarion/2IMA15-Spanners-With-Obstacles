@@ -1,7 +1,8 @@
 define(['../core/Util', './Astar'], function(Util, shortest){
-	return function greedy(graph, t) {
+	return function greedy(graph, settings) {
 		nodes = graph.nodes;
 		node_pairs = [];
+		t = settings.t;
 
 		// Calculate all possible pairs
 		for (var i in nodes) {

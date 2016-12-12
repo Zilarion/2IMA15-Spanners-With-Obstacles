@@ -4,6 +4,11 @@ requirejs(['./vis/Visualization'], function(app) {
 	  e.preventDefault();
 	});
 
+	$('#tvalue').on('change', function(e) {
+		app.updateSettings();
+	  e.preventDefault();
+	});
+
 	$('#clearPoints').on('click', function(e) {
 		app.clearPoints();
 	  e.preventDefault();

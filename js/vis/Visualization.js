@@ -1,11 +1,15 @@
-define(['../core/Graph', '../algorithms/Greedy', '../../data', '../core/Util'], function(Graph, greedy, inputData, util) {
+define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../data', '../core/Util'], function(Graph, greedy, wspd, inputData, util) {
 	return {
+		// Parameters
+		lastRun: 0,					// How long the last run took in ms
+		g: null, 						// Graph
+		container: null, 		// the container used
+		settings: {					// The settings of the visualization
+			w: 1920,
+			h: 1080,
+			t: 1.1
+		},
 		init: function() {
-			this.settings = {
-				w: 1920,
-				h: 1080,
-				t: 1.1
-			}
 
 			var selector = document.getElementById('selectedObstacle');
 			for (var obs in inputData.obstacles){
@@ -44,8 +48,16 @@ define(['../core/Graph', '../algorithms/Greedy', '../../data', '../core/Util'], 
 			  that.recalculate();
 			});
 
+			function getRandomArbitrary(min, max) {
+			  return Math.random() * (max - min) + min;
+			}
+
+			for (var i = 0; i < 150; i++) {
+				this.g.addNode(this.g.nodes.length, getRandomArbitrary(0, this.settings.w), getRandomArbitrary(0, this.settings.h))
+			}
+			this.recalculate();
 		},
-		lastRun: 0,
+		// Update the visualization
 		update: function() {
 			var data = this.g;
 
@@ -141,12 +153,15 @@ define(['../core/Graph', '../algorithms/Greedy', '../../data', '../core/Util'], 
 		  this.g.clearEdges();
 
 		  var t0 = performance.now();
-			greedy(this.g, this.settings.t, this.obstacles);
+			// greedy(this.g, this.settings, this.obstacles);
 			var t1 = performance.now();
 			lastRun = t1 - t0;
+
+			wspd(this.g, this.settings);
+
 		  this.update();
 		},
-
+		// Update the settings based on the input values
 		updateSettings: function() {
 			tvalue = parseFloat(document.getElementById('tvalue').value);	
 			selectedObstacle = document.getElementById('selectedObstacle').value;
@@ -162,18 +177,10 @@ define(['../core/Graph', '../algorithms/Greedy', '../../data', '../core/Util'], 
 
 			this.recalculate();
 		},
-
+		// Clear all points from the graph
 		clearPoints: function(){
 			this.g.nodes = [];
 			this.recalculate();
 		}
-
-		// function getRandomArbitrary(min, max) {
-		//   return Math.random() * (max - min) + min;
-		// }
-
-		// for (var i = 0; i < 50; i++) {
-		// 	// g.addNode(g.nodes.length, getRandomArbitrary(0, settings.w), getRandomArbitrary(0, settings.h))
-		// }
 	}
 });
