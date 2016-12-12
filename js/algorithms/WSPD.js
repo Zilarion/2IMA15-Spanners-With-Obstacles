@@ -20,12 +20,8 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 		function intersects(c1, c2) {
 			var dx = Math.pow(c1.x - c2.x, 2);
 			var dy = Math.pow(c1.y - c2.y, 2);
-			var sumxy = dx + dy;
-			var result = sumxy <= Math.pow(c1.r + c2.r, 2) && Math.pow(c1.r - c2.r, 2) <= sumxy;
-			if (!result) {
-				console.log(c1, c2)
-			}
-			return result;
+			var radiussum = c1.r + c2.r;
+			return dx + dy <= Math.pow(radiussum, 2);
 		}
 
 		// Well seperated
@@ -36,7 +32,7 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 				r: isLeaf(u) ? 0 :  Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2))
 			}
 			var circleV = {
-				x: v._bounds.x + v._bounds.height / 2,
+				x: v._bounds.x + v._bounds.width / 2,
 				y: v._bounds.y + v._bounds.height / 2,
 				r: isLeaf(v) ? 0 : Math.sqrt(Math.pow(v._bounds.height, 2), Math.pow(v._bounds.width, 2))
 			}
@@ -74,16 +70,18 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 			}		
 			return result;
 		}
-		var r = wsPairs(quad.root, quad.root, quad, 2);
-		console.log(r)
+
+		var s = 4 * (settings.t+1) / (settings.t-1)
+		var r = wsPairs(quad.root, quad.root, quad, s);
+		// console.log(r)
 		for (var key in r) {
 			// console.log("Pair: ", pair)
 			var pair = r[key];
 			var repu = rep(pair.u);
 			var repv = rep(pair.v);
-			console.log("representatives", repu, repv)
+			// console.log("representatives", repu, repv)
 			if (repu.id && repv.id) {
-				console.log(repu, repv)
+				// console.log(repu, repv)
 				graph.addEdge(repu, repv, 1);
 			}
 		}
