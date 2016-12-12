@@ -12,16 +12,41 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 
 		quad.insert(graph.nodes);
 
+		// Check if this node is a leaf
+		function isLeaf(u) {
+			return u.nodes.length == 0;
+		}
+
+		function intersects(c1, c2) {
+			var dx = Math.pow(c1.x - c2.x, 2);
+			var dy = Math.pow(c1.y - c2.y, 2);
+			var sumxy = dx + dy;
+			var result = sumxy <= Math.pow(c1.r + c2.r, 2) && Math.pow(c1.r - c2.r, 2) <= sumxy;
+			if (!result) {
+				console.log(c1, c2)
+			}
+			return result;
+		}
+
 		// Well seperated
 		function seperated(u, v, s) {
-			console.log(u, v, s)
-			return false;
+			var circleU = {
+				x: u._bounds.x + u._bounds.width / 2,
+				y: u._bounds.y + u._bounds.height / 2,
+				r: isLeaf(u) ? 0 :  Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2))
+			}
+			var circleV = {
+				x: v._bounds.x + v._bounds.height / 2,
+				y: v._bounds.y + v._bounds.height / 2,
+				r: isLeaf(v) ? 0 : Math.sqrt(Math.pow(v._bounds.height, 2), Math.pow(v._bounds.width, 2))
+			}
+			return !intersects(circleU, circleV);
 		}
 
 		// Representative of u
 		function rep(u) {
-			if (u.children == null) {
-				return u;
+			if (isLeaf(u) && u.children[0] != undefined) {
+				return u.children[0];
 			} else {
 				return [];
 			}
@@ -29,28 +54,39 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 
 		// ws pairs function
 		function wsPairs(u, v, T, s) {
-			if (rep(u) == [] || rep(v) == [] || (u.children == null && v.children == null && u == v)) {
-				return [];
+			var result = [];
+			if (rep(u) == [] || rep(v) == [] || (isLeaf(u) && isLeaf(v) && u == v)) {
+				result = [];
 			} else if (seperated(u, v, s)) {
-				return [{u, v}];
+				result = [{u, v}];
 			} else {
-				if (u.depth > v.depth) {
+				if (u._depth > v._depth) {
 					var temp = v;
 					v = u;
 					u = temp;
 				}
-				var childs = u.children;
-				var result = [];
-				for (key in childs) {
-					var child = childs[key];
-					var r = wsPairs(child, v, T, s);
-					result.concat(r);
+				var childNodes = u.nodes;
+				for (key in childNodes) {
+					var childNode = childNodes[key];
+					var r = wsPairs(childNode, v, T, s);
+					result = result.concat(r);
 				}
-				return result;
+			}		
+			return result;
+		}
+		var r = wsPairs(quad.root, quad.root, quad, 2);
+		console.log(r)
+		for (var key in r) {
+			// console.log("Pair: ", pair)
+			var pair = r[key];
+			var repu = rep(pair.u);
+			var repv = rep(pair.v);
+			console.log("representatives", repu, repv)
+			if (repu.id && repv.id) {
+				console.log(repu, repv)
+				graph.addEdge(repu, repv, 1);
 			}
 		}
-		wsPairs(quad.root, quad.root, quad, 1);
-
 	}
 });
 

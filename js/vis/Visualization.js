@@ -52,7 +52,7 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 			  return Math.random() * (max - min) + min;
 			}
 
-			for (var i = 0; i < 150; i++) {
+			for (var i = 0; i < 10; i++) {
 				this.g.addNode(this.g.nodes.length, getRandomArbitrary(0, this.settings.w), getRandomArbitrary(0, this.settings.h))
 			}
 			this.recalculate();
