@@ -52,7 +52,7 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 			  return Math.random() * (max - min) + min;
 			}
 
-			for (var i = 0; i < 150; i++) {
+			for (var i = 0; i < 10; i++) {
 				this.g.addNode(this.g.nodes.length, getRandomArbitrary(0, this.settings.w), getRandomArbitrary(0, this.settings.h))
 			}
 			this.recalculate();
@@ -126,23 +126,58 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 
 			var edges = this.svg
 				.selectAll("line")
-				.data(data.edges)
+				.data(data.circedge)
 				.enter()
 				.append("line")
 
-
 			var edgeAttr = edges
-				.attr("x1", function (d) { return d.source.x; })
-				.attr("y1", function (d) { return d.source.y; })
-				.attr("x2", function (d) { return d.target.x; })
-				.attr("y2", function (d) { return d.target.y; })
+				.attr("x1", function (d) { return d.x1; })
+				.attr("y1", function (d) { return d.y1; })
+				.attr("x2", function (d) { return d.x2; })
+				.attr("y2", function (d) { return d.y2; })
 				.style("stroke", "grey" )
-		  //   .attr( "opacity", 0 )
+				.attr( "opacity", 0.2 )
+
+			// var edgeAttr = edges
+			// 	.attr("x1", function (d) { return d.source.x; })
+			// 	.attr("y1", function (d) { return d.source.y; })
+			// 	.attr("x2", function (d) { return d.target.x; })
+			// 	.attr("y2", function (d) { return d.target.y; })
+			// 	.style("stroke", "grey" )
+		 //    .attr( "opacity", 0.2 )
 				// .transition()
 				// 	.delay(function(d, i) { return i * 10 })
 		  //   	.duration(10)
 		  //   	.attr( "opacity", 1 );
 
+			var rects = this.svg
+							.selectAll("rect")
+							.data(data.rects)
+							.enter()
+							.append("rect");
+
+			var rectattr = rects
+				.attr("x", function (d) { return d.x; })
+				.attr("y", function (d) { return d.y; })
+				.attr("width", function (d) { return d.width; })
+				.attr("height", function (d) { return d.height; })
+				.style("stroke", "grey" )
+				.style("fill", "none" )
+				.style("opacity", "0.1" )
+
+			var circles = this.svg
+						.selectAll("circle")
+						.data(data.circles)
+						.enter()
+						.append("circle");
+
+			var cirattr = circles
+				.attr("cx", function (d) { return d.x; })
+				.attr("cy", function (d) { return d.y; })
+				.attr("r", function (d) { return d.r == 0 ? 5 : d.r; })
+				.style("stroke", "grey" )
+				.style("fill", "none" )
+				.style("opacity", "1" )
 
 		  $("#d_nodes").html(data.nodes.length);
 		  $("#d_edges").html(data.edges.length);
@@ -154,12 +189,12 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 
 		  var t0 = performance.now();
 			// greedy(this.g, this.settings, this.obstacles);
+			wspd(this.g, this.settings);
 			var t1 = performance.now();
 			lastRun = t1 - t0;
 
-			wspd(this.g, this.settings);
-
 		  this.update();
+
 		},
 		// Update the settings based on the input values
 		updateSettings: function() {
@@ -167,7 +202,6 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 			selectedObstacle = document.getElementById('selectedObstacle').value;
 			newObstacles = inputData.obstacles[selectedObstacle];
 			if (newObstacles){
-				console.log("new obstacle", selectedObstacle, newObstacles);
 				this.obstacles = newObstacles;
 			}
 			if (tvalue != NaN && tvalue >= 1) {
