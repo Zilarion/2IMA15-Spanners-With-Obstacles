@@ -52,8 +52,8 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 			  return Math.random() * (max - min) + min;
 			}
 
-			for (var i = 0; i < 10; i++) {
-				this.g.addNode(this.g.nodes.length, getRandomArbitrary(0, this.settings.w), getRandomArbitrary(0, this.settings.h))
+			for (var i = 0; i < 20; i++) {
+				// this.g.addNode(this.g.nodes.length, getRandomArbitrary(0, this.settings.w), getRandomArbitrary(0, this.settings.h))
 			}
 			this.recalculate();
 		},
@@ -67,6 +67,10 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 
 			this.svg
 				.selectAll("line")
+				.remove();
+
+			this.svg
+				.selectAll("square")
 				.remove();
 				
 			this.svg
@@ -102,8 +106,6 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 				.data(data.nodes)
 				.enter()
 				.append("circle")
-
-			var nodeAttr = nodes
 				.attr("cx", function (d) { return d.x; })
 				.attr("cy", function (d) { return d.y; })
 				.attr("r", function (d) { return 2; })
@@ -113,71 +115,67 @@ define(['../core/Graph', '../algorithms/Greedy', '../algorithms/WSPD', '../../da
 			var text = this.svg.selectAll("text")
 				.data(data.nodes)
 				.enter()
-				.append("text");
-
-			//Add SVG Text Element Attributes
-			var textLabels = text
-			 .attr("x", function(d) { return d.x - 3; })
-			 .attr("y", function(d) { return d.y - 3; })
-			 .text( function (d) { return d.id })
-			 .attr("font-family", "sans-serif")
-			 .attr("font-size", "12px")
-			 .attr("fill", "red");
+				.append("text")
+				.attr("x", function(d) { return d.x - 3; })
+				.attr("y", function(d) { return d.y - 3; })
+				.text( function (d) { return d.id })
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "12px")
+				.attr("fill", "red");
 
 			var edges = this.svg
 				.selectAll("line")
-				.data(data.circedge)
+				.data(data.edges)
 				.enter()
 				.append("line")
-
-			var edgeAttr = edges
-				.attr("x1", function (d) { return d.x1; })
-				.attr("y1", function (d) { return d.y1; })
-				.attr("x2", function (d) { return d.x2; })
-				.attr("y2", function (d) { return d.y2; })
+				.attr("x1", function (d) { return d.source.x; })
+				.attr("y1", function (d) { return d.source.y; })
+				.attr("x2", function (d) { return d.target.x; })
+				.attr("y2", function (d) { return d.target.y; })
 				.style("stroke", "grey" )
-				.attr( "opacity", 0.2 )
+		    .attr( "opacity", 1 )
 
-			// var edgeAttr = edges
-			// 	.attr("x1", function (d) { return d.source.x; })
-			// 	.attr("y1", function (d) { return d.source.y; })
-			// 	.attr("x2", function (d) { return d.target.x; })
-			// 	.attr("y2", function (d) { return d.target.y; })
+			// var wsEdges = this.svg
+			// 	.selectAll("line")
+			// 	.data(data.circedge)
+			// 	.enter()
+			// 	.append("line")
+			// 	.attr("x1", function (d) { return d.x1; })
+			// 	.attr("y1", function (d) { return d.y1; })
+			// 	.attr("x2", function (d) { return d.x2; })
+			// 	.attr("y2", function (d) { return d.y2; })
 			// 	.style("stroke", "grey" )
-		 //    .attr( "opacity", 0.2 )
-				// .transition()
-				// 	.delay(function(d, i) { return i * 10 })
-		  //   	.duration(10)
-		  //   	.attr( "opacity", 1 );
 
 			var rects = this.svg
-							.selectAll("rect")
-							.data(data.rects)
-							.enter()
-							.append("rect");
-
-			var rectattr = rects
+				.selectAll("rect")
+				.data(data.rects)
+				.enter()
+				.append("rect")
 				.attr("x", function (d) { return d.x; })
 				.attr("y", function (d) { return d.y; })
 				.attr("width", function (d) { return d.width; })
 				.attr("height", function (d) { return d.height; })
 				.style("stroke", "grey" )
 				.style("fill", "none" )
-				.style("opacity", "0.1" )
+				.style("opacity", 0.1 )
 
 			var circles = this.svg
-						.selectAll("circle")
-						.data(data.circles)
-						.enter()
-						.append("circle");
-
-			var cirattr = circles
+				.selectAll("circle")
+				.data(data.circles)
+				.enter()
+				.append("circle")
 				.attr("cx", function (d) { return d.x; })
 				.attr("cy", function (d) { return d.y; })
 				.attr("r", function (d) { return d.r == 0 ? 5 : d.r; })
-				.style("stroke", "grey" )
+				.style("stroke", function(d) { return d.color } )
 				.style("fill", "none" )
-				.style("opacity", "1" )
+				.style("opacity", "1" ) 
+				.attr( "opacity", 0.2 )
+				.transition()
+					.delay(function(d, i) { return i * 100 })
+		    	.duration(100)
+		    	.attr( "opacity", 1 );
+
 
 		  $("#d_nodes").html(data.nodes.length);
 		  $("#d_edges").html(data.edges.length);

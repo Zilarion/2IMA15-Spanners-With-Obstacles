@@ -56,6 +56,7 @@
         }
 
         this.root = node;
+        this.root.parent = null;
     }
 
     /**
@@ -109,10 +110,11 @@
     /************** Node ********************/
 
 
-    function Node(bounds, depth, maxDepth, maxChildren) {
+    function Node(bounds, depth, maxDepth, maxChildren, parent) {
         this._bounds = bounds;
         this.children = [];
         this.nodes = [];
+        this.parent = parent;
 
         if (maxChildren) {
             this._maxChildren = maxChildren;
@@ -230,7 +232,7 @@
             width: b_w_h,
             height: b_h_h
         },
-            depth, this._maxDepth, this._maxChildren);
+            depth, this._maxDepth, this._maxChildren, this);
 
         //top right
         this.nodes[Node.TOP_RIGHT] = new this._classConstructor({
@@ -239,7 +241,7 @@
             width: b_w_h,
             height: b_h_h
         },
-            depth, this._maxDepth, this._maxChildren);
+            depth, this._maxDepth, this._maxChildren, this);
 
         //bottom left
         this.nodes[Node.BOTTOM_LEFT] = new this._classConstructor({
@@ -248,7 +250,7 @@
             width: b_w_h,
             height: b_h_h
         },
-            depth, this._maxDepth, this._maxChildren);
+            depth, this._maxDepth, this._maxChildren, this);
 
 
         //bottom right
@@ -258,7 +260,7 @@
             width: b_w_h,
             height: b_h_h
         },
-            depth, this._maxDepth, this._maxChildren);
+            depth, this._maxDepth, this._maxChildren, this);
     };
 
     Node.prototype.clear = function () {
