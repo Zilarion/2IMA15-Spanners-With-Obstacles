@@ -187,8 +187,8 @@ class Visualization {
 	  this.g.clearEdges();
 
 	  var t0 = performance.now();
-		greedy.calculate(this.g, this.settings, this.obstacles);
-		// wspd(this.g, this.settings);
+		// greedy.calculate(this.g, this.settings, this.obstacles);
+		wspd.calculate(this.g, this.settings);
 		var t1 = performance.now();
 		this.lastRun = t1 - t0;
 
