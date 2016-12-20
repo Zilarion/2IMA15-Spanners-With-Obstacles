@@ -18,7 +18,8 @@
   "homepage": "https://github.com/Zilarion/2IMA15-Spanners-With-Obstacles#readme",
   "dependencies": {
     "d3": "^4.4.0",
-    "heap": "^0.2.6"
+    "heap": "^0.2.6",
+    "jquery": "^3.1.1"
   },
   "devDependencies": {
     "browserify": "^13.1.1",

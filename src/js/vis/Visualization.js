@@ -5,6 +5,7 @@ var Util = require('../core/Util');
 var greedy = require('../algorithms/Greedy');
 var wspd = require('../algorithms/WSPD');
 var d3 = require('d3');
+var $ = require('jquery');
 
 class Visualization {
 	constructor() {
@@ -36,6 +37,16 @@ class Visualization {
 			.attr("preserveAspectRatio", "xMinYMid")
 	  	.attr("viewBox", "0 0 " + this.settings.w + " " + this.settings.h)
 	  	.classed("svg-element", true);
+
+		
+		$(window).on("resize", function(e) {
+			var targetWidth = $("div#container").width();
+	    var svg = d3.select(".svg-element");
+	    var aspect = svg.attr("ar");
+	    var targetHeight = Math.round(targetWidth / aspect)
+	    svg.attr("width", targetWidth);
+	    svg.attr("height", targetHeight);
+		}).trigger("resize");
 
 	  this.lastRun = 0;
 
@@ -169,7 +180,7 @@ class Visualization {
 	  $("#d_nodes").html(data.nodes.length);
 	  $("#d_edges").html(data.edges.length);
 	  $("#d_weight").html(data.totalWeight().toFixed(3));
-	  $("#d_time").html(lastRun.toFixed(0) + " ms");
+	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
 	}
 
  	recalculate() {
