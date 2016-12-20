@@ -1,5 +1,10 @@
-define(['../core/Util'], function(Util) {
-	return function calculate(start, goal, graph) {
+'use strict';
+
+var Util = require('../core/Util');
+var Heap = require('heap');
+
+class Astar {
+	static calculate(start, goal, graph) {
 		var heuristic = Util.distance;
 
     var gScore = new Map();
@@ -68,4 +73,6 @@ define(['../core/Util'], function(Util) {
 		// Fail
 		return 999999999999999;
 	}
-})
+};
+
+module.exports = Astar;

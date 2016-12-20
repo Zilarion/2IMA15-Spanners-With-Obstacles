@@ -1,8 +1,13 @@
-define(['../core/Util', './Astar'], function(Util, shortest){
-	return function greedy(graph, settings) {
-		nodes = graph.nodes;
-		node_pairs = [];
-		t = settings.t;
+'use strict';
+
+var Util = require('../core/Util');
+var astar = require('./Astar');
+
+class Greedy {
+	static calculate(graph, settings) {
+		var nodes = graph.nodes;
+		var node_pairs = [];
+		var t = settings.t;
 
 		// Calculate all possible pairs
 		for (var i in nodes) {
@@ -24,7 +29,7 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 			var n2 = pair.n2;
 
 			// Find shortest path in current graph
-			var dist = shortest(n1, n2, graph);
+			var dist = astar.calculate(n1, n2, graph);
 			
 			// If this is to large, add this pair as edge
 			if (dist > t * pair.dist) {
@@ -32,4 +37,6 @@ define(['../core/Util', './Astar'], function(Util, shortest){
 			}
 		}
 	}
-})
+};
+
+module.exports = Greedy;
