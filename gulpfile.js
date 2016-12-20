@@ -13,7 +13,7 @@ var sourcemaps = require('gulp-sourcemaps');
 
 // Compile js
 gulp.task("js", function () {
-    return browserify('src/js/app.js').bundle()
+    return browserify({entries: 'src/js/app.js', debug: true}).bundle()
         .on('error', function(error) {
             gutil.log(gutil.colors.red('Error: ' + error));
         })
