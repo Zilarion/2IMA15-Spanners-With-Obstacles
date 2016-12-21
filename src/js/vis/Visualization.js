@@ -58,7 +58,7 @@ class Visualization extends EventEmitter {
 			.remove();
 
 		this.svg
-			.selectAll("square")
+			.selectAll("rect")
 			.remove();
 			
 		this.svg
@@ -123,35 +123,39 @@ class Visualization extends EventEmitter {
 			.style("stroke", "grey" )
 	    .attr( "opacity", 1 )
 
-		// var rects = this.svg
-		// 	.selectAll("rect")
-		// 	.data(data.rects)
-		// 	.enter()
-		// 	.append("rect")
-		// 	.attr("x", function (d) { return d.x; })
-		// 	.attr("y", function (d) { return d.y; })
-		// 	.attr("width", function (d) { return d.width; })
-		// 	.attr("height", function (d) { return d.height; })
-		// 	.style("stroke", "grey" )
-		// 	.style("fill", "none" )
-		// 	.style("opacity", 0.1 )
+	  if (data.debug.rects) {
+			var rects = this.svg
+				.selectAll("rect")
+				.data(data.debug.rects)
+				.enter()
+				.append("rect")
+				.attr("x", function (d) { return d.x; })
+				.attr("y", function (d) { return d.y; })
+				.attr("width", function (d) { return d.width; })
+				.attr("height", function (d) { return d.height; })
+				.style("stroke", "grey" )
+				.style("fill", "none" )
+				.style("opacity", 0.1 )
+		}
 
-		// var circles = this.svg
-		// 	.selectAll("circle")
-		// 	.data(data.circles)
-		// 	.enter()
-		// 	.append("circle")
-		// 	.attr("cx", function (d) { return d.x; })
-		// 	.attr("cy", function (d) { return d.y; })
-		// 	.attr("r", function (d) { return d.r == 0 ? 5 : d.r; })
-		// 	.style("stroke", function(d) { return d.color } )
-		// 	.style("fill", "none" )
-		// 	.style("opacity", "1" ) 
-		// 	.attr( "opacity", 0.2 )
-		// 	.transition()
-		// 		.delay(function(d, i) { return i * 100 })
-	 //    	.duration(100)
-	 //    	.attr( "opacity", 1 );
+		if (data.debug.circles) {
+			var circles = this.svg
+				.selectAll("circle")
+				.data(data.debug.circles)
+				.enter()
+				.append("circle")
+				.attr("cx", function (d) { return d.x; })
+				.attr("cy", function (d) { return d.y; })
+				.attr("r", function (d) { return d.r == 0 ? 5 : d.r; })
+				.style("stroke", function(d) { return d.color } )
+				.style("fill", "none" )
+				.style("opacity", "1" ) 
+				.attr( "opacity", 0.2 )
+				.transition()
+					.delay(function(d, i) { return i * 100 })
+		    	.duration(100)
+		    	.attr( "opacity", 1 );
+    }
 	}
 
 	// Clear all points from the graph
