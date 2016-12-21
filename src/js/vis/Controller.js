@@ -23,6 +23,41 @@ class Controller {
 				Util.getRandomArbitrary(0, this.visualization.height)
 			)
 		}
+		
+		this.obstacle = [];
+		var obstacleSize = 5;
+		var old = null;
+		outer_loop:
+		while (this.obstacle.length != obstacleSize) {
+			var varX = Util.getRandomArbitrary(0, this.visualization.width);
+			var varY = Util.getRandomArbitrary(0, this.visualization.height);
+			
+			var points = this.obstacle.length;
+			if (points>=2) {
+				for (var j = 0; j < points-1; j++) {
+					if (points == obstacleSize-1) {
+						if (Util.linesIntersect(varX,varY,this.obstacle[0].x,this.obstacle[0].y,
+								this.obstacle[j].x,this.obstacle[j].y,this.obstacle[j+1].x,this.obstacle[j+1].y)) {
+										varX = Util.getRandomArbitrary(0, this.visualization.width);
+										varY = Util.getRandomArbitrary(0, this.visualization.height);
+										continue outer_loop;
+						}
+					}
+					if (Util.linesIntersect(old.x,old.y,varX,varY,this.obstacle[j].x,this.obstacle[j].y,this.obstacle[j+1].x,this.obstacle[j+1].y)) {
+						varX = Util.getRandomArbitrary(0, this.visualization.width);
+						varY = Util.getRandomArbitrary(0, this.visualization.height);
+						continue outer_loop;
+					}
+				}
+			}
+			var p = {
+				x: varX,
+				y: varY
+			}
+			this.obstacle.push(p);
+			old = p;
+		}
+		
 		this.recalculate();
 
 		visualization.on('click', (position) => {
@@ -69,7 +104,7 @@ class Controller {
 	}
 
 	updateData() {
-	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges})
+	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, obstacle: this.obstacle})
 	}
 
 	clicked(position) {

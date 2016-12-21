@@ -71,22 +71,23 @@ class Visualization extends EventEmitter {
 
 
 		//obstacles
-		// this.svg.selectAll("polyline")
-		// 	.data(this.obstacles)
-		// 	.enter()
-		// 	.append("polyline")
-		// 	.attr("points", function(d){
-		// 		var str = "";
-		// 		for (var i = 0; i < d.length; i++){
-		// 			str += d[i].x + "," + d[i].y + " ";
-		// 		}
-		// 		//close loop
-		// 		str += d[0].x + "," + d[0].y;
-		// 		return str;
-		// 	})
-		// 	.attr("stroke-width", "1px")
-		// 	.attr("stroke", "rgb(100,100,100)")
-		// 	.attr("fill", "rgb(220,220,220)");
+		var obstacle = this.svg
+			.selectAll("polyline")
+		 	.data([data.obstacle])
+		 	.enter()
+		 	.append("polyline")
+		 	.attr("points", function(d){
+		 		var str = "";
+		 		for (var i = 0; i < d.length; i++){
+		 			str += d[i].x + "," + d[i].y + " ";
+		 		}
+		 		//close loop
+		 		str += d[0].x + "," + d[0].y;
+		 		return str;
+		 	})
+		 	.attr("stroke-width", "1px")
+		 	.attr("stroke", "rgb(100,100,100)")
+		 	.attr("fill", "rgb(220,220,220)");
 
 
 		var nodes = this.svg
