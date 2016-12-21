@@ -34,8 +34,15 @@ class Controller {
 		this.obstacle = [];
 		var obstacleSize = 5;
 		var old = null;
+		var fails = 0;
 		outer_loop:
 		while (this.obstacle.length != obstacleSize) {
+			if (fails == 10) {
+				this.obstacle = [];
+				old = null;
+				fails = 0;
+				continue outer_loop;
+			}
 			var varX = Util.getRandomArbitrary(0, this.visualization.width);
 			var varY = Util.getRandomArbitrary(0, this.visualization.height);
 			
@@ -47,12 +54,14 @@ class Controller {
 								this.obstacle[j].x,this.obstacle[j].y,this.obstacle[j+1].x,this.obstacle[j+1].y)) {
 										varX = Util.getRandomArbitrary(0, this.visualization.width);
 										varY = Util.getRandomArbitrary(0, this.visualization.height);
+										fails++;
 										continue outer_loop;
 						}
 					}
 					if (Util.linesIntersect(old.x,old.y,varX,varY,this.obstacle[j].x,this.obstacle[j].y,this.obstacle[j+1].x,this.obstacle[j+1].y)) {
 						varX = Util.getRandomArbitrary(0, this.visualization.width);
 						varY = Util.getRandomArbitrary(0, this.visualization.height);
+						fails++;
 						continue outer_loop;
 					}
 				}
