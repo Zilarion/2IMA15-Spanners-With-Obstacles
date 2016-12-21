@@ -3,7 +3,7 @@
 var Util = require('../core/Util');
 var Quadtree = require('../core/Quadtree');
 var shortest = require('./Dijkstra');
-var debug = {circles: [], rects: []};
+var debug;
 
 class WSPD {
 	static calculate(graph, settings) {
@@ -15,26 +15,32 @@ class WSPD {
 		    width: settings.w,
 		    height: settings.h
 		}
+		debug = {circles: [], rects: []};
 		var quad = new QuadTree(bounds, pointQuad, 9999999, 1);
 		quad.insert(graph.nodes);
 
 		var t = settings.t
-		var s = 4 * (t+1) / (t-1)
+		var s = 4 * (t+1)/(t-1)
 
 		var r = WSPD.wsPairs(quad.root, quad.root, quad, s);
 		
-		// var map2 = {};
+		var map2 = {};
 		for (var key in r) {
 			var pair = r[key];
 			var repu = WSPD.rep(pair.u);
 			var repv = WSPD.rep(pair.v);
+
+			if (!WSPD.isLeaf(pair.u))
+				repu.color = "green";
+			if (!WSPD.isLeaf(pair.v))
+				repv.color = "green";
 			
-			// map2[repu.id] ? map2[repu.id].push(repv.id) : map2[repu.id] = [repv.id];
-			// map2[repv.id] ? map2[repv.id].push(repu.id) : map2[repv.id] = [repu.id];
+			map2[repu.id] ? map2[repu.id].push(repv.id) : map2[repu.id] = [repv.id];
+			map2[repv.id] ? map2[repv.id].push(repu.id) : map2[repv.id] = [repu.id];
 			// console.log(repu.id, repv.id)
 			graph.addEdge(repu, repv, Util.distance(repu, repv));
 		}
-		// console.log(map2);
+		console.log(map2);
 		return debug;
 	}
 
@@ -79,7 +85,7 @@ class WSPD {
 
 		var d = WSPD.distance(cu, cv);
 		var result =  d >= s * maxr;
-		if (true) {
+		if (result) {
 			cu.color = result ? "black" : "red";
 			cv.color = result ? "black" : "red";
 			debug.circles.push(cu);
@@ -93,22 +99,29 @@ class WSPD {
 	}
 
 	static isempty(u) {
-		return Array.isArray(u);
+		return Array.isArray(u) && u.length == 0;
 	}
 	// Representative of u
 	static rep(u) {
 		if (WSPD.isLeaf(u)) {
+			// If u is leaf
 			if (u.children.length > 0) {
+				// It has only one child, which is therefore the representative
 				return u.children[0];
 			}
 			else {
+				// Or it is empty, meaning we return the empty set
 				return [];
 			}
 		} else {
+			// If it is not a leaf
 			for (var key in u.nodes) {
-				var node = u.nodes[key]
+				var node = u.nodes[key];
 				var r = WSPD.rep(node);
+
+				// Find it's first non empty subnode
 				if (!WSPD.isempty(r)) {
+					// Our representative is this nodes representative
 					return r;
 				}
 			}
@@ -154,7 +167,6 @@ class WSPD {
 				var r = WSPD.wsPairs(childNode, v, T, s);
 				result = result.concat(r);
 				// result = WSPD.union(result, r);
-				// console.log(r, result);
 			}
 		}		
 		return result;
