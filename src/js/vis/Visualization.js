@@ -8,17 +8,7 @@ class Visualization extends EventEmitter {
 	constructor(settings) {
 		super();
 		this.settings = settings;
-
-		// var selector = document.getElementById('selectedObstacle');
-		// for (var obs in inputData.obstacles){
-		// 	if (!this.obstacles){
-		// 		this.obstacles = inputData.obstacles[obs];
-		// 	}
-		// 	var opt = document.createElement("option");
-		// 	opt.innerHTML = obs;
-		// 	selector.appendChild(opt)
-		// }
-
+		
 		this.container = d3.select("div#container");
 		var aspect = this.settings.w / this.settings.h;
 
@@ -162,28 +152,6 @@ class Visualization extends EventEmitter {
 		// 		.delay(function(d, i) { return i * 100 })
 	 //    	.duration(100)
 	 //    	.attr( "opacity", 1 );
-
-
-	  $("#d_nodes").html(data.nodes.length);
-	  $("#d_edges").html(data.edges.length);
-	  // $("#d_weight").html(data.totalWeight().toFixed(3));
-	  // $("#d_time").html(this.lastRun.toFixed(0) + " ms");
-	}
-
-	// Update the settings based on the input values
-	updateSettings() {
-		tvalue = parseFloat(document.getElementById('tvalue').value);	
-		selectedObstacle = document.getElementById('selectedObstacle').value;
-		newObstacles = inputData.obstacles[selectedObstacle];
-		if (newObstacles){
-			this.obstacles = newObstacles;
-		}
-		if (tvalue != NaN && tvalue >= 1) {
-			this.settings.t = tvalue;
-		}
-
-
-		this.recalculate();
 	}
 
 	// Clear all points from the graph
@@ -197,11 +165,11 @@ class Visualization extends EventEmitter {
 	}
 
 	get height() {
-		this.settings.h;
+		return this.settings.h;
 	}
 	
 	get width() {
-		this.settings.w;
+		return this.settings.w;
 	}
 };
 
