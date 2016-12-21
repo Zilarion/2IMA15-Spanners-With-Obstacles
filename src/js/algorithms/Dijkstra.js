@@ -1,20 +1,25 @@
-define(function() {
-	return function(start, goal, graph) {
+'use strict';
 
+var Heap = require('heap');
+
+class Dijkstra {
+	static calculate(start, goal, graph) {
 			var dist = {};
-			var Q = new Heap(
-				function(nodeA, nodeB) {
-				return dist[nodeA] - dist[nodeB];
+			var Q = new Heap(function(nodeA, nodeB) {
+				return dist[nodeA.id] - dist[nodeB.id];
 	    });
 
 			for (var key in graph.nodes) {
 				var node = graph.nodes[key];
 				if (node.id != start.id) {
-					dist[node.id] = 99999999999;
+					dist[node.id] = 999999999999999;
 				} else {
 					dist[node.id] = 0;
 				}
-				Q.push(node);
+			}
+
+			for (var key in graph.nodes) {
+				Q.push(graph.nodes[key]);
 			}
 
 			while (!Q.empty()) {
@@ -27,9 +32,12 @@ define(function() {
 					if (alt < dist[v.id]) {
 						dist[v.id] = alt;
 						Q.updateItem(v.id);
+						Q.heapify()
 					}
 				}
 			}
 			return dist[goal.id];
 	}
-})
+}
+
+module.exports = Dijkstra;
