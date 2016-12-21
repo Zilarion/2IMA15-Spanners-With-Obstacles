@@ -2,7 +2,8 @@
 
 var Util = require('../core/Util');
 var Quadtree = require('../core/Quadtree');
-var shortest = require('./Astar');
+var shortest = require('./Dijkstra');
+var debug = {circles: [], rects: []};
 
 class WSPD {
 	static calculate(graph, settings) {
@@ -19,26 +20,22 @@ class WSPD {
 
 		var t = settings.t
 		var s = 4 * (t+1) / (t-1)
-		console.log("t: ", t, "s: ", s)
 
-		graph.circles = [];
-		graph.circedge = [];
-		graph.rects = [];
-		var r = this.wsPairs(quad.root, quad.root, quad, s);
+		var r = WSPD.wsPairs(quad.root, quad.root, quad, s);
 		
-		var map2 = {};
+		// var map2 = {};
 		for (var key in r) {
 			var pair = r[key];
-			var repu = this.rep(pair.u);
-			var repv = this.rep(pair.v);
+			var repu = WSPD.rep(pair.u);
+			var repv = WSPD.rep(pair.v);
 			
-			map2[repu.id] ? map2[repu.id].push(repv.id) : map2[repu.id] = [repv.id];
-			map2[repv.id] ? map2[repv.id].push(repu.id) : map2[repv.id] = [repu.id];
+			// map2[repu.id] ? map2[repu.id].push(repv.id) : map2[repu.id] = [repv.id];
+			// map2[repv.id] ? map2[repv.id].push(repu.id) : map2[repv.id] = [repu.id];
 			// console.log(repu.id, repv.id)
 			graph.addEdge(repu, repv, Util.distance(repu, repv));
-			
 		}
-		console.log(map2);
+		// console.log(map2);
+		return debug;
 	}
 
 	// Check if this node is a leaf
@@ -51,20 +48,16 @@ class WSPD {
 		var dy = Math.pow(c1.y - c2.y, 2);
 		var r = Math.pow(c1.r + c2.r, 2);
 		var result = dx + dy - r < 0 ? 0 : Math.sqrt(dx + dy - r);
-
-		if (result) {
-			console.log(c1, c2, result);
-		}
 		return result;
 	}
 	// Creates the bounding circle of a node u
 	static createCircle(u, depth, leaves) {
 		if (u._depth > depth) {
-			return this.createCircle(u.parent, depth, leaves);
+			return WSPD.createCircle(u.parent, depth, leaves);
 		}
 		return {
-			x: leaves ? this.rep(u).x : u._bounds.x + u._bounds.width / 2,
-			y: leaves ? this.rep(u).y : u._bounds.y + u._bounds.height / 2,
+			x: leaves ? WSPD.rep(u).x : u._bounds.x + u._bounds.width / 2,
+			y: leaves ? WSPD.rep(u).y : u._bounds.y + u._bounds.height / 2,
 			r: leaves ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2))
 		}
 	}
@@ -72,32 +65,30 @@ class WSPD {
 	// Well seperated
 	static seperated(u, v, s) {
 		var leaves = false;
-		if (this.isLeaf(u) && this.isLeaf(v)) {
+		if (WSPD.isLeaf(u) && WSPD.isLeaf(v)) {
 			leaves = true;
 		}
 		var depth = u._depth > v._depth ? v._depth : u._depth;
 
-		var cu = this.createCircle(u, depth, leaves);
-		var cv = this.createCircle(v, depth, leaves);
+		var cu = WSPD.createCircle(u, depth, leaves);
+		var cv = WSPD.createCircle(v, depth, leaves);
 
 		var maxr = cu.r > cv.r ? cu.r : cv.r;
 		cu.r = maxr;
 		cv.r = maxr;
 
-		var d = this.distance(cu, cv);
+		var d = WSPD.distance(cu, cv);
 		var result =  d >= s * maxr;
-		if (false) {
+		if (true) {
 			cu.color = result ? "black" : "red";
 			cv.color = result ? "black" : "red";
-			graph.circles.push(cu);
-			graph.circles.push(cv);
+			debug.circles.push(cu);
+			debug.circles.push(cv);
 
 			if (!leaves) {
-				graph.circedge.push({x1: cu.x, x2: cv.x, y1: cu.y, y2: cv.y })
+				// data.circedge.push({x1: cu.x, x2: cv.x, y1: cu.y, y2: cv.y })
 			}
 		}
-		if (leaves)
-			console.log("WS: ", this.rep(u).id, this.rep(v).id, result)
 		return result;
 	}
 
@@ -106,7 +97,7 @@ class WSPD {
 	}
 	// Representative of u
 	static rep(u) {
-		if (this.isLeaf(u)) {
+		if (WSPD.isLeaf(u)) {
 			if (u.children.length > 0) {
 				return u.children[0];
 			}
@@ -116,8 +107,8 @@ class WSPD {
 		} else {
 			for (var key in u.nodes) {
 				var node = u.nodes[key]
-				var r = this.rep(node);
-				if (!this.isempty(r)) {
+				var r = WSPD.rep(node);
+				if (!WSPD.isempty(r)) {
 					return r;
 				}
 			}
@@ -145,11 +136,11 @@ class WSPD {
 	// ws pairs function
 	static wsPairs(u, v, T, s) {
 		var result = [];
-		// graph.rects.push(u._bounds)
-		// graph.rects.push(v._bounds)
-		if (this.isempty(this.rep(u)) || this.isempty(this.rep(v)) || (this.isLeaf(u) && this.isLeaf(v) && u == v)) {
+		debug.rects.push(u._bounds)
+		debug.rects.push(v._bounds)
+		if (WSPD.isempty(WSPD.rep(u)) || WSPD.isempty(WSPD.rep(v)) || (WSPD.isLeaf(u) && WSPD.isLeaf(v) && u == v)) {
 			result = [];
-		} else if (this.seperated(u, v, s)) {
+		} else if (WSPD.seperated(u, v, s)) {
 			return [{u, v}];
 		} else {
 			if (u._depth > v._depth) {
@@ -160,9 +151,9 @@ class WSPD {
 			var childNodes = u.nodes;
 			for (var key in childNodes) {
 				var childNode = childNodes[key];
-				var r = this.wsPairs(childNode, v, T, s);
+				var r = WSPD.wsPairs(childNode, v, T, s);
 				result = result.concat(r);
-				// result = this.union(result, r);
+				// result = WSPD.union(result, r);
 				// console.log(r, result);
 			}
 		}		
