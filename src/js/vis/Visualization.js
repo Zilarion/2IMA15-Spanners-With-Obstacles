@@ -1,19 +1,13 @@
 'use strict';
 
-var Graph = require('../core/Graph');
-var Util = require('../core/Util');
-var greedy = require('../algorithms/Greedy');
-var wspd = require('../algorithms/WSPD');
 var d3 = require('d3');
 var $ = require('jquery');
+const EventEmitter = require('events');
 
-class Visualization {
-	constructor() {
-		this.settings = {
-			w: 1920,
-			h: 1080,
-			t: 1.1
-		}
+class Visualization extends EventEmitter {
+	constructor(settings) {
+		super();
+		this.settings = settings;
 
 		// var selector = document.getElementById('selectedObstacle');
 		// for (var obs in inputData.obstacles){
@@ -25,7 +19,6 @@ class Visualization {
 		// 	selector.appendChild(opt)
 		// }
 
-		this.g = new Graph();
 		this.container = d3.select("div#container");
 		var aspect = this.settings.w / this.settings.h;
 
@@ -38,7 +31,7 @@ class Visualization {
 	  	.attr("viewBox", "0 0 " + this.settings.w + " " + this.settings.h)
 	  	.classed("svg-element", true);
 
-		
+		// On resize		
 		$(window).on("resize", function(e) {
 			var targetWidth = $("div#container").width();
 	    var svg = d3.select(".svg-element");
@@ -48,29 +41,23 @@ class Visualization {
 	    svg.attr("height", targetHeight);
 		}).trigger("resize");
 
-	  this.lastRun = 0;
-
+		// On click
 	  var that = this;
 		this.svg.on("click", function() {
 			var coords = d3.mouse(this);
-		  var newData= {
+		  var position = {
 				x: Math.round(coords[0]),
 		    y: Math.round(coords[1])
 		  };
-		  var nodes = that.g.nodes;
-		  that.g.addNode(nodes.length + 1, newData.x, newData.y);
-		  that.recalculate();
+		  that.emit('click', position);
 		});
 
-		for (var i = 0; i < 10; i++) {
-			this.g.addNode(this.g.nodes.length, Util.getRandomArbitrary(0, this.settings.w), Util.getRandomArbitrary(0, this.settings.h))
-		}
-		this.recalculate();
+		this.data = {nodes: [], edges: []};
 	}
 
 	// Update the visualization
 	update() {
-		var data = this.g;
+		var data = this.data;
 
 		this.svg
 			.selectAll("circle")
@@ -179,22 +166,10 @@ class Visualization {
 
 	  $("#d_nodes").html(data.nodes.length);
 	  $("#d_edges").html(data.edges.length);
-	  $("#d_weight").html(data.totalWeight().toFixed(3));
-	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
+	  // $("#d_weight").html(data.totalWeight().toFixed(3));
+	  // $("#d_time").html(this.lastRun.toFixed(0) + " ms");
 	}
 
- 	recalculate() {
-	  this.g.clearEdges();
-
-	  var t0 = performance.now();
-		// greedy.calculate(this.g, this.settings, this.obstacles);
-		wspd.calculate(this.g, this.settings);
-		var t1 = performance.now();
-		this.lastRun = t1 - t0;
-
-	  this.update();
-
-	}
 	// Update the settings based on the input values
 	updateSettings() {
 		tvalue = parseFloat(document.getElementById('tvalue').value);	
@@ -215,6 +190,18 @@ class Visualization {
 	clearPoints(){
 		this.g.nodes = [];
 		this.recalculate();
+	}
+
+	setData(data) {
+		this.data = data;
+	}
+
+	get height() {
+		this.settings.h;
+	}
+	
+	get width() {
+		this.settings.w;
 	}
 };
 
