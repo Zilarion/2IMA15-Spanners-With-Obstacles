@@ -49,25 +49,7 @@ class Visualization extends EventEmitter {
 	update() {
 		var data = this.data;
 
-		this.svg
-			.selectAll("circle")
-			.remove();
-
-		this.svg
-			.selectAll("line")
-			.remove();
-
-		this.svg
-			.selectAll("rect")
-			.remove();
-			
-		this.svg
-			.selectAll("polyline")
-			.remove();
-
-		this.svg
-			.selectAll("text")
-			.remove();
+		this.svg.selectAll("*").remove();
 
 
 		//obstacles
@@ -97,7 +79,7 @@ class Visualization extends EventEmitter {
 			.attr("cx", function (d) { return d.x; })
 			.attr("cy", function (d) { return d.y; })
 			.attr("r", function (d) { return 2; })
-			.style("fill", "blue");
+			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
 		//Add the SVG Text Element to the svgContainer
 		var text = this.svg.selectAll("text")
@@ -123,39 +105,52 @@ class Visualization extends EventEmitter {
 			.style("stroke", "grey" )
 	    .attr( "opacity", 1 )
 
-	  if (data.debug.rects) {
-			var rects = this.svg
-				.selectAll("rect")
-				.data(data.debug.rects)
-				.enter()
-				.append("rect")
-				.attr("x", function (d) { return d.x; })
-				.attr("y", function (d) { return d.y; })
-				.attr("width", function (d) { return d.width; })
-				.attr("height", function (d) { return d.height; })
-				.style("stroke", "grey" )
-				.style("fill", "none" )
-				.style("opacity", 0.1 )
-		}
+	  if (data.debug) {
+		  if (data.debug.rects) {
+				var rects = this.svg
+					.selectAll("rect")
+					.data(data.debug.rects)
+					.enter()
+					.append("rect")
+					.attr("x", function (d) { return d.x; })
+					.attr("y", function (d) { return d.y; })
+					.attr("width", function (d) { return d.width; })
+					.attr("height", function (d) { return d.height; })
+					.style("stroke", "grey" )
+					.style("fill", "none" )
+					.style("opacity", 0.1 )
+			}
 
-		if (data.debug.circles) {
-			var circles = this.svg
-				.selectAll("circle")
-				.data(data.debug.circles)
-				.enter()
-				.append("circle")
-				.attr("cx", function (d) { return d.x; })
-				.attr("cy", function (d) { return d.y; })
-				.attr("r", function (d) { return d.r == 0 ? 5 : d.r; })
-				.style("stroke", function(d) { return d.color } )
-				.style("fill", "none" )
-				.style("opacity", "1" ) 
-				.attr( "opacity", 0.2 )
-				.transition()
-					.delay(function(d, i) { return i * 100 })
-		    	.duration(100)
-		    	.attr( "opacity", 1 );
-    }
+			if (data.debug.circles) {
+				console.log("num cir", data.debug.circles.length)
+				var dur = 100;
+				var circles = this.svg
+					.selectAll("wspd_circle")
+					.data(data.debug.circles)
+					.enter()
+					.append("circle")
+					.attr("cx", function (d) { return d.x; })
+					.attr("cy", function (d) { return d.y; })
+					.attr("r", function (d) { return d.r == 0 ? 5 : d.r; })
+					.style("stroke", function(d) { return d.color } )
+					.style("fill", "none" )
+					// // .style("opacity", "0" ) 
+		   //  	.attr( "opacity", 0 )
+					// .transition()
+					// 	.delay(function(d, i) {
+					// 		var isEven = (i%2 == 0);
+					// 		var delay = isEven ? (i * dur) : (i-1) * dur;
+					// 		console.log("in", i, delay);
+					// 		return delay;
+					// 	})
+			  //   	.duration(dur/2)
+			  //   	.attr( "opacity", 1 )
+		   //  	.transition()
+		   //  		.delay(dur)
+			  //   	.duration(dur)
+			  //   	.attr( "opacity", 0 );
+	    }
+	  }
 	}
 
 	// Clear all points from the graph
