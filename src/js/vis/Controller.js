@@ -32,7 +32,7 @@ class Controller {
 		}
 		
 		this.obstacle = [];
-		var obstacleSize = 5;
+		var obstacleSize = 15;
 		var old = null;
 		var fails = 0;
 		outer_loop:
@@ -70,6 +70,7 @@ class Controller {
 				x: varX,
 				y: varY
 			}
+			fails == 0;
 			this.obstacle.push(p);
 			old = p;
 		}
