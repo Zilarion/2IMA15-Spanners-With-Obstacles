@@ -49,12 +49,6 @@ class Controller {
 	// Update the settings based on the input values
 	updateSettings() {
 		var tvalue = parseFloat(document.getElementById('tvalue').value);	
-		var selectedObstacle = document.getElementById('selectedObstacle').value;
-		// var newObstacles = inputData.obstacles[selectedObstacle];
-		// if (newObstacles){
-			// this.obstacles = newObstacles;
-		// }
-
 		this.settings.algorithm = document.getElementById('algorithms').value;
 		if (tvalue != NaN && tvalue >= 1) {
 			this.settings.t = tvalue;
