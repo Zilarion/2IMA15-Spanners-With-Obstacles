@@ -3,6 +3,7 @@
 var Graph = require('../core/Graph');
 var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
+var generator = require('../data/Generator');
 var $ = require('jquery')
 
 class Controller {
@@ -31,49 +32,7 @@ class Controller {
 			)
 		}
 		
-		this.obstacle = [];
-		var obstacleSize = 15;
-		var old = null;
-		var fails = 0;
-		outer_loop:
-		while (this.obstacle.length != obstacleSize) {
-			if (fails == 10) {
-				this.obstacle = [];
-				old = null;
-				fails = 0;
-				continue outer_loop;
-			}
-			var varX = Util.getRandomArbitrary(0, this.visualization.width);
-			var varY = Util.getRandomArbitrary(0, this.visualization.height);
-			
-			var points = this.obstacle.length;
-			if (points>=2) {
-				for (var j = 0; j < points-1; j++) {
-					if (points == obstacleSize-1) {
-						if (Util.linesIntersect(varX,varY,this.obstacle[0].x,this.obstacle[0].y,
-								this.obstacle[j].x,this.obstacle[j].y,this.obstacle[j+1].x,this.obstacle[j+1].y)) {
-										varX = Util.getRandomArbitrary(0, this.visualization.width);
-										varY = Util.getRandomArbitrary(0, this.visualization.height);
-										fails++;
-										continue outer_loop;
-						}
-					}
-					if (Util.linesIntersect(old.x,old.y,varX,varY,this.obstacle[j].x,this.obstacle[j].y,this.obstacle[j+1].x,this.obstacle[j+1].y)) {
-						varX = Util.getRandomArbitrary(0, this.visualization.width);
-						varY = Util.getRandomArbitrary(0, this.visualization.height);
-						fails++;
-						continue outer_loop;
-					}
-				}
-			}
-			var p = {
-				x: varX,
-				y: varY
-			}
-			fails == 0;
-			this.obstacle.push(p);
-			old = p;
-		}
+		this.obstacle = generator.createSimplePolygon(5, this.visualization);
 		
 		this.recalculate();
 
