@@ -27,6 +27,9 @@ class WSPD {
 		var map = {};
 		for (var key in r) {
 			var pair = r[key];
+
+			debug.circles.push(WSPD.createCircle(pair.u))
+			debug.circles.push(WSPD.createCircle(pair.v))
 			var repu = WSPD.rep(pair.u);
 			var repv = WSPD.rep(pair.v);
 
@@ -85,8 +88,8 @@ class WSPD {
 		if (true) {
 			cu.color = result ? "black" : "red";
 			cv.color = result ? "black" : "red";
-			debug.circles.push(cu);
-			debug.circles.push(cv);
+			// debug.circles.push(cu);
+			// debug.circles.push(cv);
 		}
 		return result;
 	}
@@ -142,8 +145,8 @@ class WSPD {
 	// ws pairs function
 	static wsPairs(u, v, T, s) {
 		var result = [];
-		debug.rects.push(u._bounds)
-		debug.rects.push(v._bounds)
+		// debug.rects.push(u._bounds)
+		// debug.rects.push(v._bounds)
 		if (WSPD.isempty(WSPD.rep(u)) || WSPD.isempty(WSPD.rep(v)) || (WSPD.isLeaf(u) && WSPD.isLeaf(v) && u == v)) {
 			result = [];
 		} else if (WSPD.seperated(u, v, s)) {

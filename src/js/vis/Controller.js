@@ -16,6 +16,7 @@ class Controller {
 		this.settings.h = this.visualization.height;
 
 		document.getElementById('tvalue').value = this.settings.t;	
+		document.getElementById('debug').checked = this.settings.debug;	
 
 		var algorithms = $('#algorithms');
 		for ( var key in this.settings.algorithms ) {
@@ -47,8 +48,6 @@ class Controller {
 		$('.control_setting').on('change', (e) => {
 			this.updateSettings();
 		});
-
-		this.recalculate();
 	}
 
 	// Update the settings based on the input values
@@ -66,22 +65,40 @@ class Controller {
 	  // Set loading to true
 	  this.visualization.loading(true);
 
-		// Clear previous result
-	  this.g.clearEdges();
+	  // Store the current promise
+	  this.promise = this.asyncCompute();
 
-	  // Run algorithm
-	  var t0 = performance.now();
-	  this.debug = this.settings.algorithms[this.settings.algorithm](this.g, this.obstacle, this.settings);
-		var t1 = performance.now();
-		this.lastRun = t1 - t0;
+	  var that = this;
+		this.promise.then(function() {
+			// We are done, stop loading
+			that.visualization.loading(false);
+		})
 
-	  // Update the visualization
-		this.updateData();
-	  this.visualization.update(this.settings.debug);
+		// Remove promise
+		this.promise = undefined;
+  }
 
-		// We are done, stop loading
-	  this.visualization.loading(false);
-	  }
+  asyncCompute() {
+	  var that = this;
+		return new Promise((resolve, reject) => {
+			setTimeout(function() { 
+				// Clear previous result
+		  	that.g.clearEdges();
+
+			  // Run algorithm
+		  	var t0 = performance.now();
+			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.obstacle, that.settings);
+				var t1 = performance.now();
+				that.lastRun = t1 - t0;
+
+			  // Update the visualization
+				that.updateData();
+			  that.visualization.update(that.settings.debug);
+
+				resolve(); 
+		 	});
+	  });
+  }
 
 	updateData() {
 	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, debug: this.debug, obstacle: this.obstacle})
@@ -91,7 +108,8 @@ class Controller {
 	  $("#d_weight").html(this.g.totalWeight().toFixed(3));
 	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
 	  if (this.settings.debug) {
-		  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
+	  	var valid = this.validTSpanner(this.g, this.settings.t);
+		  $("#d_valid").html(valid ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
 		} else {
 			$("#d_valid").html("<div class=\"light\"></div>");
 		}

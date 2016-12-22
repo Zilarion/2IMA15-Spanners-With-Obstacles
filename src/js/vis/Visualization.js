@@ -61,8 +61,6 @@ class Visualization extends EventEmitter {
 	// Update the visualization
 	update(debug) {
 		var data = this.data;
-		// this.svg.selectAll("*:not(.loader)").remove();
-
 		//obstacles
 		var obstacle = this.svg
 			.selectAll("polyline")
@@ -93,18 +91,6 @@ class Visualization extends EventEmitter {
 			.attr("r", function (d) { return 2; })
 			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
-		//Add the SVG Text Element to the svgContainer
-		var text = this.svg.selectAll("text")
-			.data(data.nodes)
-			.enter()
-			.append("text")
-			.attr("x", function(d) { return d.x - 3; })
-			.attr("y", function(d) { return d.y - 3; })
-			.text( function (d) { return d.id })
-			.attr("font-family", "sans-serif")
-			.attr("font-size", "12px")
-			.attr("fill", "red");
-
 		var edges = this.svg
 			.selectAll("line")
 			.data(data.edges)
@@ -117,48 +103,63 @@ class Visualization extends EventEmitter {
 			.style("stroke", "grey" )
 	    .attr( "opacity", 1 )
 
-	  if (data.debug && debug) {
-		  if (data.debug.rects) {
-				var rects = this.svg
-					.selectAll("rect")
-					.data(data.debug.rects)
-					.enter()
-					.append("rect")
-					.attr("x", function (d) { return d.x; })
-					.attr("y", function (d) { return d.y; })
-					.attr("width", function (d) { return d.width; })
-					.attr("height", function (d) { return d.height; })
-					.style("stroke", "grey" )
-					.style("fill", "none" )
-					.style("opacity", 0.1 )
-			}
+	  if (debug) {	  	
+			//Add the SVG Text Element to the svgContainer
+			var text = this.svg.selectAll("text.ids")
+				.data(data.nodes)
+				.enter()
+				.append("text")
+				.attr("x", function(d) { return d.x + 3; })
+				.attr("y", function(d) { return d.y - 4; })
+				.text( function (d) { return d.id; })
+				.attr("font-family", "sans-serif")
+				.attr("font-size", "12px")
+				.attr("fill", "red")
+				.classed("ids", true);
 
-			if (data.debug.circles) {
-				var dur = 500;
-				var circles = this.svg
-					.selectAll("wspd_circle")
-					.data(data.debug.circles)
-					.enter()
-					.append("circle")
-					.attr("cx", function (d) { return d.x; })
-					.attr("cy", function (d) { return d.y; })
-					.attr("r", function (d) { return d.r == 0 ? 15 : d.r; })
-					.style("stroke", function(d) { return d.color } )
-					.style("fill", "none" ) 
-		   //  	.attr( "opacity", 0 )
-					// .transition()
-					// 	.delay(function(d, i) {
-					// 		var isEven = (i%2 == 0);
-					// 		var delay = isEven ? (i * dur) : (i-1) * dur;
-					// 		return delay;
-					// 	})
-			  //   	.duration(dur/2)
-			  //   	.attr( "opacity", 1 )
-		   //  	.transition()
-		   //  		.delay(dur)
-			  //   	.duration(dur)
-			  //   	.attr( "opacity", 0 );
-	    }
+			if (data.debug) {
+			  if (data.debug.rects) {
+					var rects = this.svg
+						.selectAll("rect")
+						.data(data.debug.rects)
+						.enter()
+						.append("rect")
+						.attr("x", function (d) { return d.x; })
+						.attr("y", function (d) { return d.y; })
+						.attr("width", function (d) { return d.width; })
+						.attr("height", function (d) { return d.height; })
+						.style("stroke", "grey" )
+						.style("fill", "none" )
+						.style("opacity", 0.1 )
+				}
+
+				if (data.debug.circles) {
+					var dur = 500;
+					var circles = this.svg
+						.selectAll("wspd_circle")
+						.data(data.debug.circles)
+						.enter()
+						.append("circle")
+						.attr("cx", function (d) { return d.x; })
+						.attr("cy", function (d) { return d.y; })
+						.attr("r", function (d) { return d.r == 0 ? 15 : d.r; })
+						.style("stroke", function(d) { return d.color ? d.color : "black" } )
+						.style("fill", "none" ) 
+			   //  	.attr( "opacity", 0 )
+						// .transition()
+						// 	.delay(function(d, i) {
+						// 		var isEven = (i%2 == 0);
+						// 		var delay = isEven ? (i * dur) : (i-1) * dur;
+						// 		return delay;
+						// 	})
+				  //   	.duration(dur/2)
+				  //   	.attr( "opacity", 1 )
+			   //  	.transition()
+			   //  		.delay(dur)
+				  //   	.duration(dur)
+				  //   	.attr( "opacity", 0 );
+		    }
+		  }
 	  }
 		this.svg.selectAll(".loader").raise();
 	}
