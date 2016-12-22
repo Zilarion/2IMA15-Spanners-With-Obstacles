@@ -7,7 +7,7 @@ var wspd = require('./algorithms/WSPD');
 
 var vis_settings = {
 	w: 1920,
-	h: 1080
+	h: 1920
 }
 
 var controller_settings = {
