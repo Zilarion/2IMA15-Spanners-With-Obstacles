@@ -26,16 +26,18 @@
           <table>
             <tr>
               <td>t-value:</td>
-              <td><input id="tvalue" placeholder="t-value > 1" value="1.1"></input></td>
+              <td><input class="control_setting" id="tvalue" placeholder="t-value > 1" value="1.1"></input></td>
             </tr>
             <tr>
               <td>Algorithm:</td>
-              <td><select id="algorithms"></select></td> 
+              <td><select class="control_setting" id="algorithms"></select></td> 
+            </tr>
+            <tr>
+              <td>Debug:</td>
+              <td><input class="control_setting" type="checkbox" id="debug" checked></td></td> 
             </tr>
           </table>
 
-          <br />
-          <br />
           <button id="recalculate" class="btn btn-green">Recalculate</button>
           <button id="clearPoints" class="btn btn-red">Clear points</button>
           </div>
