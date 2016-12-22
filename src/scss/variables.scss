@@ -1,8 +1,15 @@
 // grid variables
 $grid-columns: 12;
-$grid-max-width: 65em;
+$grid-max-width: 120em;
  
  
 // breakpoints
 $breakpoint-small: "only screen and (min-width: 20em)";
-$breakpoint-medium: "only screen and (min-width: 30em)";
+$breakpoint-medium: "only screen and (min-width: 40em)";
+
+
+// Background color
+$background-color: #4e4e4e;
+$block-background-color: #ccc;
+$background-color-header: #242424;
+$color-baby-blue: 116, 199, 209;

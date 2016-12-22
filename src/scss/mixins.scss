@@ -1,3 +1,4 @@
+/* Grid */
 *,
 *:after,
 *:before {
@@ -23,5 +24,17 @@
   }
   &:after {
       clear: both;
+  }
+}
+
+/* Buttons */
+@mixin button-bg($bg) {
+  background: $bg;
+  &:hover {
+    background: darken($bg, 8%);
+    transition: all 0.3s ease;
+  }
+  &:active {
+    background:darken($bg, 25%);
   }
 }

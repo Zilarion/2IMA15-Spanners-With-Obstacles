@@ -1,27 +1,69 @@
 @import "grid";
+@import "mixins";
 
-html,body { height: 100%; margin: 0px; padding: 0px; }
+html,body { height: 100%; margin: 0px; padding: 0px; background: $background-color}
 
-#control {
-  display: inline-block;
-  float: right;
-	width: 20%;
-	padding: 20px 1%;
+input {
+	width: 100%;
 }
-
 
 #details {
-  display: inline-block;
-  float: right;
-	width: 20%;
-	padding: 20px 1%;
+	margin: 20px 0px;
+ 	tr {
+		display: block;
+		// border-bottom: 1px solid #dd2121;
+	}
 }
 
-#details tr {
-	display: block;
-	/*border-top: 1px solid #dd2121;*/
+// .svg-element {
+//   border: 1px solid black
+// }
+
+.svg-container {
+	background: white;
 }
 
-.svg-element {
-    border: 1px solid black
+.wrapper {
+	margin-top: 10px;
+}
+
+.block {
+  background-color: $block-background-color;
+  border: 1px solid black;
+  border-radius: 2px;
+
+  .block-header {
+		background-color: $background-color-header;
+		width: 100%;
+		color: white;
+  	padding: 10px 5px;
+  	border-bottom: 2px solid $color-baby-blue;
+	}
+	.block-content {
+  	padding: 10px 5px;
+	}
+}
+
+.btn {
+	color:white;
+	text-decoration:none;
+	padding: 3px 4px;
+	border: none;
+	font-size: 1em;
+}
+
+.btn-green {
+   @include button-bg(#2ecc71);
+}
+
+.btn-blue {
+   @include button-bg(#3498db);
+}
+
+.btn-yellow {
+   @include button-bg(#f1c40f);
+}
+
+.btn-red {
+   @include button-bg(#e74c3c);
 }
