@@ -14,8 +14,8 @@ class Visibility {
 		for (var p in points){
 			graph.nodes.push(points[p]);
 		}
-		for (var node in obstacle.nodes){
-			graph.nodes.push(node);
+		for (var node in obstacle.nodes) {
+			graph.nodes.push(obstacle.getNode(node));
 		}
 
 		points = graph.nodes;
