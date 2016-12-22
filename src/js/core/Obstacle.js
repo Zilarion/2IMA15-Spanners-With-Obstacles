@@ -1,12 +1,18 @@
 "use strict";
 
+var Node = require('./Node');
 
 class Obstacle {
-	constructor(id, x, y, nodes) {
-		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.nodes = nodes;
+	constructor() {
+		this.nodes = [];
+	}
+	
+	addNode(id, x, y) {
+		this.nodes.push(new Node(id, x, y, this));
+	}
+	
+	getNode(id) {
+		return this.nodes[id];
 	}
 };
 

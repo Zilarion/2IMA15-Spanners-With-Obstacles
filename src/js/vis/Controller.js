@@ -1,6 +1,7 @@
 'use strict';
 
 var Graph = require('../core/Graph');
+//var Obstacle = require('../core/Obstacle');
 var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
 var generator = require('../data/Generator');

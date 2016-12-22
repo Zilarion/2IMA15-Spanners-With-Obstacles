@@ -2,16 +2,17 @@
 
 var Util = require('../core/Util');
 var Graph = require('../core/Graph');
+var Obstacle = require('../core/Obstacle');
 
 class Generator {
 	static createSimplePolygon(obstacleSize, settings) {
-		var obstacle = [];
+		var obstacle = new Obstacle();
 		var old = null;
 		var fails = 0;
 		outer_loop:
-		while (obstacle.length != obstacleSize) {
+		while (obstacle.nodes.length != obstacleSize) {
 			if (fails == 10) {
-				obstacle = [];
+				obstacle = new Obstacle();
 				old = null;
 				fails = 0;
 				continue outer_loop;
@@ -19,19 +20,19 @@ class Generator {
 			var varX = Util.getRandomArbitrary(0, settings.w);
 			var varY = Util.getRandomArbitrary(0, settings.h);
 			
-			var points = obstacle.length;
+			var points = obstacle.nodes.length;
 			if (points>=2) {
 				for (var j = 0; j < points-1; j++) {
 					if (points == obstacleSize-1) {
-						if (Util.linesIntersect(varX,varY,obstacle[0].x,obstacle[0].y,
-								obstacle[j].x,obstacle[j].y,obstacle[j+1].x,obstacle[j+1].y)) {
+						if (Util.linesIntersect(varX,varY,obstacle.getNode(0).x,obstacle.getNode(0).y,
+								obstacle.getNode(j).x,obstacle.getNode(j).y,obstacle.getNode(j+1).x,obstacle.getNode(j+1).y)) {
 										varX = Util.getRandomArbitrary(0, settings.w);
 										varY = Util.getRandomArbitrary(0, settings.h);
 										fails++;
 										continue outer_loop;
 						}
 					}
-					if (Util.linesIntersect(old.x,old.y,varX,varY,obstacle[j].x,obstacle[j].y,obstacle[j+1].x,obstacle[j+1].y)) {
+					if (Util.linesIntersect(old.x,old.y,varX,varY,obstacle.getNode(j).x,obstacle.getNode(j).y,obstacle.getNode(j+1).x,obstacle.getNode(j+1).y)) {
 						varX = Util.getRandomArbitrary(0, settings.w);
 						varY = Util.getRandomArbitrary(0, settings.h);
 						fails++;
@@ -44,7 +45,7 @@ class Generator {
 				y: varY
 			}
 			fails = 0;
-			obstacle.push(p);
+			obstacle.addNode(obstacle.nodes.length,p.x,p.y);
 			old = p;
 		}
 		return obstacle;

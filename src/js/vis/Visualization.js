@@ -71,11 +71,11 @@ class Visualization extends EventEmitter {
 		 	.append("polyline")
 		 	.attr("points", function(d){
 		 		var str = "";
-		 		for (var i = 0; i < d.length; i++){
-		 			str += d[i].x + "," + d[i].y + " ";
+		 		for (var i = 0; i < d.nodes.length; i++){
+		 			str += d.getNode(i).x + "," + d.getNode(i).y + " ";
 		 		}
 		 		//close loop
-		 		str += d[0].x + "," + d[0].y;
+		 		str += d.getNode(0).x + "," + d.getNode(0).y;
 		 		return str;
 		 	})
 		 	.attr("stroke-width", "1px")
