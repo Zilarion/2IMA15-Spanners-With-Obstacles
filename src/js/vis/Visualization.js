@@ -123,8 +123,7 @@ class Visualization extends EventEmitter {
 			}
 
 			if (data.debug.circles) {
-				console.log("num cir", data.debug.circles.length)
-				var dur = 100;
+				var dur = 500;
 				var circles = this.svg
 					.selectAll("wspd_circle")
 					.data(data.debug.circles)
@@ -132,16 +131,14 @@ class Visualization extends EventEmitter {
 					.append("circle")
 					.attr("cx", function (d) { return d.x; })
 					.attr("cy", function (d) { return d.y; })
-					.attr("r", function (d) { return d.r == 0 ? 5 : d.r; })
+					.attr("r", function (d) { return d.r == 0 ? 15 : d.r; })
 					.style("stroke", function(d) { return d.color } )
-					.style("fill", "none" )
-					// // .style("opacity", "0" ) 
+					.style("fill", "none" ) 
 		   //  	.attr( "opacity", 0 )
 					// .transition()
 					// 	.delay(function(d, i) {
 					// 		var isEven = (i%2 == 0);
 					// 		var delay = isEven ? (i * dur) : (i-1) * dur;
-					// 		console.log("in", i, delay);
 					// 		return delay;
 					// 	})
 			  //   	.duration(dur/2)
