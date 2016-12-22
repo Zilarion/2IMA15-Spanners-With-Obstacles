@@ -24,7 +24,7 @@ class WSPD {
 
 		var r = WSPD.wsPairs(quad.root, quad.root, quad, s);
 		
-		var map2 = {};
+		var map = {};
 		for (var key in r) {
 			var pair = r[key];
 			var repu = WSPD.rep(pair.u);
@@ -35,12 +35,12 @@ class WSPD {
 			if (!WSPD.isLeaf(pair.v))
 				repv.color = "green";
 			
-			map2[repu.id] ? map2[repu.id].push(repv.id) : map2[repu.id] = [repv.id];
-			map2[repv.id] ? map2[repv.id].push(repu.id) : map2[repv.id] = [repu.id];
+			// map[repu.id] ? map[repu.id].push(repv.id) : map[repu.id] = [repv.id];
+			// map[repv.id] ? map[repv.id].push(repu.id) : map[repv.id] = [repu.id];
 			// console.log(repu.id, repv.id)
 			graph.addEdge(repu, repv, Util.distance(repu, repv));
 		}
-		console.log(map2);
+		// console.log(map)
 		return debug;
 	}
 
@@ -57,27 +57,24 @@ class WSPD {
 		return result;
 	}
 	// Creates the bounding circle of a node u
-	static createCircle(u, depth, leaves) {
-		if (u._depth > depth) {
-			return WSPD.createCircle(u.parent, depth, leaves);
-		}
+	static createCircle(u) {
 		return {
-			x: leaves ? WSPD.rep(u).x : u._bounds.x + u._bounds.width / 2,
-			y: leaves ? WSPD.rep(u).y : u._bounds.y + u._bounds.height / 2,
-			r: leaves ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2))
+			x: WSPD.isLeaf(u) ? WSPD.rep(u).x : u._bounds.x + u._bounds.width / 2,
+			y: WSPD.isLeaf(u) ? WSPD.rep(u).y : u._bounds.y + u._bounds.height / 2,
+			r: WSPD.isLeaf(u) ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2)) + 0.5
 		}
 	}
 
 	// Well seperated
 	static seperated(u, v, s) {
-		var leaves = false;
-		if (WSPD.isLeaf(u) && WSPD.isLeaf(v)) {
-			leaves = true;
-		}
-		var depth = u._depth > v._depth ? v._depth : u._depth;
+		// var leaves = false;
+		// if (WSPD.isLeaf(u) && WSPD.isLeaf(v)) {
+		// 	leaves = true;
+		// }
+		// var depth = u._depth > v._depth ? u._depth : v._depth;
 
-		var cu = WSPD.createCircle(u, depth, leaves);
-		var cv = WSPD.createCircle(v, depth, leaves);
+		var cu = WSPD.createCircle(u);
+		var cv = WSPD.createCircle(v);
 
 		var maxr = cu.r > cv.r ? cu.r : cv.r;
 		cu.r = maxr;
@@ -85,15 +82,11 @@ class WSPD {
 
 		var d = WSPD.distance(cu, cv);
 		var result =  d >= s * maxr;
-		if (result) {
+		if (true) {
 			cu.color = result ? "black" : "red";
 			cv.color = result ? "black" : "red";
 			debug.circles.push(cu);
 			debug.circles.push(cv);
-
-			if (!leaves) {
-				// data.circedge.push({x1: cu.x, x2: cv.x, y1: cu.y, y2: cv.y })
-			}
 		}
 		return result;
 	}
