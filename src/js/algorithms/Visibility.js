@@ -1,9 +1,11 @@
 'use strict';
 
+var Heap = require('heap');
+var RBTree = require('bintrees').RBTree;
+
 var Util = require('../core/Util');
 var Graph = require('../core/Graph');
-var Heap = require('heap');;
-var BinarySearchTree = require('../core/BinarySearchTree');
+
 
 
 class Visibility {
@@ -11,9 +13,23 @@ class Visibility {
 		return Visibility.greedy(points, obstacle);
 	}
 
-
 	static angle(x1, y1, x2, y2){
 		return Math.atan2(y2, x2) - Math.atan2(y1, x1)
+	}
+
+	static linePosOnAngle(start, end, findAngle){
+		var sa = angleA(start);
+		var ea = angleA(end);
+		var span = Math.abs(sa - ea);
+		var minAngle = sa > ea ? ea : sa;
+		var minPoint = sa > ea ? end : start;
+		var factor = (findAngle - minAngle)/span;
+		//construct point for currentAngle
+		var currentPointOnMin = {};
+		//TODO: can we interpolate with angles like this?
+		currentPointOnMin.x = start.x + (end.x - start.x)*factor;
+		currentPointOnMin.y = start.y + (end.y - start.y)*factor;
+		return currentPointOnMin;			
 	}
 
 	static radialSweepPoint(p, points, pointsOffset, edges){
@@ -74,17 +90,20 @@ class Visibility {
 		Bdir.x += p.x;
 		Bdir.y += p.y;
 		//construct status with lines intersecting dir
-		var status = new BinarySearchTree();
+		var status = new RBTree(function(e1, e2) {
+			//TODO: does currentAngle update here?
+			 var p1 = linePosOnAngle(e1.s, e1.e, currentAngle);
+			 var p2 = linePosOnAngle(e2.s, e2.e, currentAngle); 
+			 var d1 = Util.distance(p, p1);
+			 var d2 = Util.distance(p, p2);
+			 return d1 - d2;
+		});
 		for (var index_e in edges){
 			var e = edges[index_e];
 			if (Util.intersect(e.s.x, e.s.y, e.e.x, e.e.y, 
 						   	   p.x,   p.y,   Bdir.x,   Bdir.y)){
 				//add clockwise closest to B
-				if (angleA(e.e) > angleA(e.s)){
-					status.insert(e.s);
-				}else{
-					status.insert(e.e);
-				}
+				status.insert(e);
 			}
 		}
 		//sweep algorithm
@@ -95,27 +114,26 @@ class Visibility {
 			if (q.edge){
 				//update status
 				var edge = q.edge;
-				if (status.contains(edge.p)){
-					status.remove(edge.p);
+				//check if status already has edge
+				if (status.find(edge) != null){
+					//this point is the endpoint of the edge
+					status.remove(edge);
 				}else{
-					status.insertWithKeyChecks(q);
+					//this point is the startpoint of the edge
+					status.insert(q.edge);
 				}
 			}else{
-				//q is not from an obstacle
-				//calculate sweep intersection point on closest line
-				var min = status.findMin().edge;
-				var sa = angleA(min.s);
-				var ea = angleA(min.e);
-				var span = Math.abs(sa - ea);
-				var minAngle = sa > ea ? ea : sa;
-				var minPoint = sa > ea ? min.e : min.s;
-				var factor = (currentAngle - minAngle)/span;
-				var currentPointOnMin = {};//construct point for currentAngle
-				//TODO: can we interpolate like this?
-				currentPointOnMin.x = min.s.x + (min.e.x - min.s.x)*factor;
-				currentPointOnMin.y = min.s.y + (min.e.y - min.s.y)*factor;
-				//if closer than first line, point is visible
-				if (Util.distance(p, currentPointOnMin) < Util.distance(p, q)){
+				//q is not from an obstacle, find closest line
+				var minEdge = status.min();
+				//check if status is empty
+				if (minEdge != null){
+					//calculate sweep intersection point on closest line
+					var linePos = linePosOnAngle(minEdge.s, minEdge.e, currentAngle);
+					//if closer than first line, point is visible
+					if (Util.distance(p, currentPointOnMin) < Util.distance(p, q)){
+						visible.push(q);
+					}
+				}else{
 					visible.push(q);
 				}
 			}
