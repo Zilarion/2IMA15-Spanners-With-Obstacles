@@ -43,14 +43,12 @@ class Greedy {
 				for (var p in pair.path.sequence){
 					var point = pair.path.sequence[p];
 					if (prev){
-						console.log(prev.id, point.id);
 						graph.addEdge(prev, point, Util.distance(prev, point));
 					}
 					prev = point;
 				}
 			}
 		}
-		console.log(graph.edges);
 	}
 };
 

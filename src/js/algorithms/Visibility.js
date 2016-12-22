@@ -187,7 +187,15 @@ class Visibility {
 		for (var p = 0; p < points.length; p++){
 			for (var q = p+1; q < points.length; q++){
 				if (!Util.lineIntersectsObstacle(points[p], points[q], obstacle)){
-					graph.addEdge(points[p], points[q], Util.distance(points[p], points[q]));
+					var pp = points[p];
+					var qq = points[q];
+					//check for boundary lines, which lie inside but do not intersect the polygon
+					var midpoint = {};
+					midpoint.x = pp.x + (qq.x - pp.x)/2;
+					midpoint.y = pp.y + (qq.y - pp.y)/2;
+					if (!Util.pointInsideObstacle(midpoint.x, midpoint.y, obstacle)){
+						graph.addEdge(points[p], points[q], Util.distance(points[p], points[q]));
+					}
 				}
 			}
 		}

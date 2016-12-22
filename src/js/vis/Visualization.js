@@ -91,12 +91,9 @@ class Visualization extends EventEmitter {
 			.attr("r", function (d) { return 2; })
 			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
-		console.log(data.edges);
-		console.log(data.nodes);
 		var allEdges = [];
 		for (var n in data.nodes){
 			var node = data.nodes[n];
-			console.log(node.id, data.edges[node.id]);
 			for (var e in data.edges[node.id]){
 				allEdges.push(data.edges[node.id][e]);
 			}
