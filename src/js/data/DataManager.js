@@ -2,26 +2,26 @@
 
 
 class DataManager {
-	static export(graph, obstacles, t) {
-		var n = graph.nodes.length;
+	static export(nodes, obstacles, t) {
+		var n = nodes.length;
 		var m = obstacles.length;
-		var a = t - 1 * 100;
+		var a = t * 100;
 		var b = 100;
 
 		var result = 
 			n + "\n" +
 			m + "\n" +
 			a + " " + b + "\n" +
-			DataManager.points(graph) +
+			DataManager.points(nodes) +
 			DataManager.obstacles(obstacles);
 
 		return result;
 	}
 
-	static points(graph) {
+	static points(nodes) {
 		var result = "";
-		for (var key in graph.nodes) {
-			var node = graph.nodes[key];
+		for (var key in nodes) {
+			var node = nodes[key];
 			result += node.x + " " + node.y + "\n";
 		}
 		return result;
@@ -30,7 +30,7 @@ class DataManager {
 	static obstacles(obstacles) {
 		var result = "";
 		for (var key in obstacles) {
-			var obstacle = graph.nodes[key];
+			var obstacle = obstacles[key];
 			result += obstacle.x + " " + obstacle.y + "\n";
 		}
 		return result;

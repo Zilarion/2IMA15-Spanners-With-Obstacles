@@ -5,6 +5,7 @@ var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
 var generator = require('../data/Generator');
 var $ = require('jquery')
+var DataManager = require('../data/DataManager')
 
 class Controller {
 	constructor(visualization, settings) {
@@ -12,7 +13,6 @@ class Controller {
 		this.settings = settings;
 		this.settings.w = this.visualization.width;
 		this.settings.h = this.visualization.height;
-
 
 		document.getElementById('tvalue').value = this.settings.t;	
 
@@ -34,15 +34,25 @@ class Controller {
 		
 		this.obstacle = generator.createSimplePolygon(5, this.visualization);
 
+		/*===============================
+							Listeners 
+			=============================*/
+
 		visualization.on('click', (position) => {
 			this.clicked(position)
 		})
 
 		$('#recalculate').on('click', (e) => {
-			this.updateSettings();
 		  e.preventDefault();
+			this.updateSettings();
+		});	
+
+		$('#dataset_export').on('click', (e) => {
+		  e.preventDefault();
+			console.log(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
 		});		
-		
+
+
 		this.recalculate();
 	}
 
