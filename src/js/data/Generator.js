@@ -61,8 +61,8 @@ class Generator {
 			var varY = Util.getRandomArbitrary(0, settings.h);
 			
 			inner_loop:
-			for (var i = 0; i < obstacle.length; i++) {
-				if (Util.linesIntersect(0,0,varX,varY, obstacle[i].x,obstacle[i].y,obstacle[(i+1)%obstacle.length].x,obstacle[(i+1)%obstacle.length].y)) {
+			for (var i = 0; i < obstacle.nodes.length; i++) {
+				if (Util.linesIntersect(0,0,varX,varY, obstacle.getNode(i).x,obstacle.getNode(i).y,obstacle.getNode((i+1)%obstacle.nodes.length).x,obstacle.getNode((i+1)%obstacle.nodes.length).y)) {
 					count++;
 					continue inner_loop;
 				}
