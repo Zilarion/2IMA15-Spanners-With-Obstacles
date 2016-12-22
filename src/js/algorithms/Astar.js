@@ -14,6 +14,7 @@ class Astar {
     fScore.set(start, heuristic(start, goal));
     var closed = new Map();
     var opened = new Map();
+	var backward = new Map();
 
     // Initially, only the start node is known
 		var openList = new Heap(function(nodeA, nodeB) {
@@ -29,11 +30,20 @@ class Astar {
 
 			// If this is our goal, we are done!
 			if (node.id == goal.id) {
-				return gScore.get(goal.id);
+				//walkback
+				var path = {};
+				path.length = gScore.get(goal.id);
+				path.sequence = [goal];
+				var prev = goal;
+				while(prev.id != start.id){
+					prev = backward.get(prev.id);
+					path.sequence.splice(0,0,prev);
+				}
+				return path;
 			}
 
 			// Check all our edges to find new neighbors
-			var edges = node.edges;
+			var edges = graph.edges[node.id];
 			for (var i = 0; i < edges.length; i++) {
 				var edge = edges[i];
 				var neighbor = edge.target.id == node.id ? edge.source : edge.target;
@@ -49,6 +59,7 @@ class Astar {
 				// Check if this is a new node, or the new g score is less
 				if(!closed.has(neighbor.id) || newG < gScore.get(neighbor.id)) {
 					// Update the hscore if there is none yet
+					backward.set(neighbor.id, node);
 					if(!hScore.has(neighbor.id)) {
 						hScore.set(neighbor.id, heuristic(neighbor, goal));
 					}
@@ -71,7 +82,7 @@ class Astar {
 		}
 
 		// Fail
-		return 999999999999999;
+		return {length: 999999999999999, sequence:[]};
 	}
 };
 

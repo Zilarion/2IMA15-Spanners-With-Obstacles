@@ -91,9 +91,20 @@ class Visualization extends EventEmitter {
 			.attr("r", function (d) { return 2; })
 			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
+		console.log(data.edges);
+		console.log(data.nodes);
+		var allEdges = [];
+		for (var n in data.nodes){
+			var node = data.nodes[n];
+			console.log(node.id, data.edges[node.id]);
+			for (var e in data.edges[node.id]){
+				allEdges.push(data.edges[node.id][e]);
+			}
+		}
+
 		var edges = this.svg
 			.selectAll("line")
-			.data(data.edges)
+			.data(allEdges)
 			.enter()
 			.append("line")
 			.attr("x1", function (d) { return d.source.x; })
@@ -101,7 +112,7 @@ class Visualization extends EventEmitter {
 			.attr("x2", function (d) { return d.target.x; })
 			.attr("y2", function (d) { return d.target.y; })
 			.style("stroke", "grey" )
-	    .attr( "opacity", 1 )
+		.attr( "opacity", 1 )
 
 	  if (debug) {	  	
 			//Add the SVG Text Element to the svgContainer
@@ -113,7 +124,7 @@ class Visualization extends EventEmitter {
 				.attr("y", function(d) { return d.y - 4; })
 				.text( function (d) { return d.id; })
 				.attr("font-family", "sans-serif")
-				.attr("font-size", "12px")
+				.attr("font-size", "18px")
 				.attr("fill", "red")
 				.classed("ids", true);
 

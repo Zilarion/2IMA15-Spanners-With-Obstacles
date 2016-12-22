@@ -9,6 +9,7 @@ class Greedy {
 		var node_pairs = [];
 		var t = settings.t;
 
+
 		// Calculate all possible pairs
 		for (var i in nodes) {
 				for (var j = i; j < nodes.length; j++) {
@@ -16,7 +17,11 @@ class Greedy {
 						// If they don't match, calculate distance and add
 						var n1 = nodes[i];
 						var n2 = nodes[j];
-						node_pairs.push( {dist: Util.distance(n1, n2), n1: n1, n2: n2} );
+						//don't make a spanner for the obstacles nodes, only for the free nodes
+						if (!n1.ISOBSTACLE && !n2.ISOBSTACLE){
+							var path = astar.calculate(n1, n2, visibilityGraph);
+							node_pairs.push( {dist: path.length, path:path, n1: n1, n2: n2} );
+						}
 					}
 				}
 		}
@@ -28,14 +33,24 @@ class Greedy {
 			var n1 = pair.n1;
 			var n2 = pair.n2;
 
+
 			// Find shortest path in current graph
-			var dist = astar.calculate(n1, n2, graph);
+			var path = astar.calculate(n1, n2, graph);
 			
 			// If this is to large, add this pair as edge
-			if (dist > t * pair.dist) {
-				graph.addEdge(n1, n2, pair.dist);
+			if (path.length > t * pair.dist) {
+				var prev = undefined;
+				for (var p in pair.path.sequence){
+					var point = pair.path.sequence[p];
+					if (prev){
+						console.log(prev.id, point.id);
+						graph.addEdge(prev, point, Util.distance(prev, point));
+					}
+					prev = point;
+				}
 			}
 		}
+		console.log(graph.edges);
 	}
 };
 

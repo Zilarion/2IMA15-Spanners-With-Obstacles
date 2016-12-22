@@ -177,10 +177,10 @@ class Visibility {
 	static greedy(g, obstacle){
 		var graph = new Graph();
 		for (var node in g.nodes){
-			graph.nodes.push(g.getNode(node));
+			graph.addExistingNode(g.nodes[node]);
 		}
 		for (var node in obstacle.nodes) {
-			graph.nodes.push(obstacle.getNode(node));
+			 graph.addExistingNode(obstacle.getNode(node));
 		}
 
 		var points = graph.nodes;

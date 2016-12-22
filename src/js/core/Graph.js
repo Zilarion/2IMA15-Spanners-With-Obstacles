@@ -3,25 +3,31 @@ var Node = require('./Node');
 class Graph {
 	constructor() {
 		this.nodes = [];
-		this.edges = [];
+		this.edges = {};
 	}
 
 	load(data) {
 		for (var key in data.nodes) {
 			var node = data.nodes[key];
-			this.nodes.push(new Node(node.id, node.x, node.y, this));
+			var n = new Node(node.id, node.x, node.y, this);
+			this.addExistingNode(n);
 		}
 	}
 
 	addNode(id, x, y) {
-		this.nodes.push(new Node(id, x, y, this));
+		var n = new Node(id, x, y, this);
+		this.addExistingNode(n);
+	}
+
+	addExistingNode(node){
+		this.nodes.push(node);
+		this.edges[node.id] = [];
 	}
 
 	addEdge(source, target, weight) {
 		var newEdge = {source: source, target: target, weight: weight};
-		source.addEdge(newEdge)
-		target.addEdge(newEdge)
-		this.edges.push(newEdge);
+		this.edges[source.id].push(newEdge);
+		this.edges[target.id].push(newEdge);
 	}
 
 	totalWeight() {
@@ -35,9 +41,9 @@ class Graph {
 	clearEdges() {
 		for (var key in this.nodes) {
 			var n = this.nodes[key];
-			n.edges = [];
+			// n.edges = [];
 		}
-		this._edges = [];
+		// this._edges = [];
 	}
 
 	set nodes(n) {

@@ -5,7 +5,7 @@ var Graph = require('../core/Graph');
 var Obstacle = require('../core/Obstacle');
 
 class Generator {
-	static createSimplePolygon(obstacleSize, settings) {
+	static createSimplePolygon(graph, obstacleSize, settings) {
 		var obstacle = new Obstacle();
 		var old = null;
 		var fails = 0;
@@ -45,14 +45,14 @@ class Generator {
 				y: varY
 			}
 			fails = 0;
-			obstacle.addNode(obstacle.nodes.length,p.x,p.y);
+			obstacle.addNode(obstacle.nodes.length+100,p.x,p.y);
+			// graph.addNode(graph.nodes.length+1,p.x,p.y);
 			old = p;
 		}
 		return obstacle;
 	}
 	
-	static createNodes(nrNodes, obstacle, settings) {
-		var graph = new Graph();
+	static createNodes(graph, nrNodes, obstacle, settings) {
 		
 		outer_loop:
 		while (graph.nodes.length != nrNodes) {
@@ -67,7 +67,7 @@ class Generator {
 					continue inner_loop;
 				}
 			}
-			
+							
 			if (count % 2 != 0) {
 				continue outer_loop;
 			}
