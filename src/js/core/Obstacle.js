@@ -5,6 +5,8 @@ var Node = require('./Node');
 class Obstacle {
 	constructor() {
 		this.nodes = [];
+		this.x = 0;
+		this.y = 0;
 	}
 	
 	addNode(id, x, y) {

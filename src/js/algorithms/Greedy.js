@@ -4,7 +4,7 @@ var Util = require('../core/Util');
 var astar = require('./Astar');
 
 class Greedy {
-	static calculate(graph, settings) {
+	static calculate(graph, visibilityGraph, settings) {
 		var nodes = graph.nodes;
 		var node_pairs = [];
 		var t = settings.t;

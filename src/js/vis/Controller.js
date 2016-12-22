@@ -4,6 +4,7 @@ var Graph = require('../core/Graph');
 //var Obstacle = require('../core/Obstacle');
 var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
+var Visibility = require('../algorithms/Visibility');
 var generator = require('../data/Generator');
 var $ = require('jquery')
 var DataManager = require('../data/DataManager')
@@ -87,7 +88,8 @@ class Controller {
 
 			  // Run algorithm
 		  	var t0 = performance.now();
-			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.settings);
+			var visibilityGraph = Visibility.compute(that.g.nodes, that.obstacle);
+			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, visibilityGraph, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
 
