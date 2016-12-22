@@ -1,3 +1,5 @@
+@import "grid";
+
 html,body { height: 100%; margin: 0px; padding: 0px; }
 
 #control {
@@ -18,14 +20,6 @@ html,body { height: 100%; margin: 0px; padding: 0px; }
 #details tr {
 	display: block;
 	/*border-top: 1px solid #dd2121;*/
-}
-
-.svg-container {
-    display: inline-block;
-    position: relative;
-    float: left;
-    width: 78%;
-    height: 90%;
 }
 
 .svg-element {
