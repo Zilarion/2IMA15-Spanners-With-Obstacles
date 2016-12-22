@@ -16,6 +16,7 @@ class Controller {
 		this.settings.h = this.visualization.height;
 
 		document.getElementById('tvalue').value = this.settings.t;	
+		document.getElementById('debug').checked = this.settings.debug;	
 
 		var algorithms = $('#algorithms');
 		for ( var key in this.settings.algorithms ) {
@@ -25,7 +26,7 @@ class Controller {
 
 		this.obstacle = generator.createSimplePolygon(5, this.settings);
 		
-		this.g = generator.createNodes(70, this.obstacle, this.settings);
+		this.g = generator.createNodes(10, this.obstacle, this.settings);
 		
 		this.recalculate();
 
@@ -107,7 +108,8 @@ class Controller {
 	  $("#d_weight").html(this.g.totalWeight().toFixed(3));
 	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
 	  if (this.settings.debug) {
-		  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
+	  	var valid = this.validTSpanner(this.g, this.settings.t);
+		  $("#d_valid").html(valid ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
 		} else {
 			$("#d_valid").html("<div class=\"light\"></div>");
 		}

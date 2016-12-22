@@ -17,7 +17,7 @@ var controller_settings = {
 		"greedy": greedy.calculate,
 		"WSPD": wspd.calculate
 	},
-	debug: true
+	debug: false
 }
 
 var v = new Visualization(vis_settings);
