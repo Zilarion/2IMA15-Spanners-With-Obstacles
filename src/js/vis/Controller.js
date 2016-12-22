@@ -22,17 +22,9 @@ class Controller {
 		};
 		algorithms.val(this.settings.algorithm);
 
-		this.g = new Graph();
-
-		for (var i = 0; i < 10; i++) {
-			this.g.addNode(
-				this.g.nodes.length + 1, 
-				Util.getRandomArbitrary(0, this.settings.w), 
-				Util.getRandomArbitrary(0, this.settings.h)
-			)
-		}
+		this.obstacle = generator.createSimplePolygon(5, this.settings);
 		
-		this.obstacle = generator.createSimplePolygon(5, this.visualization);
+		this.g = generator.createNodes(10, this.obstacle, this.settings);
 		
 		this.recalculate();
 
