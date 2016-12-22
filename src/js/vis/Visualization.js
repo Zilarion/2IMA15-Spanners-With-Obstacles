@@ -59,7 +59,7 @@ class Visualization extends EventEmitter {
 	}
 
 	// Update the visualization
-	update() {
+	update(debug) {
 		var data = this.data;
 		// this.svg.selectAll("*:not(.loader)").remove();
 
@@ -117,7 +117,7 @@ class Visualization extends EventEmitter {
 			.style("stroke", "grey" )
 	    .attr( "opacity", 1 )
 
-	  if (data.debug) {
+	  if (data.debug && debug) {
 		  if (data.debug.rects) {
 				var rects = this.svg
 					.selectAll("rect")
