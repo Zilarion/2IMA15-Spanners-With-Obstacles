@@ -30,6 +30,7 @@ class WSPD {
 
 			debug.circles.push(WSPD.createCircle(pair.u))
 			debug.circles.push(WSPD.createCircle(pair.v))
+
 			var repu = WSPD.rep(pair.u);
 			var repv = WSPD.rep(pair.v);
 
@@ -53,10 +54,12 @@ class WSPD {
 	}
 
 	static distance(c1, c2) {
-		var dx = Math.pow(c1.x - c2.x, 2);
-		var dy = Math.pow(c1.y - c2.y, 2);
-		var r = Math.pow(c1.r + c2.r, 2);
-		var result = dx + dy - r < 0 ? 0 : Math.sqrt(dx + dy - r);
+		var dx2 = Math.pow(c2.x - c1.x, 2);
+		var dy2 = Math.pow(c2.y - c1.y, 2);
+
+		var dCenter = Math.sqrt(dx2 + dy2);
+
+		var result = dCenter - c1.r - c2.r;
 		return result;
 	}
 	// Creates the bounding circle of a node u
@@ -64,18 +67,12 @@ class WSPD {
 		return {
 			x: WSPD.isLeaf(u) ? WSPD.rep(u).x : u._bounds.x + u._bounds.width / 2,
 			y: WSPD.isLeaf(u) ? WSPD.rep(u).y : u._bounds.y + u._bounds.height / 2,
-			r: WSPD.isLeaf(u) ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2)) + 0.5
+			r: WSPD.isLeaf(u) ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2))
 		}
 	}
 
 	// Well seperated
 	static seperated(u, v, s) {
-		// var leaves = false;
-		// if (WSPD.isLeaf(u) && WSPD.isLeaf(v)) {
-		// 	leaves = true;
-		// }
-		// var depth = u._depth > v._depth ? u._depth : v._depth;
-
 		var cu = WSPD.createCircle(u);
 		var cv = WSPD.createCircle(v);
 
@@ -84,13 +81,7 @@ class WSPD {
 		cv.r = maxr;
 
 		var d = WSPD.distance(cu, cv);
-		var result =  d >= s * maxr;
-		if (true) {
-			cu.color = result ? "black" : "red";
-			cv.color = result ? "black" : "red";
-			// debug.circles.push(cu);
-			// debug.circles.push(cv);
-		}
+		var result =  d >= s * maxr || false;
 		return result;
 	}
 
@@ -113,12 +104,12 @@ class WSPD {
 			// If it is not a leaf
 			for (var key in u.nodes) {
 				var node = u.nodes[key];
-				var r = WSPD.rep(node);
+				var rep = WSPD.rep(node);
 
 				// Find it's first non empty subnode
-				if (!WSPD.isempty(r)) {
+				if (!WSPD.isempty(rep)) {
 					// Our representative is this nodes representative
-					return r;
+					return rep;
 				}
 			}
 		}
@@ -145,8 +136,8 @@ class WSPD {
 	// ws pairs function
 	static wsPairs(u, v, T, s) {
 		var result = [];
-		// debug.rects.push(u._bounds)
-		// debug.rects.push(v._bounds)
+		debug.rects.push(u._bounds)
+		debug.rects.push(v._bounds)
 		if (WSPD.isempty(WSPD.rep(u)) || WSPD.isempty(WSPD.rep(v)) || (WSPD.isLeaf(u) && WSPD.isLeaf(v) && u == v)) {
 			result = [];
 		} else if (WSPD.seperated(u, v, s)) {
