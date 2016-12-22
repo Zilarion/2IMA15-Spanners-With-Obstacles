@@ -23,7 +23,97 @@ class Util {
         return result * sortOrder;
     }
 	}
+
+	//stolen from online, multiple sources
+	static intersect(x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4){
+		//check for same points
+		if ((x1 == x3 && y1 == y3) || (x2 == x3 && y2 == y3)){
+			return false;
+		}
+		if ((x1 == x4 && y1 == y4) || (x2 == x4 && y2 == y4)){
+			return false;
+		}
+
+		var a1, a2, b1, b2, c1, c2;
+		var r1, r2 , r3, r4;
+		var denom, offset, num;
+
+		// Compute a1, b1, c1, where line joining points 1 and 2
+		// is "a1 x + b1 y + c1 = 0".
+		a1 = y2 - y1;
+		b1 = x1 - x2;
+		c1 = (x2 * y1) - (x1 * y2);
+
+		// Compute r3 and r4.
+		r3 = ((a1 * x3) + (b1 * y3) + c1);
+		r4 = ((a1 * x4) + (b1 * y4) + c1);
+
+		// Check signs of r3 and r4. If both point 3 and point 4 lie on
+		// same side of line 1, the line segments do not intersect.
+		if ((r3 != 0) && (r4 != 0) && ((r3 > 0 && r4 > 0) || (r3 < 0 && r4 < 0))){
+			return false;
+		}
+
+		// Compute a2, b2, c2
+		a2 = y4 - y3;
+		b2 = x3 - x4;
+		c2 = (x4 * y3) - (x3 * y4);
+
+		// Compute r1 and r2
+		r1 = (a2 * x1) + (b2 * y1) + c2;
+		r2 = (a2 * x2) + (b2 * y2) + c2;
+
+		// Check signs of r1 and r2. If both point 1 and point 2 lie
+		// on same side of second line segment, the line segments do
+		// not intersect.
+		if ((r1 != 0) && (r2 != 0) && ((r1 > 0 && r2 > 0) || (r1 < 0 && r2 < 0))){
+			return false;
+		}
+
+		//Line segments intersect: compute intersection point.
+		denom = (a1 * b2) - (a2 * b1);
+
+		if (denom == 0) {
+			return false;//TODO: COLINEAR
+		}
+
+		//code to figure out the intersection point
+		//   if (denom < 0){ 
+		//     offset = -denom / 2; 
+		//   } 
+		//   else {
+		//     offset = denom / 2 ;
+		//   }
+
+		// The denom/2 is to get rounding instead of truncating. It
+		// is added or subtracted to the numerator, depending upon the
+		// sign of the numerator.
+		//   num = (b1 * c2) - (b2 * c1);
+		
+
+		//   if (num < 0){
+		//     x = (num - offset) / denom;
+		//   } 
+		//   else {
+		//     x = (num + offset) / denom;
+		//   }
+
+		//   num = (a2 * c1) - (a1 * c2);
+		//   if (num < 0){
+		//     y = ( num - offset) / denom;
+		//   } 
+		//   else {
+		//     y = (num + offset) / denom;
+		//   }
+
+		// lines_intersect
+		return true;
+}
+
+
+
 	//trivial solution stolen from https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
+	//doesn't seem to work for all cases
 	static linesIntersect(x1,y1,x2,y2, x3,y3,x4,y4) {
 		var x=((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
 		var y=((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4))/((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4));
@@ -53,21 +143,35 @@ class Util {
 		}
 		return true;
 	}
-	static numIntersectLineSimplePolygon(simplePolygon, lstart, lend){ 
+	static numIntersectLineSimplePolygon(simplePolygon, lstart, lend, bailearly, offsetx, offsety){ 
 		var numIntersect = 0;
 		for (var i = 0; i < simplePolygon.length; i++){
 			var start = simplePolygon[i];
 			var end = simplePolygon[(i+1)%simplePolygon.length];//wrap for last edge
 			//intersect
-			if (this.linesIntersect(start.x, start.y, end.x, end.y, lstart.x, lstart.y, lend.x, lend.y)){
+			if (this.intersect(start.x + offsetx, start.y + offsety, 
+								 	end.x   + offsetx, end.y   + offsety, 
+									lstart.x, lstart.y, lend.x, lend.y)){
 				numIntersect++;
+				if (bailearly){
+					return numIntersect;
+				}
 			}
 		}
 		return numIntersect;
 	}
 
 	static pointInsideSimplePolygon(simplePolygon, px, py){
-		return this.numIntersectLineSimplePolygon(simplePolygon, {x:0, y:py}, {x:px, y:py})%2 == 1;
+		return this.numIntersectLineSimplePolygon(simplePolygon, {x:0, y:py}, {x:px, y:py}, false, 0, 0)%2 == 1;
+	}
+
+	static pointInsideObstacle(px, py, obstacle){
+		return this.numIntersectLineSimplePolygon(obstacle.nodes, {x:0, y:py}, {x:px, y:py}, false, obstacle.x, obstacle.y)%2 == 1;
+	}
+
+	static lineIntersectsObstacle(lstart, lend, obstacle){
+		return this.numIntersectLineSimplePolygon(obstacle.nodes, lstart, lend,
+						true, obstacle.x, obstacle.y) != 0;
 	}
 };
 
