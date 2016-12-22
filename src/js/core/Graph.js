@@ -7,15 +7,10 @@ class Graph {
 	}
 
 	load(data) {
-		console.log("Loading...");
-		console.log(data);
-
 		for (var key in data.nodes) {
 			var node = data.nodes[key];
 			this.nodes.push(new Node(node.id, node.x, node.y, this));
 		}
-		console.log("loaded all data: ");
-		console.log(this.nodes);
 	}
 
 	addNode(id, x, y) {

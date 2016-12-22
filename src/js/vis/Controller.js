@@ -1,6 +1,7 @@
 'use strict';
 
 var Graph = require('../core/Graph');
+//var Obstacle = require('../core/Obstacle');
 var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
 var generator = require('../data/Generator');
@@ -15,6 +16,7 @@ class Controller {
 		this.settings.h = this.visualization.height;
 
 		document.getElementById('tvalue').value = this.settings.t;	
+		document.getElementById('debug').checked = this.settings.debug;	
 
 		var algorithms = $('#algorithms');
 		for ( var key in this.settings.algorithms ) {
@@ -27,10 +29,8 @@ class Controller {
 		this.g = generator.createNodes(10, this.obstacle, this.settings);
 		
 		this.recalculate();
-		/*===============================
-							Listeners 
-			=============================*/
 
+		// Listeners
 		visualization.on('click', (position) => {
 			this.clicked(position)
 		})
@@ -45,14 +45,16 @@ class Controller {
 			console.log(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
 		});		
 
-
-		this.recalculate();
+		$('.control_setting').on('change', (e) => {
+			this.updateSettings();
+		});
 	}
 
 	// Update the settings based on the input values
 	updateSettings() {
 		var tvalue = parseFloat(document.getElementById('tvalue').value);	
 		this.settings.algorithm = document.getElementById('algorithms').value;
+		this.settings.debug = document.getElementById('debug').checked;
 		if (tvalue != NaN && tvalue >= 1) {
 			this.settings.t = tvalue;
 		}
@@ -63,22 +65,40 @@ class Controller {
 	  // Set loading to true
 	  this.visualization.loading(true);
 
-		// Clear previous result
-	  this.g.clearEdges();
+	  // Store the current promise
+	  this.promise = this.asyncCompute();
 
-	  // Run algorithm
-	  var t0 = performance.now();
-	  this.debug = this.settings.algorithms[this.settings.algorithm](this.g, this.settings);
-		var t1 = performance.now();
-		this.lastRun = t1 - t0;
+	  var that = this;
+		this.promise.then(function() {
+			// We are done, stop loading
+			that.visualization.loading(false);
+		})
 
-	  // Update the visualization
-		this.updateData();
-	  this.visualization.update();
+		// Remove promise
+		this.promise = undefined;
+  }
 
-		// We are done, stop loading
-	  this.visualization.loading(false);
-	  }
+  asyncCompute() {
+	  var that = this;
+		return new Promise((resolve, reject) => {
+			setTimeout(function() { 
+				// Clear previous result
+		  	that.g.clearEdges();
+
+			  // Run algorithm
+		  	var t0 = performance.now();
+			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.settings);
+				var t1 = performance.now();
+				that.lastRun = t1 - t0;
+
+			  // Update the visualization
+				that.updateData();
+			  that.visualization.update(that.settings.debug);
+
+				resolve(); 
+		 	});
+	  });
+  }
 
 	updateData() {
 	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, debug: this.debug, obstacle: this.obstacle})
@@ -87,7 +107,12 @@ class Controller {
 	  $("#d_edges").html(this.g.edges.length);
 	  $("#d_weight").html(this.g.totalWeight().toFixed(3));
 	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
-	  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
+	  if (this.settings.debug) {
+	  	var valid = this.validTSpanner(this.g, this.settings.t);
+		  $("#d_valid").html(valid ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
+		} else {
+			$("#d_valid").html("<div class=\"light\"></div>");
+		}
 	}
 
 	clicked(position) {
