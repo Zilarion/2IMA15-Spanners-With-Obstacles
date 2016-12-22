@@ -25,7 +25,7 @@ class Util {
 	}
 
 	//stolen from online, multiple sources
-	static intersect(x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4){
+	static intersect(x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4, returnPoint){
 		//check for same points
 		if ((x1 == x3 && y1 == y3) || (x2 == x3 && y2 == y3)){
 			return false;
@@ -77,38 +77,44 @@ class Util {
 			return false;//TODO: COLINEAR
 		}
 
+		// lines_intersect
+		if (!returnPoint){
+			return true;
+		}
+
 		//code to figure out the intersection point
-		//   if (denom < 0){ 
-		//     offset = -denom / 2; 
-		//   } 
-		//   else {
-		//     offset = denom / 2 ;
-		//   }
+		  if (denom < 0){ 
+		    offset = -denom / 2; 
+		  } 
+		  else {
+		    offset = denom / 2 ;
+		  }
 
 		// The denom/2 is to get rounding instead of truncating. It
 		// is added or subtracted to the numerator, depending upon the
 		// sign of the numerator.
-		//   num = (b1 * c2) - (b2 * c1);
+		num = (b1 * c2) - (b2 * c1);
 		
+		var x = 0;
+		var y = 0;
 
-		//   if (num < 0){
-		//     x = (num - offset) / denom;
-		//   } 
-		//   else {
-		//     x = (num + offset) / denom;
-		//   }
+		if (num < 0){
+			x = (num - offset) / denom;
+		} 
+		else {
+			x = (num + offset) / denom;
+		}
 
-		//   num = (a2 * c1) - (a1 * c2);
-		//   if (num < 0){
-		//     y = ( num - offset) / denom;
-		//   } 
-		//   else {
-		//     y = (num + offset) / denom;
-		//   }
+		num = (a2 * c1) - (a1 * c2);
+		if (num < 0){
+			y = ( num - offset) / denom;
+		} 
+		else {
+			y = (num + offset) / denom;
+		}
 
-		// lines_intersect
-		return true;
-}
+		return {x:x, y:y};
+	}
 
 
 
@@ -160,9 +166,26 @@ class Util {
 		}
 		return numIntersect;
 	}
+	
+	static polygonIntersectSimplePolygon(poly1, offset1, poly2, offset2){
+		//if this needs to be fast, do a bound intersection first
+		for (var i = 0; i < poly1.length; i++){
+			//countour poly1
+			var s = poly1[i];
+			var e = poly1[(i+1)%poly1.length];//wrap for last edge
+			//offset
+			var start = {x: s.x + offset1.x, y: s.y + offset1.y};
+			var end =   {x: e.x + offset1.x, y: e.y + offset1.y};
+			//intersect
+			if (this.lineIntectsObstacle(start, end, poly2)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	static pointInsideSimplePolygon(simplePolygon, px, py){
-		return this.numIntersectLineSimplePolygon(simplePolygon, {x:0, y:py}, {x:px, y:py}, false, 0, 0)%2 == 1;
+		return this.numIntersectLineSimplePolygon(simplePolygon,  {x:0, y:py}, {x:px, y:py}, false, 0, 0)%2 == 1;
 	}
 
 	static pointInsideObstacle(px, py, obstacle){
