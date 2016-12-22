@@ -87,7 +87,7 @@ class Controller {
 
 			  // Run algorithm
 		  	var t0 = performance.now();
-			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.obstacle, that.settings);
+			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
 

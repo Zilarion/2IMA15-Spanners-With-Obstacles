@@ -2,15 +2,12 @@
 
 var Util = require('../core/Util');
 var astar = require('./Astar');
-var Visibility = require('./Visibility');
 
 class Greedy {
-	static calculate(graph, obstacle, settings) {
+	static calculate(graph, settings) {
 		var nodes = graph.nodes;
 		var node_pairs = [];
 		var t = settings.t;
-		
-		nodes = Visibility.compute(graph.nodes, obstacle);
 
 		// Calculate all possible pairs
 		for (var i in nodes) {
