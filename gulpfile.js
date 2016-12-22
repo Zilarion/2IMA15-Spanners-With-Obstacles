@@ -25,10 +25,10 @@ gulp.task("js", function () {
 gulp.task('sass', function() {
     return gulp.src('src/scss/index.scss')
         .pipe(bulkSass())
-        .pipe(sourcemaps.init())
+        // .pipe(sourcemaps.init())
         .pipe(sass().on('error', sass.logError))
         .pipe(concat('style.css'))
-        .pipe(sourcemaps.write('sourcemaps/'))
+        // .pipe(sourcemaps.write('sourcemaps/'))
         .pipe(gulp.dest('www/'))
 });
 
