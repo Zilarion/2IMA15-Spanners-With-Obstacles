@@ -24,7 +24,7 @@ class Controller {
 
 		this.g = new Graph();
 
-		for (var i = 0; i < 10; i++) {
+		for (var i = 0; i < 50; i++) {
 			this.g.addNode(
 				this.g.nodes.length + 1, 
 				Util.getRandomArbitrary(0, this.settings.w), 
@@ -33,8 +33,6 @@ class Controller {
 		}
 		
 		this.obstacle = generator.createSimplePolygon(5, this.visualization);
-		
-		this.recalculate();
 
 		visualization.on('click', (position) => {
 			this.clicked(position)
@@ -43,7 +41,9 @@ class Controller {
 		$('#recalculate').on('click', (e) => {
 			this.updateSettings();
 		  e.preventDefault();
-		});
+		});		
+		
+		this.recalculate();
 	}
 
 	// Update the settings based on the input values
@@ -57,25 +57,34 @@ class Controller {
 	}
 
 	recalculate() {
+	  // Set loading to true
+	  this.visualization.loading(true);
+
+		// Clear previous result
 	  this.g.clearEdges();
 
+	  // Run algorithm
 	  var t0 = performance.now();
 	  this.debug = this.settings.algorithms[this.settings.algorithm](this.g, this.settings);
 		var t1 = performance.now();
 		this.lastRun = t1 - t0;
 
+	  // Update the visualization
 		this.updateData();
 	  this.visualization.update();
+
+		// We are done, stop loading
+	  this.visualization.loading(false);
+	  }
+
+	updateData() {
+	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, debug: this.debug, obstacle: this.obstacle})
 
 	  $("#d_nodes").html(this.g.nodes.length);
 	  $("#d_edges").html(this.g.edges.length);
 	  $("#d_weight").html(this.g.totalWeight().toFixed(3));
 	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
-	  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "Valid" : "Invalid");
-	}
-
-	updateData() {
-	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, debug: this.debug, obstacle: this.obstacle})
+	  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
 	}
 
 	clicked(position) {

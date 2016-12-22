@@ -15,9 +15,16 @@ input {
 	}
 }
 
-// .svg-element {
-//   border: 1px solid black
-// }
+.light {
+	width: 20px;
+	height: 20px;
+}
+.light-valid {
+	background-color: green;
+}
+.light-invalid {
+	background-color: red;
+}
 
 .svg-container {
 	background: white;
