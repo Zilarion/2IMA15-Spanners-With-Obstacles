@@ -26,7 +26,7 @@ class Controller {
 
 		this.obstacle = generator.createSimplePolygon(5, this.settings);
 		
-		this.g = generator.createNodes(10, this.obstacle, this.settings);
+		this.g = generator.createNodes(4, this.obstacle, this.settings);
 		
 		this.recalculate();
 

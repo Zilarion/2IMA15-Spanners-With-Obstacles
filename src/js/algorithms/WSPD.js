@@ -34,11 +34,6 @@ class WSPD {
 			var repu = WSPD.rep(pair.u);
 			var repv = WSPD.rep(pair.v);
 
-			if (!WSPD.isLeaf(pair.u))
-				repu.color = "green";
-			if (!WSPD.isLeaf(pair.v))
-				repv.color = "green";
-			
 			// map[repu.id] ? map[repu.id].push(repv.id) : map[repu.id] = [repv.id];
 			// map[repv.id] ? map[repv.id].push(repu.id) : map[repv.id] = [repu.id];
 			// console.log(repu.id, repv.id)
@@ -81,8 +76,9 @@ class WSPD {
 		cv.r = maxr;
 
 		var d = WSPD.distance(cu, cv);
-		var result =  d >= s * maxr || false;
+		var result = d >= s * maxr;
 		return result;
+		return WSPD.isLeaf(u) && WSPD.isLeaf(v);
 	}
 
 	static isempty(u) {
@@ -90,15 +86,12 @@ class WSPD {
 	}
 	// Representative of u
 	static rep(u) {
+		var result = [];
 		if (WSPD.isLeaf(u)) {
 			// If u is leaf
 			if (u.children.length > 0) {
 				// It has only one child, which is therefore the representative
-				return u.children[0];
-			}
-			else {
-				// Or it is empty, meaning we return the empty set
-				return [];
+				result = u.children[0];
 			}
 		} else {
 			// If it is not a leaf
@@ -109,11 +102,12 @@ class WSPD {
 				// Find it's first non empty subnode
 				if (!WSPD.isempty(rep)) {
 					// Our representative is this nodes representative
-					return rep;
+					result = rep;
+					break;
 				}
 			}
 		}
-		return [];
+		return result;
 	}
 
 	static union(r1, r2) {
@@ -136,26 +130,27 @@ class WSPD {
 	// ws pairs function
 	static wsPairs(u, v, T, s) {
 		var result = [];
-		debug.rects.push(u._bounds)
-		debug.rects.push(v._bounds)
 		if (WSPD.isempty(WSPD.rep(u)) || WSPD.isempty(WSPD.rep(v)) || (WSPD.isLeaf(u) && WSPD.isLeaf(v) && u == v)) {
 			result = [];
 		} else if (WSPD.seperated(u, v, s)) {
-			return [{u, v}];
+			console.log("returning ", u, v);
+			return [{u: u, v: v}];
 		} else {
 			if (u._depth > v._depth) {
 				var temp = v;
 				v = u;
 				u = temp;
 			}
+			debug.rects.push(u._bounds)
+			debug.rects.push(v._bounds)
 			var childNodes = u.nodes;
 			for (var key in childNodes) {
 				var childNode = childNodes[key];
 				var r = WSPD.wsPairs(childNode, v, T, s);
+				console.log("got back: ", r);
 				result = result.concat(r);
-				// result = WSPD.union(result, r);
 			}
-		}		
+		}
 		return result;
 	}
 };

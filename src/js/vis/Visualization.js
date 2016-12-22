@@ -118,6 +118,7 @@ class Visualization extends EventEmitter {
 				.classed("ids", true);
 
 			if (data.debug) {
+					var dur = 500;
 			  if (data.debug.rects) {
 					var rects = this.svg
 						.selectAll("rect")
@@ -129,12 +130,25 @@ class Visualization extends EventEmitter {
 						.attr("width", function (d) { return d.width; })
 						.attr("height", function (d) { return d.height; })
 						.style("stroke", "grey" )
-						.style("fill", "none" )
-						.style("opacity", 0.1 )
+			    	.style( "fill", "none" )
+			    	.style( "opacity", 0.1 )
+						.transition()
+							.delay(function(d, i) {
+								var isEven = (i%2 == 0);
+								var delay = isEven ? (i * dur) : (i-1) * dur;
+								return delay;
+							})
+				    	.duration(dur/2)
+				    	.style( "fill", function(d,i) {
+				    		return (i%2 == 0) ? "red" : "green"
+				    	})
+			    	.on("end", function(d,i) {
+			    		d3.select(this).transition()
+							.delay(500).style("fill", "none");
+			    	});
 				}
 
 				if (data.debug.circles) {
-					var dur = 500;
 					var circles = this.svg
 						.selectAll("wspd_circle")
 						.data(data.debug.circles)
