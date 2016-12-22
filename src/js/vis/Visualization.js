@@ -3,8 +3,11 @@
 var d3 = require('d3');
 var $ = require('jquery');
 const EventEmitter = require('events');
+var Spinner = require('spin');
+var Loader = require('./Loader')
 
 class Visualization extends EventEmitter {
+
 	constructor(settings) {
 		super();
 		this.settings = settings;
@@ -43,14 +46,22 @@ class Visualization extends EventEmitter {
 		});
 
 		this.data = {nodes: [], edges: []};
+		this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.svg, id: "loader"});
+	}
+
+	loading(status) {
+		if (status) {
+			this.svg.selectAll("*:not(.loader)").remove();
+			this.loader.opacity(1);
+		} else {
+			this.loader.opacity(0);
+		}
 	}
 
 	// Update the visualization
 	update() {
 		var data = this.data;
-
-		this.svg.selectAll("*").remove();
-
+		// this.svg.selectAll("*:not(.loader)").remove();
 
 		//obstacles
 		var obstacle = this.svg
@@ -149,6 +160,7 @@ class Visualization extends EventEmitter {
 			  //   	.attr( "opacity", 0 );
 	    }
 	  }
+		this.svg.selectAll(".loader").raise();
 	}
 
 	// Clear all points from the graph

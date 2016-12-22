@@ -5,6 +5,7 @@ var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
 var generator = require('../data/Generator');
 var $ = require('jquery')
+var DataManager = require('../data/DataManager')
 
 class Controller {
 	constructor(visualization, settings) {
@@ -12,7 +13,6 @@ class Controller {
 		this.settings = settings;
 		this.settings.w = this.visualization.width;
 		this.settings.h = this.visualization.height;
-
 
 		document.getElementById('tvalue').value = this.settings.t;	
 
@@ -27,26 +27,31 @@ class Controller {
 		this.g = generator.createNodes(10, this.obstacle, this.settings);
 		
 		this.recalculate();
+		/*===============================
+							Listeners 
+			=============================*/
 
 		visualization.on('click', (position) => {
 			this.clicked(position)
 		})
 
 		$('#recalculate').on('click', (e) => {
-			this.updateSettings();
 		  e.preventDefault();
-		});
+			this.updateSettings();
+		});	
+
+		$('#dataset_export').on('click', (e) => {
+		  e.preventDefault();
+			console.log(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
+		});		
+
+
+		this.recalculate();
 	}
 
 	// Update the settings based on the input values
 	updateSettings() {
 		var tvalue = parseFloat(document.getElementById('tvalue').value);	
-		var selectedObstacle = document.getElementById('selectedObstacle').value;
-		// var newObstacles = inputData.obstacles[selectedObstacle];
-		// if (newObstacles){
-			// this.obstacles = newObstacles;
-		// }
-
 		this.settings.algorithm = document.getElementById('algorithms').value;
 		if (tvalue != NaN && tvalue >= 1) {
 			this.settings.t = tvalue;
@@ -55,25 +60,34 @@ class Controller {
 	}
 
 	recalculate() {
+	  // Set loading to true
+	  this.visualization.loading(true);
+
+		// Clear previous result
 	  this.g.clearEdges();
 
+	  // Run algorithm
 	  var t0 = performance.now();
 	  this.debug = this.settings.algorithms[this.settings.algorithm](this.g, this.settings);
 		var t1 = performance.now();
 		this.lastRun = t1 - t0;
 
+	  // Update the visualization
 		this.updateData();
 	  this.visualization.update();
+
+		// We are done, stop loading
+	  this.visualization.loading(false);
+	  }
+
+	updateData() {
+	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, debug: this.debug, obstacle: this.obstacle})
 
 	  $("#d_nodes").html(this.g.nodes.length);
 	  $("#d_edges").html(this.g.edges.length);
 	  $("#d_weight").html(this.g.totalWeight().toFixed(3));
 	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
-	  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "Valid" : "Invalid");
-	}
-
-	updateData() {
-	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, debug: this.debug, obstacle: this.obstacle})
+	  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
 	}
 
 	clicked(position) {
