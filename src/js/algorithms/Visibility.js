@@ -20,6 +20,7 @@ class Visibility {
 			}
 		}
 
+		points = graph.nodes;
 		for (var p = 0; p < points.length; p++){
 			for (var q = p+1; q < points.length; q++){
 				var intersect = false;
