@@ -1,62 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Geometric spanners</title>
-    <link href="style.css" rel="stylesheet">
+<head>
+  <meta charset="utf-8">
+  <title>Geometric spanners</title>
 
-    <!-- inject:css -->
-    <!-- endinject -->
-  </head>
+  <!-- inject:css -->
+  <!-- endinject -->
+</head>
 
-  <body>
-    <div id="container" class="svg-container">
+<body>
+  <div class="wrapper">
+    <div class="row">
+      <div class="column-9">
+        <div class="block">
+          <div class="block-header"><h4>View</h4></div>
+          <div class="block-content">
+            <div id="container" class="svg-container"></div>
+          </div>
+        </div>
+      </div> <!-- End view column -->
+      <div id="sidepanel" class="column-3">
+        <div id="control" class="block">
+          <div class="block-header"><h4>Settings</h4></div>
+          <div class="block-content">
+          <table>
+            <tr>
+              <td>t-value:</td>
+              <td><input id="tvalue" placeholder="t-value > 1" value="1.1"></input></td>
+            </tr>
+            <tr>
+              <td>Algorithm:</td>
+              <td><select id="algorithms"></select></td> 
+            </tr>
+          </table>
+
+          <br />
+          <br />
+          <button id="recalculate" class="btn btn-green">Recalculate</button>
+          <button id="clearPoints" class="btn btn-red">Clear points</button>
+          </div>
+        </div> <!-- End control -->
+        <div id="details" class="block">
+          <div class="block-header"><h4>Details</h4></div>
+          <div class="block-content">
+          <table>
+            <tr>
+              <td>Number of nodes:</td>
+              <td id="d_nodes"></td>
+            </tr>
+            <tr>
+              <td>Number of edges:</td>
+              <td id="d_edges"></td>
+            </tr>
+            <tr>
+              <td>Total weight:</td>
+              <td id="d_weight"></td>
+            </tr>
+            <tr>
+              <td>Time to compute:</td>
+              <td id="d_time"></td>
+            </tr>
+            <tr>
+              <td>Valid:</td>
+              <td id="d_valid"></td>
+            </tr>
+          </table>
+          </div>
+        </div> <!-- End details -->
+        <div class="block">
+          <div class="block-header"><h4>Dataset testing</h4></div>
+          <div id="results" class="block-content">
+            <button id="dataset_export" class="btn btn-green">Export</button>
+            <button id="dataset_import" class="btn btn-red">Import</button>
+          </div> <!-- End results -->
+        </div>
+      </div> <!-- End side panel -->
+    </div> <!-- End row -->
+
+    <div class="row">
     </div>
-    <div id="control">
-      <h4>Settings</h4>
-      <table>
-        <tr>
-          <td>t-value:</td>
-          <td><input id="tvalue" placeholder="t-value > 1" value="1.1"></input></td>
-        </tr>
-        <tr>
-          <td>Use algorithm:</td>
-          <td><select id="algorithms"></select></td> 
-        </tr>
-        <tr>
-          <td>use obstacle:</td>
-          <td><select id="selectedObstacle">
-          </select></td> 
-        </tr>
-      </table>
+  </div>
 
-      <br />
-      <br />
-      <button id="recalculate">Recalculate</button>
-      <button id="clearPoints">Clear points</button>
-    </div>
-    <div id="details">
-      <h4>Details</h4>
-      <table>
-        <tr>
-          <td>Number of nodes:</td>
-          <td id="d_nodes"></td>
-        </tr>
-        <tr>
-          <td>Number of edges:</td>
-          <td id="d_edges"></td>
-        </tr>
-        <tr>
-          <td>Total weight:</td>
-          <td id="d_weight"></td>
-        </tr>
-        <tr>
-          <td>Time to compute:</td>
-          <td id="d_time"></td>
-        </tr>
-      </table>
-    </div>
-
-    <!-- inject:js -->
-    <!-- endinject -->
-  </body>
+  <!-- inject:js -->
+  <!-- endinject -->
+</body>
