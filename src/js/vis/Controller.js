@@ -89,7 +89,11 @@ class Controller {
 	  $("#d_edges").html(this.g.edges.length);
 	  $("#d_weight").html(this.g.totalWeight().toFixed(3));
 	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
-	  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
+	  if (this.settings.debug) {
+		  $("#d_valid").html(this.validTSpanner(this.g, this.settings.t) ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
+		} else {
+			$("#d_valid").html("<div class=\"light\"></div>");
+		}
 	}
 
 	clicked(position) {
