@@ -71,7 +71,7 @@ class Controller {
 
 	  // Run algorithm
 	  var t0 = performance.now();
-	  this.debug = this.settings.algorithms[this.settings.algorithm](this.g, this.settings);
+	  this.debug = this.settings.algorithms[this.settings.algorithm](this.g, this.obstacle, this.settings);
 		var t1 = performance.now();
 		this.lastRun = t1 - t0;
 
