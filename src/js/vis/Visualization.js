@@ -61,8 +61,6 @@ class Visualization extends EventEmitter {
 	// Update the visualization
 	update(debug) {
 		var data = this.data;
-		// this.svg.selectAll("*:not(.loader)").remove();
-
 		//obstacles
 		var obstacle = this.svg
 			.selectAll("polyline")
@@ -107,16 +105,17 @@ class Visualization extends EventEmitter {
 
 	  if (debug) {	  	
 			//Add the SVG Text Element to the svgContainer
-			var text = this.svg.selectAll("text")
+			var text = this.svg.selectAll("text.ids")
 				.data(data.nodes)
 				.enter()
 				.append("text")
 				.attr("x", function(d) { return d.x + 3; })
 				.attr("y", function(d) { return d.y - 4; })
-				.text( function (d) { return d.id })
+				.text( function (d) { return d.id; })
 				.attr("font-family", "sans-serif")
-				.attr("font-size", "20px")
-				.attr("fill", "red");
+				.attr("font-size", "12px")
+				.attr("fill", "red")
+				.classed("ids", true);
 
 			if (data.debug) {
 			  if (data.debug.rects) {
@@ -144,7 +143,7 @@ class Visualization extends EventEmitter {
 						.attr("cx", function (d) { return d.x; })
 						.attr("cy", function (d) { return d.y; })
 						.attr("r", function (d) { return d.r == 0 ? 15 : d.r; })
-						.style("stroke", function(d) { return d.color } )
+						.style("stroke", function(d) { return d.color ? d.color : "black" } )
 						.style("fill", "none" ) 
 			   //  	.attr( "opacity", 0 )
 						// .transition()
