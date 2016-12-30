@@ -92,7 +92,7 @@ class Controller {
 
 			  // Run algorithm
 		  	var t0 = performance.now();
-				var visibilityGraph = Visibility.compute(that.g, that.obstacle);
+				var visibilityGraph = {}//Visibility.compute(that.g, that.obstacle);
 			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, visibilityGraph, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;

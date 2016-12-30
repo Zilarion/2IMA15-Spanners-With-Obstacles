@@ -133,7 +133,6 @@ class WSPD {
 		if (WSPD.isempty(WSPD.rep(u)) || WSPD.isempty(WSPD.rep(v)) || (WSPD.isLeaf(u) && WSPD.isLeaf(v) && u == v)) {
 			result = [];
 		} else if (WSPD.seperated(u, v, s)) {
-			console.log("returning ", u, v);
 			return [{u: u, v: v}];
 		} else {
 			if (u._depth > v._depth) {
@@ -147,7 +146,6 @@ class WSPD {
 			for (var key in childNodes) {
 				var childNode = childNodes[key];
 				var r = WSPD.wsPairs(childNode, v, T, s);
-				console.log("got back: ", r);
 				result = result.concat(r);
 			}
 		}
