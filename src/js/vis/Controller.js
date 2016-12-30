@@ -1,7 +1,6 @@
 'use strict';
 
 var Graph = require('../core/Graph');
-//var Obstacle = require('../core/Obstacle');
 var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
 var Visibility = require('../algorithms/Visibility');
@@ -30,7 +29,7 @@ class Controller {
 		generator.createNodes(this.g, 4, this.obstacle, this.settings);
 		for (var n in this.obstacle.nodes){
 			this.obstacle.nodes[n].ISOBSTACLE = true;
-			this.g.addExistingNode(this.obstacle.nodes[n]);
+			// this.g.addExistingNode(this.obstacle.nodes[n]);
 		}
 		
 		
@@ -93,7 +92,7 @@ class Controller {
 
 			  // Run algorithm
 		  	var t0 = performance.now();
-			var visibilityGraph = Visibility.compute(that.g, that.obstacle);
+				var visibilityGraph = Visibility.compute(that.g, that.obstacle);
 			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, visibilityGraph, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
@@ -139,8 +138,6 @@ class Controller {
 				var dist = dijkstra.calculate(v1, v2, graph)
 				var bestDist = Util.distance(v1, v2);
 				if (dist > bestDist * t) {
-					console.log(dist + " > " + bestDist * t);
-					console.log(v1.id, v2.id)
 					return false;
 				}
 			}

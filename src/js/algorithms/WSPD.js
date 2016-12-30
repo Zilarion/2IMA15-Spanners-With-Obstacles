@@ -6,7 +6,7 @@ var shortest = require('./Dijkstra');
 var debug;
 
 class WSPD {
-	static calculate(graph, settings) {
+	static calculate(graph, visibilityGraph, settings) {
 		// Build quad tree
 		var pointQuad = true;
 		var bounds = {
