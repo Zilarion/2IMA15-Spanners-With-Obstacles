@@ -1,6 +1,8 @@
 'use strict';
 
 var $ = require('jquery');
+var Node = require('../core/Node')
+var Obstacle = require('../core/Obstacle')
 
 class DataManager {
 	constructor(element_id) {
@@ -19,25 +21,25 @@ class DataManager {
 		var tval = +tvalLine[0] / +tvalLine[1];
 
 		var nodes = [];
-		var obstacles = [];
 
 		// Load all nodes
-		for(var i = 2; i < 2 + +numNodes; i++){
+		for(var i = 3; i < 3 + +numNodes; i++){
 			var node = lines[i].split(' ');
-			nodes.push({id: i-2, x: node[0], y: node[1]});
+			nodes.push({id: i-2, x: node[0]/100, y: node[1]/100});
 		}
 
 		// Load all obstacles
-		for(var i = 2 + +numNodes; i < 2 + +numNodes + +numObstacles; i++){
-			var obstacle = lines[i].split(' ');
-			obstacles.push({id: i - 2 - numNodes, x: obstacle[0], y: obstacle[1]});
+		var obstacle = new Obstacle();
+		for(var i = 3 + +numNodes; i < 3 + +numNodes + +numObstacles; i++) {
+			var oNode = lines[i].split(' ');
+			obstacle.addNode(i - 2 - numNodes, oNode[0]/100, oNode[1]/100);
 		}
 
 		// Construct data
 		var cID = this.datasets.length + 1;
 		var newData = {
 			nodes: nodes,
-			obstacles: obstacles,
+			obstacle: obstacle,
 			t: tval,
 			id: cID + (data.id ? ": " + data.id : "") // set name to given id, otherwise just set it to the dataset number
 		};
@@ -78,7 +80,7 @@ class DataManager {
 			ntd.className = "cell";
 
 			var ktd = document.createElement("td");
-			ktd.innerHTML = dataset.obstacles.length;
+			ktd.innerHTML = dataset.obstacle.size();
 			ktd.className = "cell";
 
 			var tvaltd = document.createElement("td");
@@ -99,6 +101,10 @@ class DataManager {
 
 	getDatasets() {
 		return this.datasets;
+	}
+
+	getLastDataset() {
+		return this.datasets[this.datasets.length - 1];
 	}
 
 	bind(element_id) {

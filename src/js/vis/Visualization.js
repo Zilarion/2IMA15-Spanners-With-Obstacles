@@ -61,6 +61,7 @@ class Visualization extends EventEmitter {
 	// Update the visualization
 	update(debug) {
 		var data = this.data;
+
 		//obstacles
 		var obstacle = this.svg
 			.selectAll("polyline")

@@ -17,6 +17,10 @@ class Obstacle {
 	getNode(id) {
 		return this.nodes[id];
 	}
+
+	size() {
+		return this.nodes.length;
+	}
 	
 	inObstacle(varX, varY) {
 		var result = false;

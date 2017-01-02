@@ -27,12 +27,11 @@ class Controller {
 
 		this.g = new Graph();
 		this.obstacle = generator.createSimplePolygon(this.g, 5, this.settings);
-		this.g = generator.createNodes(this.g, 4, this.obstacle, this.settings);
-		for (var n in this.obstacle.nodes){
-			this.obstacle.nodes[n].ISOBSTACLE = true;
+		// this.g = generator.createNodes(this.g, 4, this.obstacle, this.settings);
+		// for (var n in this.obstacle.nodes){
+			// this.obstacle.nodes[n].ISOBSTACLE = true;
 			// this.g.addExistingNode(this.obstacle.nodes[n]);
-		}
-		
+		// }
 		
 		this.recalculate();
 
@@ -54,6 +53,11 @@ class Controller {
 		$('#dataset_import').on('click', (e) => {
 		  var data = $("#dataset_data").val();
 		  this.dm.addDataset(data);
+			var dataset = this.dm.getLastDataset();
+		  this.g = new Graph();
+		  this.g.load(dataset);
+		  this.obstacle = dataset.obstacle;
+		  this.recalculate();
 		});		
 
 		$('#dataset_runmass').on('click', (e) => {
@@ -133,7 +137,7 @@ class Controller {
 
 			  // Run algorithm
 		  	var t0 = performance.now();
-				var visibilityGraph = {}//Visibility.compute(that.g, that.obstacle);
+				var visibilityGraph = {nodes: [], edges: []}//Visibility.compute(that.g, that.obstacle);
 			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, visibilityGraph, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;

@@ -14,7 +14,7 @@ class Astar {
     fScore.set(start, heuristic(start, goal));
     var closed = new Map();
     var opened = new Map();
-	var backward = new Map();
+		var backward = new Map();
 
     // Initially, only the start node is known
 		var openList = new Heap(function(nodeA, nodeB) {
@@ -43,7 +43,7 @@ class Astar {
 			}
 
 			// Check all our edges to find new neighbors
-			var edges = graph.edges[node.id];
+			var edges = node.edges;
 			for (var i = 0; i < edges.length; i++) {
 				var edge = edges[i];
 				var neighbor = edge.target.id == node.id ? edge.source : edge.target;

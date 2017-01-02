@@ -62,7 +62,7 @@ class WSPD {
 		return {
 			x: WSPD.isLeaf(u) ? WSPD.rep(u).x : u._bounds.x + u._bounds.width / 2,
 			y: WSPD.isLeaf(u) ? WSPD.rep(u).y : u._bounds.y + u._bounds.height / 2,
-			r: WSPD.isLeaf(u) ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2)) / 2
+			r: WSPD.isLeaf(u) ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2))
 		}
 	}
 
