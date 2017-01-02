@@ -1,7 +1,108 @@
 'use strict';
 
+var $ = require('jquery');
 
 class DataManager {
+	constructor(element_id) {
+		this.datasets = [];
+		this.bound = element_id;
+		this.update();
+	}
+
+	addDataset(data) {
+		console.log(data);
+		var lines = data.split('\n');
+
+		// Read in all basic values
+		var numNodes = lines[0];
+		var numObstacles = lines[1];
+		var tvalLine = lines[2].split(' ');
+		var tval = +tvalLine[0] / +tvalLine[1];
+
+		var nodes = [];
+		var obstacles = [];
+
+		// Load all nodes
+		for(var i = 2; i < 2 + +numNodes; i++){
+			var node = lines[i].split(' ');
+			nodes.push({id: i-2, x: node[0], y: node[1]});
+		}
+
+		// Load all obstacles
+		for(var i = 2 + +numNodes; i < 2 + +numNodes + +numObstacles; i++){
+			var obstacle = lines[i].split(' ');
+			obstacles.push({id: i - 2 - numNodes, x: obstacle[0], y: obstacle[1]});
+		}
+
+		// Construct data
+		var cID = this.datasets.length + 1;
+		var newData = {
+			nodes: nodes,
+			obstacles: obstacles,
+			tval: tval,
+			id: cID + ": " + (data.id ? data.id : "") // set name to given id, otherwise just set it to the dataset number
+		};
+
+		this.datasets.push(newData);
+		this.update();
+
+		return newData;
+	}
+
+	update() {
+		if (this.bound === undefined) {
+			return;
+		}
+		var element = $(this.bound);
+
+		// Clear
+		element.empty();
+		var table = document.createElement("table");
+		table.className = "table"
+
+		var header = document.createElement("tr");
+		header.className = "tablerow header"
+		table.append(header);
+
+		header.innerHTML = "<th class='cell'>Id</th><th class='cell'>n</th><th class='cell'>k</th><th class='cell'>t</th>";
+
+		for (var i = 0; i < this.datasets.length; i++) {
+			var dataset = this.datasets[i];
+			console.log(dataset);
+			var row = document.createElement("tr");
+
+			var idtd = document.createElement("td");
+			idtd.innerHTML = dataset.id
+			idtd.className = "cell";
+
+			var ntd = document.createElement("td");
+			ntd.innerHTML = dataset.nodes.length
+			ntd.className = "cell";
+
+			var ktd = document.createElement("td");
+			ktd.innerHTML = dataset.obstacles.length;
+			ktd.className = "cell";
+
+			var tvaltd = document.createElement("td");
+			tvaltd.innerHTML = dataset.tval;
+			tvaltd.className = "cell";
+
+			row.append(idtd);
+			row.append(ntd);
+			row.append(ktd);
+			row.append(tvaltd);
+
+			row.className = "tablerow";
+
+			table.append(row);
+		}
+		element.append(table);
+	}
+
+	bind(element_id) {
+		this.bound = element_id;
+	}
+
 	static export(nodes, obstacle, t) {
 		var n = nodes.length;
 		var m = obstacle.nodes.length;

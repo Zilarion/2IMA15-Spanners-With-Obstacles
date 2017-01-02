@@ -11,6 +11,7 @@ var DataManager = require('../data/DataManager')
 class Controller {
 	constructor(visualization, settings) {
 		this.visualization = visualization;
+		this.dm = new DataManager("#dataset_record");
 		this.settings = settings;
 		this.settings.w = this.visualization.width;
 		this.settings.h = this.visualization.height;
@@ -47,8 +48,18 @@ class Controller {
 
 		$('#dataset_export').on('click', (e) => {
 		  e.preventDefault();
-			console.log(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
+		  $('#dataset_data').val(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
 		});		
+
+		$('#dataset_import').on('click', (e) => {
+		  var data = $("#dataset_data").val();
+		  this.dm.addDataset(data);
+		});		
+
+		$('#dataset_runmass').on('click', (e) => {
+		  // this.dm.addDataset(data);
+		});		
+
 
 		$('.control_setting').on('change', (e) => {
 			this.updateSettings();
