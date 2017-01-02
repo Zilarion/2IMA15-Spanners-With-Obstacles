@@ -1,7 +1,7 @@
 'use strict';
 
 var Heap = require('heap');
-var RBTree = require('bintrees').RBTree;
+//var RBTree = require('bintrees').RBTree;
 
 var Util = require('../core/Util');
 var Graph = require('../core/Graph');
@@ -90,14 +90,14 @@ class Visibility {
 		Bdir.x += p.x;
 		Bdir.y += p.y;
 		//construct status with lines intersecting dir
-		var status = new RBTree(function(e1, e2) {
+		//var status = new RBTree(function(e1, e2) {
 			//TODO: does currentAngle update here?
-			 var p1 = linePosOnAngle(e1.s, e1.e, currentAngle);
-			 var p2 = linePosOnAngle(e2.s, e2.e, currentAngle); 
-			 var d1 = Util.distance(p, p1);
-			 var d2 = Util.distance(p, p2);
-			 return d1 - d2;
-		});
+		//	 var p1 = linePosOnAngle(e1.s, e1.e, currentAngle);
+		//	 var p2 = linePosOnAngle(e2.s, e2.e, currentAngle); 
+		//	 var d1 = Util.distance(p, p1);
+		//	 var d2 = Util.distance(p, p2);
+		//	 return d1 - d2;
+		//});
 		for (var index_e in edges){
 			var e = edges[index_e];
 			if (Util.intersect(e.s.x, e.s.y, e.e.x, e.e.y, 

@@ -1,7 +1,6 @@
 'use strict';
 
 var Graph = require('../core/Graph');
-//var Obstacle = require('../core/Obstacle');
 var Util = require('../core/Util');
 var dijkstra = require('../algorithms/Dijkstra');
 var Visibility = require('../algorithms/Visibility');
@@ -12,6 +11,7 @@ var DataManager = require('../data/DataManager')
 class Controller {
 	constructor(visualization, settings) {
 		this.visualization = visualization;
+		this.dm = new DataManager("#dataset_record");
 		this.settings = settings;
 		this.settings.w = this.visualization.width;
 		this.settings.h = this.visualization.height;
@@ -27,10 +27,10 @@ class Controller {
 
 		this.g = new Graph();
 		this.obstacle = generator.createSimplePolygon(this.g, 5, this.settings);
-		generator.createNodes(this.g, 4, this.obstacle, this.settings);
+		this.g = generator.createNodes(this.g, 4, this.obstacle, this.settings);
 		for (var n in this.obstacle.nodes){
 			this.obstacle.nodes[n].ISOBSTACLE = true;
-			this.g.addExistingNode(this.obstacle.nodes[n]);
+			// this.g.addExistingNode(this.obstacle.nodes[n]);
 		}
 		
 		
@@ -48,8 +48,18 @@ class Controller {
 
 		$('#dataset_export').on('click', (e) => {
 		  e.preventDefault();
-			console.log(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
+		  $('#dataset_data').val(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
 		});		
+
+		$('#dataset_import').on('click', (e) => {
+		  var data = $("#dataset_data").val();
+		  this.dm.addDataset(data);
+		});		
+
+		$('#dataset_runmass').on('click', (e) => {
+		  // this.dm.addDataset(data);
+		});		
+
 
 		$('.control_setting').on('change', (e) => {
 			this.updateSettings();
@@ -93,7 +103,7 @@ class Controller {
 
 			  // Run algorithm
 		  	var t0 = performance.now();
-			var visibilityGraph = Visibility.compute(that.g, that.obstacle);
+				var visibilityGraph = {}//Visibility.compute(that.g, that.obstacle);
 			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, visibilityGraph, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
@@ -123,8 +133,10 @@ class Controller {
 	}
 
 	clicked(position) {
-	  this.g.addNode(this.g.nodes.length + 1, position.x, position.y);
-	  this.recalculate();
+		if (!this.obstacle.inObstacle(position.x, position.y)) {
+			this.g.addNode(this.g.nodes.length + 1, position.x, position.y);
+			this.recalculate();
+		}
 	}
 
 	get algorithms() {
@@ -139,8 +151,6 @@ class Controller {
 				var dist = dijkstra.calculate(v1, v2, graph)
 				var bestDist = Util.distance(v1, v2);
 				if (dist > bestDist * t) {
-					console.log(dist + " > " + bestDist * t);
-					console.log(v1.id, v2.id)
 					return false;
 				}
 			}

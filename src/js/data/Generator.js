@@ -53,25 +53,13 @@ class Generator {
 	}
 	
 	static createNodes(graph, nrNodes, obstacle, settings) {
-		
-		outer_loop:
 		while (graph.nodes.length != nrNodes) {
-			var count = 0;
 			var varX = Util.getRandomArbitrary(0, settings.w);
 			var varY = Util.getRandomArbitrary(0, settings.h);
 			
-			inner_loop:
-			for (var i = 0; i < obstacle.nodes.length; i++) {
-				if (Util.linesIntersect(0,0,varX,varY, obstacle.getNode(i).x,obstacle.getNode(i).y,obstacle.getNode((i+1)%obstacle.nodes.length).x,obstacle.getNode((i+1)%obstacle.nodes.length).y)) {
-					count++;
-					continue inner_loop;
-				}
+			if (!obstacle.inObstacle(varX, varY)) {
+				graph.addNode(graph.nodes.length+1,varX,varY);
 			}
-							
-			if (count % 2 != 0) {
-				continue outer_loop;
-			}
-			graph.addNode(graph.nodes.length+1,varX,varY);
 		}
 		return graph;
 	}
