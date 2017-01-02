@@ -200,6 +200,7 @@ class Visibility {
 			}
 		}
 
+		// :TODO: find a decent solution for adding all edges instead
 		for (var node in obstacle.edges) {
 			var edge = obstacle.edges[node];
 			graph.addEdge(edge.source, edge.target, Util.distance(edge.source, edge.target));
