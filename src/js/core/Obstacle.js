@@ -18,9 +18,7 @@ class Obstacle {
 		return this.nodes[id];
 	}
 	
-	inObstacle(position) {
-		var varX = position.x;
-		var varY = position.y;
+	inObstacle(varX, varY) {
 		var result = false;
 		var count = 0;
 		

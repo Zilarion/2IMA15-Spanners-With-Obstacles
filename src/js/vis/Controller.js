@@ -26,7 +26,7 @@ class Controller {
 
 		this.g = new Graph();
 		this.obstacle = generator.createSimplePolygon(this.g, 5, this.settings);
-		generator.createNodes(this.g, 4, this.obstacle, this.settings);
+		generator.createNodes(this.g, 20, this.obstacle, this.settings);
 		for (var n in this.obstacle.nodes){
 			this.obstacle.nodes[n].ISOBSTACLE = true;
 			// this.g.addExistingNode(this.obstacle.nodes[n]);
@@ -122,7 +122,7 @@ class Controller {
 	}
 
 	clicked(position) {
-		if (!this.obstacle.inObstacle(position)) {
+		if (!this.obstacle.inObstacle(position.x, position.y)) {
 			this.g.addNode(this.g.nodes.length + 1, position.x, position.y);
 			this.recalculate();
 		}
