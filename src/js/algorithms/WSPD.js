@@ -36,7 +36,7 @@ class WSPD {
 
 			// map[repu.id] ? map[repu.id].push(repv.id) : map[repu.id] = [repv.id];
 			// map[repv.id] ? map[repv.id].push(repu.id) : map[repv.id] = [repu.id];
-			// console.log(repu.id, repv.id)
+			// console.log(pair.u, pair.v)
 			graph.addEdge(repu, repv, Util.distance(repu, repv));
 		}
 		// console.log(map)
@@ -62,7 +62,7 @@ class WSPD {
 		return {
 			x: WSPD.isLeaf(u) ? WSPD.rep(u).x : u._bounds.x + u._bounds.width / 2,
 			y: WSPD.isLeaf(u) ? WSPD.rep(u).y : u._bounds.y + u._bounds.height / 2,
-			r: WSPD.isLeaf(u) ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2))
+			r: WSPD.isLeaf(u) ? 0 : Math.sqrt(Math.pow(u._bounds.height, 2), Math.pow(u._bounds.width, 2)) / 2
 		}
 	}
 
@@ -72,18 +72,18 @@ class WSPD {
 		var cv = WSPD.createCircle(v);
 
 		var maxr = cu.r > cv.r ? cu.r : cv.r;
-		cu.r = maxr;
-		cv.r = maxr;
+		// cu.r = maxr;
+		// cv.r = maxr;	
 
 		var d = WSPD.distance(cu, cv);
 		var result = d >= s * maxr;
 		return result;
-		return WSPD.isLeaf(u) && WSPD.isLeaf(v);
 	}
 
 	static isempty(u) {
 		return Array.isArray(u) && u.length == 0;
 	}
+
 	// Representative of u
 	static rep(u) {
 		var result = [];
@@ -129,9 +129,8 @@ class WSPD {
 
 	// ws pairs function
 	static wsPairs(u, v, T, s) {
-		var result = [];
-		if (WSPD.isempty(WSPD.rep(u)) || WSPD.isempty(WSPD.rep(v)) || (WSPD.isLeaf(u) && WSPD.isLeaf(v) && u == v)) {
-			result = [];
+		if (WSPD.isempty(WSPD.rep(u)) || WSPD.isempty(WSPD.rep(v)) || (WSPD.isLeaf(u) && WSPD.isLeaf(v) && u === v)) {
+			return [];
 		} else if (WSPD.seperated(u, v, s)) {
 			return [{u: u, v: v}];
 		} else {
@@ -143,13 +142,14 @@ class WSPD {
 			debug.rects.push(u._bounds)
 			debug.rects.push(v._bounds)
 			var childNodes = u.nodes;
+			var result = [];
 			for (var key in childNodes) {
 				var childNode = childNodes[key];
 				var r = WSPD.wsPairs(childNode, v, T, s);
 				result = result.concat(r);
 			}
+			return result;
 		}
-		return result;
 	}
 };
 

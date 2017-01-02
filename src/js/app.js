@@ -12,7 +12,7 @@ var vis_settings = {
 
 var controller_settings = {
 	t: 2.5,
-	algorithm: "greedy",
+	algorithm: "WSPD",
 	algorithms: {
 		"greedy": greedy.calculate,
 		"WSPD": wspd.calculate
