@@ -57,7 +57,37 @@ class Controller {
 		});		
 
 		$('#dataset_runmass').on('click', (e) => {
-		  // this.dm.addDataset(data);
+		  var datasets = this.dm.getDatasets();
+		  var algorithms = this.settings.algorithms;
+		  var results = [];
+
+		  // Run each dataset
+		  for (var i = 0; i < datasets.length; i++) {
+		  	var dataset = datasets[i];
+
+		  	// For each algorithm
+		  	for ( var key in algorithms ) {
+		  		var algorithm = algorithms[key];
+
+		  		// Initialize
+		  		var graph = new Graph(dataset);
+		  		var obstacles = dataset.obstacles;
+		  		var vg = {}; // :TODO: add visibility computation
+		  		var settings = {w: this.settings.w, h: this.settings.h, t: dataset.t};
+
+		  		// Run
+		  		var t0 = performance.now();
+		  		algorithm(graph, vg, settings)
+		  		var t1 = performance.now();
+
+		  		// Compute running time
+		  		var runtime = t1 - t0;
+
+		  		// Push the result
+		  		results.push({alg: key, ms: runtime, n: dataset.nodes.length, k: dataset.obstacles.length, id: dataset.id});
+		  	}
+		  }
+		  console.log(results);
 		});		
 
 

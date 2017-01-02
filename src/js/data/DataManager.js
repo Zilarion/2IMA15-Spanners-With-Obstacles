@@ -10,7 +10,6 @@ class DataManager {
 	}
 
 	addDataset(data) {
-		console.log(data);
 		var lines = data.split('\n');
 
 		// Read in all basic values
@@ -39,8 +38,8 @@ class DataManager {
 		var newData = {
 			nodes: nodes,
 			obstacles: obstacles,
-			tval: tval,
-			id: cID + ": " + (data.id ? data.id : "") // set name to given id, otherwise just set it to the dataset number
+			t: tval,
+			id: cID + (data.id ? ": " + data.id : "") // set name to given id, otherwise just set it to the dataset number
 		};
 
 		this.datasets.push(newData);
@@ -68,7 +67,6 @@ class DataManager {
 
 		for (var i = 0; i < this.datasets.length; i++) {
 			var dataset = this.datasets[i];
-			console.log(dataset);
 			var row = document.createElement("tr");
 
 			var idtd = document.createElement("td");
@@ -84,7 +82,7 @@ class DataManager {
 			ktd.className = "cell";
 
 			var tvaltd = document.createElement("td");
-			tvaltd.innerHTML = dataset.tval;
+			tvaltd.innerHTML = dataset.t;
 			tvaltd.className = "cell";
 
 			row.append(idtd);
@@ -97,6 +95,10 @@ class DataManager {
 			table.append(row);
 		}
 		element.append(table);
+	}
+
+	getDatasets() {
+		return this.datasets;
 	}
 
 	bind(element_id) {
