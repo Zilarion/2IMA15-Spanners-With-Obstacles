@@ -1,5 +1,6 @@
 "use strict";
 
+var Util = require('../core/Util');
 var Node = require('./Node');
 
 class Obstacle {
@@ -15,6 +16,24 @@ class Obstacle {
 	
 	getNode(id) {
 		return this.nodes[id];
+	}
+	
+	inObstacle(position) {
+		var varX = position.x;
+		var varY = position.y;
+		var result = false;
+		var count = 0;
+		
+		for (var i = 0; i < this.nodes.length; i++) {
+			if (Util.linesIntersect(0,0,varX,varY, this.getNode(i).x,this.getNode(i).y,this.getNode((i+1)%this.nodes.length).x,this.getNode((i+1)%this.nodes.length).y)) {
+				count++;
+			}
+		}
+							
+		if (count % 2 != 0) {
+			result = true;
+		}
+		return result;
 	}
 };
 

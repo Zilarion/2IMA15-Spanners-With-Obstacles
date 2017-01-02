@@ -122,8 +122,10 @@ class Controller {
 	}
 
 	clicked(position) {
-	  this.g.addNode(this.g.nodes.length + 1, position.x, position.y);
-	  this.recalculate();
+		if (!this.obstacle.inObstacle(position)) {
+			this.g.addNode(this.g.nodes.length + 1, position.x, position.y);
+			this.recalculate();
+		}
 	}
 
 	get algorithms() {
