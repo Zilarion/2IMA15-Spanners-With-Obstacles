@@ -8,7 +8,7 @@ class Greedy {
 		var nodes = graph.nodes;
 		var node_pairs = [];
 		var t = settings.t;
-
+		var debug = {edges: visibilityGraph.edges};
 
 		// Calculate all possible pairs
 		for (var i in nodes) {
@@ -26,6 +26,7 @@ class Greedy {
 				}
 		}
 
+		graph.clearEdges();
 		// Sort based on distance
 		node_pairs.sort(Util.dynamicSort("dist"));
 		for (var key in node_pairs) {
@@ -35,8 +36,6 @@ class Greedy {
 
 			// Find shortest path in current graph
 			var path = astar.calculate(n1, n2, graph);
-			
-			console.log(path.length, pair.dist)
 
 			// If this is to large, add this pair as edge
 			if (path.length > t * pair.dist) {
@@ -50,7 +49,7 @@ class Greedy {
 				}
 			}
 		}
-		console.log(graph.edges);
+		return debug;
 	}
 };
 

@@ -176,8 +176,8 @@ class Visibility {
 
 	static greedy(g, obstacle){
 		var graph = new Graph();
-		for (var node in g.nodes){
-			graph.addExistingNode(g.nodes[node]);
+		for (var key in g.nodes){
+			graph.addExistingNode(g.nodes[key]);
 		}
 		for (var node in obstacle.nodes) {
 			 graph.addExistingNode(obstacle.getNode(node));
@@ -198,6 +198,11 @@ class Visibility {
 					}
 				}
 			}
+		}
+
+		for (var node in obstacle.edges) {
+			var edge = obstacle.edges[node];
+			graph.addEdge(edge.source, edge.target, Util.distance(edge.source, edge.target));
 		}
 		return graph;
 	}

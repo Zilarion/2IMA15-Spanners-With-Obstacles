@@ -11,6 +11,12 @@ class Node {
 	addEdge(edge) {
 		this.edges.push(edge);
 	}
+	setEdges(edges) {
+		this.edges = edges;
+	}
+	getEdges() {
+		return this.edges;
+	}
 };
 
 module.exports = Node;

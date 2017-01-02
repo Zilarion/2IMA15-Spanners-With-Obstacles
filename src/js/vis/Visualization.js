@@ -118,7 +118,24 @@ class Visualization extends EventEmitter {
 				.classed("ids", true);
 
 			if (data.debug) {
-					var dur = 500;
+				var dur = 500;
+
+
+				if (data.debug.edges) {
+					var edges = this.svg
+								.selectAll("line")
+								.data(data.debug.edges)
+								.enter()
+								.append("line")
+								.attr("x1", function (d) { return d.source.x; })
+								.attr("y1", function (d) { return d.source.y; })
+								.attr("x2", function (d) { return d.target.x; })
+								.attr("y2", function (d) { return d.target.y; })
+								.style("stroke", "red" )
+							.attr( "opacity", 0.01 )
+				}
+
+
 			  if (data.debug.rects) {
 					var rects = this.svg
 						.selectAll("rect")

@@ -18,8 +18,9 @@ class Graph {
 	}
 
 	addExistingNode(node) {
-		node.graph = this;
-		this.nodes.push(node);
+		var nnode = new Node(node.id, node.x, node.y, this);
+		nnode.setEdges(node.getEdges());
+		this.nodes.push(nnode);
 	}
 
 	addEdge(source, target, weight) {
