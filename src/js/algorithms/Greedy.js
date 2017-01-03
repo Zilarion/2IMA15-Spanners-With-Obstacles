@@ -17,11 +17,8 @@ class Greedy {
 						// If they don't match, calculate distance and add
 						var n1 = nodes[i];
 						var n2 = nodes[j];
-						//don't make a spanner for the obstacles nodes, only for the free nodes
-						if (!n1.ISOBSTACLE && !n2.ISOBSTACLE){
-							var path = astar.calculate(n1, n2, visibilityGraph);
-							node_pairs.push( {dist: path.length, path: path, n1: n1, n2: n2} );
-						}
+						var path = astar.calculate(n1, n2, visibilityGraph);
+						node_pairs.push( {dist: path.length, path: path, n1: n1, n2: n2} );
 					}
 				}
 		}

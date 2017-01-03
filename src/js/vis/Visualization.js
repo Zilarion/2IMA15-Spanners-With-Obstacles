@@ -79,7 +79,8 @@ class Visualization extends EventEmitter {
 		 	})
 		 	.attr("stroke-width", "1px")
 		 	.attr("stroke", "rgb(100,100,100)")
-		 	.attr("fill", "rgb(220,220,220)");
+		 	.attr("fill", "rgb(220,220,220)")
+			.attr( "opacity", 0.3 )
 
 		var nodes = this.svg
 			.selectAll("circle")
@@ -101,7 +102,7 @@ class Visualization extends EventEmitter {
 			.attr("x2", function (d) { return d.target.x; })
 			.attr("y2", function (d) { return d.target.y; })
 			.style("stroke", "grey" )
-		.attr( "opacity", 1 )
+			.attr( "opacity", 1 )
 
 	  if (debug) {	  	
 			//Add the SVG Text Element to the svgContainer
