@@ -26,7 +26,6 @@ class Greedy {
 		}
 
 		// Sort based on distance
-		graph.clearEdges();
 		node_pairs.sort(Util.dynamicSort("dist"));
 		for (var key in node_pairs) {
 			var pair = node_pairs[key];
@@ -42,7 +41,9 @@ class Greedy {
 				for (var p in pair.path.sequence){
 					var point = pair.path.sequence[p];
 					if (prev){
-						graph.addEdge(prev, point, Util.distance(prev, point));
+						var source = graph.nodes[prev.id - 1] ? graph.nodes[prev.id- 1] : prev;
+						var target = graph.nodes[point.id- 1] ? graph.nodes[point.id- 1] : point;
+						graph.addEdge(source, target, Util.distance(prev, point));
 					}
 					prev = point;
 				}
