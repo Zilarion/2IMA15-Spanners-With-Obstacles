@@ -48,11 +48,13 @@ class Controller {
 
 		$('#dataset_import').on('click', (e) => {
 		  var data = $("#dataset_data").val();
+		  console.log("Loading new dataset");
 		  this.dm.addDataset(data);
 			var dataset = this.dm.getLastDataset();
 		  this.g = new Graph();
 		  this.g.load(dataset);
 		  this.obstacle = dataset.obstacle;
+		  console.log("Done loading new dataset");
 		  this.recalculate();
 		});		
 
@@ -130,13 +132,16 @@ class Controller {
 			setTimeout(function() { 
 				// Clear previous result
 		  	that.g.clearEdges();
-
 			  // Run algorithm
 		  	var t0 = performance.now();
+		  	console.log("Computing visibility graph");
 				var vg = Visibility.compute(that.g, that.obstacle);
+		  	console.log("Done computing visibility graph")
+		  	console.log("Computing t-spanner");
 			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, vg, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
+		  	console.log("Done computing");
 
 			  // Update the visualization
 				that.updateData();

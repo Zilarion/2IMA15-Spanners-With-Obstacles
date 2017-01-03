@@ -11,8 +11,8 @@ class Greedy {
 		var debug = {edges: vgraph.edges};
 
 		// Calculate all possible pairs
-		for (var i in vgraph.nodes) {
-				for (var j = i; j < vgraph.nodes.length; j++) {
+		for (var i in nodes) {
+				for (var j = i; j < nodes.length; j++) {
 					if (i != j) {
 						// If they don't match, calculate distance and add
 						var n1 = vgraph.nodes[i];
