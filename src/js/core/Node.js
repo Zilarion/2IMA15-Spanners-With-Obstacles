@@ -1,12 +1,13 @@
 "use strict";
 
 class Node {
-	constructor(id, x, y, graph) {
+	constructor(id, x, y, graph, obstacle) {
 		this.id = id;
 		this.edges = []
 		this.x = x;
 		this.y = y;
 		this.graph = graph;
+		this.obstacle = obstacle ? obstacle : false;
 	}
 	addEdge(edge) {
 		this.edges.push(edge);
@@ -16,6 +17,9 @@ class Node {
 	}
 	getEdges() {
 		return this.edges;
+	}
+	isObstacle() {
+		return this.obstacle;
 	}
 };
 

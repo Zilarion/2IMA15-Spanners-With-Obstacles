@@ -17,10 +17,23 @@ class Graph {
 		this.nodes.push(new Node(id, x, y, this));
 	}
 
-	addExistingNode(node) {
-		var nnode = new Node(node.id, node.x, node.y, this);
-		nnode.setEdges(node.getEdges());
-		this.nodes.push(nnode);
+	addObstacleNode(id, x, y) {
+		this.nodes.push(new Node(id, x, y, this, true));
+	}
+
+	copy(graph) {
+		for (var key in graph.nodes) {
+			var node = graph.nodes[key];
+			this.addNode(node.id, node.x, node.y);
+		}
+
+		for (var key in graph.edges) {
+			var edge = graph.edges[key];
+			var source = this.nodes[edge.source.id];
+			var target = this.nodes[edge.target.id];
+			var weight = edge.weight;
+			this.addEdge(source, target, weight);
+		}
 	}
 
 	addEdge(source, target, weight) {

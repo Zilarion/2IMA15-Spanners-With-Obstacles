@@ -26,12 +26,8 @@ class Controller {
 		algorithms.val(this.settings.algorithm);
 
 		this.g = new Graph();
-		this.obstacle = generator.createSimplePolygon(this.g, 15, this.settings);
-		this.g = generator.createNodes(this.g, 4, this.obstacle, this.settings);
-		// for (var n in this.obstacle.nodes){
-		// 	this.obstacle.nodes[n].ISOBSTACLE = true;
-		// 	this.g.addExistingNode(this.obstacle.nodes[n]);
-		// }
+		this.obstacle = generator.createSimplePolygon(this.g, 10, this.settings);
+		this.g = generator.createNodes(this.g, 1, this.obstacle, this.settings);
 		
 		this.recalculate();
 
@@ -137,8 +133,8 @@ class Controller {
 
 			  // Run algorithm
 		  	var t0 = performance.now();
-				var visibilityGraph = Visibility.compute(that.g, that.obstacle);
-			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, visibilityGraph, that.settings);
+				var vg = Visibility.compute(that.g, that.obstacle);
+			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, vg, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
 

@@ -176,11 +176,10 @@ class Visibility {
 
 	static greedy(g, obstacle){
 		var graph = new Graph();
-		for (var key in g.nodes){
-			graph.addExistingNode(g.nodes[key]);
-		}
+		graph.copy(g);
 		for (var node in obstacle.nodes) {
-			 graph.addExistingNode(obstacle.getNode(node));
+			var obstNode = obstacle.getNode(node);
+			graph.addObstacleNode(obstNode.id, obstNode.x, obstNode.y);
 		}
 
 		var points = graph.nodes;
@@ -201,10 +200,10 @@ class Visibility {
 		}
 
 		// :TODO: find a decent solution for adding all edges instead
-		for (var node in obstacle.edges) {
-			var edge = obstacle.edges[node];
-			graph.addEdge(edge.source, edge.target, Util.distance(edge.source, edge.target));
-		}
+		// for (var node in obstacle.edges) {
+		// 	var edge = obstacle.edges[node];
+		// 	graph.addEdge(edge.source, edge.target, Util.distance(edge.source, edge.target));
+		// }
 		return graph;
 	}
 }
