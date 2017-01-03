@@ -200,10 +200,15 @@ class Visibility {
 		}
 
 		// :TODO: find a decent solution for adding all edges instead
-		// for (var node in obstacle.edges) {
-		// 	var edge = obstacle.edges[node];
-		// 	graph.addEdge(edge.source, edge.target, Util.distance(edge.source, edge.target));
-		// }
+		var prev = undefined;
+		for (var key in obstacle.nodes) {
+			var p = obstacle.nodes[key]
+			if (prev) {
+				graph.addEdge(prev, p, Util.distance(prev, p));
+			}
+			prev = p;
+		}
+		graph.addEdge(prev, obstacle.nodes[0], Util.distance(prev, obstacle.nodes[0]));
 		return graph;
 	}
 }
