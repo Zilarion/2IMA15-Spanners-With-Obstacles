@@ -15,25 +15,32 @@ class Visualization extends EventEmitter {
 		this.container = d3.select("div#container");
 		var aspect = this.settings.w / this.settings.h;
 
+		// setup svg
 		this.svg = this.container
 			.append("svg")
 			.attr("width", this.settings.w)
 			.attr("height", this.settings.h)
 			.attr("ar", aspect)
-			.attr("preserveAspectRatio", "xMinYMid")
-	  	.attr("viewBox", "0 0 " + this.settings.w + " " + this.settings.h)
+			// .attr("preserveAspectRatio", "xMinYMid")
+	  // 	.attr("viewBox", "0 0 " + this.settings.w + " " + this.settings.h)
 	  	.classed("svg-element", true);
 
-		// On resize		
-		$(window).on("resize", function(e) {
-			var targetWidth = $("div#container").width();
-	    var svg = d3.select(".svg-element");
-	    var aspect = svg.attr("ar");
-	    var targetHeight = Math.round(targetWidth / aspect)
-	    svg.attr("width", targetWidth);
-	    svg.attr("height", targetHeight);
-		}).trigger("resize");
+	 	this.view = this.svg.append("rect")
+	    .attr("class", "view")
+	    .attr("x", 0)
+	    .attr("y", 0)
+	    .attr("width", this.settings.w )
+	    .attr("height", this.settings.h)
+	    .attr("fill", "none");
 
+
+		this.data = {nodes: [], edges: []};
+		this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.svg, id: "loader"});
+
+		this.setupListeners();
+	}
+
+	setupListeners() {
 		// On click
 	  var that = this;
 		this.svg.on("click", function() {
@@ -45,8 +52,28 @@ class Visualization extends EventEmitter {
 		  that.emit('click', position);
 		});
 
-		this.data = {nodes: [], edges: []};
-		this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.svg, id: "loader"});
+		// On resize		
+		$(window).on("resize", function(e) {
+			var targetWidth = $("div#container").width();
+	    var svg = d3.select(".svg-element");
+	    var aspect = svg.attr("ar");
+	    var targetHeight = Math.round(targetWidth / aspect)
+	    svg.attr("width", targetWidth);
+	    svg.attr("height", targetHeight);
+		}).trigger("resize");
+
+		this.svg.call(d3.zoom().on("zoom", function () {
+			console.log(zoom);
+      that.svg.attr("transform", d3.event.transform)
+		}));
+
+		// var zoom = d3.zoom()
+		//     .scaleExtent([1, 40])
+		//     .translateExtent([[-100, -100], [this.settings.w + 90, this.settings.h + 100]])
+		//     .on("zoom", function() {
+		//     	console.log("ZOOOM");
+		//     	that.view.attr("transform", d3.event.transform);
+		//     });
 	}
 
 	loading(status) {
