@@ -25,13 +25,7 @@ class Visualization extends EventEmitter {
 	  // 	.attr("viewBox", "0 0 " + this.settings.w + " " + this.settings.h)
 	  	.classed("svg-element", true);
 
-	 	this.view = this.svg.append("rect")
-	    .attr("class", "view")
-	    .attr("x", 0)
-	    .attr("y", 0)
-	    .attr("width", this.settings.w )
-	    .attr("height", this.settings.h)
-	    .attr("fill", "none");
+	 	this.view = this.svg.append("g");
 
 
 		this.data = {nodes: [], edges: []};
@@ -62,23 +56,17 @@ class Visualization extends EventEmitter {
 	    svg.attr("height", targetHeight);
 		}).trigger("resize");
 
-		this.svg.call(d3.zoom().on("zoom", function () {
-			console.log(zoom);
-      that.svg.attr("transform", d3.event.transform)
-		}));
+		var zoom = d3.zoom()
+	    .on("zoom", function () {
+	      that.view.attr("transform", d3.event.transform)
+			});
 
-		// var zoom = d3.zoom()
-		//     .scaleExtent([1, 40])
-		//     .translateExtent([[-100, -100], [this.settings.w + 90, this.settings.h + 100]])
-		//     .on("zoom", function() {
-		//     	console.log("ZOOOM");
-		//     	that.view.attr("transform", d3.event.transform);
-		//     });
+		this.svg.call(zoom);
 	}
 
 	loading(status) {
 		if (status) {
-			this.svg.selectAll("*:not(.loader)").remove();
+			this.view.selectAll("*:not(.loader)").remove();
 			this.loader.opacity(1);
 		} else {
 			this.loader.opacity(0);
@@ -90,7 +78,7 @@ class Visualization extends EventEmitter {
 		var data = this.data;
 
 		//obstacles
-		var obstacle = this.svg
+		var obstacle = this.view
 			.selectAll("polyline")
 		 	.data([data.obstacle])
 		 	.enter()
@@ -109,7 +97,7 @@ class Visualization extends EventEmitter {
 		 	.attr("fill", "rgb(220,220,220)")
 			.attr( "opacity", 0.3 )
 
-		var nodes = this.svg
+		var nodes = this.view
 			.selectAll("circle")
 			.data(data.nodes)
 			.enter()
@@ -119,7 +107,7 @@ class Visualization extends EventEmitter {
 			.attr("r", function (d) { return 2; })
 			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
-		var edges = this.svg
+		var edges = this.view
 			.selectAll("line")
 			.data(data.edges)
 			.enter()
@@ -133,7 +121,7 @@ class Visualization extends EventEmitter {
 
 	  if (debug) {	  	
 			//Add the SVG Text Element to the svgContainer
-			var text = this.svg.selectAll("text.ids")
+			var text = this.view.selectAll("text.ids")
 				.data(data.nodes)
 				.enter()
 				.append("text")
@@ -150,7 +138,7 @@ class Visualization extends EventEmitter {
 
 
 				if (data.debug.edges) {
-					var edges = this.svg
+					var edges = this.view
 								.selectAll("line")
 								.data(data.debug.edges)
 								.enter()
@@ -165,7 +153,7 @@ class Visualization extends EventEmitter {
 
 
 			  if (data.debug.rects) {
-					var rects = this.svg
+					var rects = this.view
 						.selectAll("rect")
 						.data(data.debug.rects)
 						.enter()
@@ -194,7 +182,7 @@ class Visualization extends EventEmitter {
 				}
 
 				if (data.debug.circles) {
-					var circles = this.svg
+					var circles = this.view
 						.selectAll("wspd_circle")
 						.data(data.debug.circles)
 						.enter()
