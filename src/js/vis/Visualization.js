@@ -21,8 +21,7 @@ class Visualization extends EventEmitter {
 			.attr("width", this.settings.w)
 			.attr("height", this.settings.h)
 			.attr("ar", aspect)
-			// .attr("preserveAspectRatio", "xMinYMid")
-	  // 	.attr("viewBox", "0 0 " + this.settings.w + " " + this.settings.h)
+			.attr("preserveAspectRatio", "xMinYMid")
 	  	.classed("svg-element", true);
 
 	 	this.view = this.svg.append("g");
@@ -32,6 +31,11 @@ class Visualization extends EventEmitter {
 		this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.svg, id: "loader"});
 
 		this.setupListeners();
+	}
+
+	size(dimensions) {
+  	this.svg
+			.attr("viewBox", dimensions.xmin + " " + dimensions.ymin + " " + dimensions.xmax + " " + dimensions.ymax)
 	}
 
 	setupListeners() {

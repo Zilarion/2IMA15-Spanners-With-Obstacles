@@ -43,6 +43,29 @@ class Graph {
 		this.edges.push(newEdge);
 	}
 
+	dimensions() {
+		var maxX = 0;
+		var maxY = 0;
+		var minX = 999999999999999999999;
+		var minY = 999999999999999999999;
+		for (var key in this.nodes) {
+			var node = this.nodes[key];
+			if (node.x > maxX) {
+				maxX = node.x;
+			}
+			if (node.y > maxY) {
+				maxY = node.y;
+			}
+			if (node.x < minX) {
+				minX = node.x;
+			}
+			if (node.y < minY) {
+				minY = node.y;
+			}
+		}
+		return {xmax: maxX, ymax: maxY, xmin: minX, ymin: minY}
+	}
+
 	totalWeight() {
 		var sum = 0;
 		for (var key in this.edges) {
