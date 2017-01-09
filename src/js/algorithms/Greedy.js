@@ -2,18 +2,18 @@
 
 var Util = require('../core/Util');
 var astar = require('./Astar');
-var Worker = require('webworker-threads').Worker;
+// var Worker = require('webworker-threads').Worker;
 
 class Greedy {
-	constructor() {
-		this.worker = new Worker({
-			this.onmessage = function(event) {
+	// constructor() {
+	// 	this.worker = new Worker({
+	// 		this.onmessage = function(event) {
 				
-			};
- 		});
-	}
+	// 		};
+ // 		});
+	// }
 	
-	calculate(graph, vgraph, settings) {
+	static calculate(graph, vgraph, settings) {
 		var nodes = graph.nodes;
 		var node_pairs = [];
 		var t = settings.t;
