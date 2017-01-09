@@ -39,10 +39,21 @@ class Visualization extends EventEmitter {
 	  var that = this;
 		this.svg.on("click", function() {
 			var coords = d3.mouse(this);
+			var svg = d3.select(".svg-element");
+
+
 		  var position = {
 				x: Math.round(coords[0]),
-		    y: Math.round(coords[1])
+		    	y: Math.round(coords[1])
 		  };
+
+
+		  if (that.zoomify){
+				//transform mouse coords to graph space
+				var transform = that.zoomify;
+				position.x = (position.x - transform.x)/transform.k;
+				position.y = (position.y - transform.y)/transform.k;
+		  }
 		  that.emit('click', position);
 		});
 
@@ -58,6 +69,7 @@ class Visualization extends EventEmitter {
 
 		var zoom = d3.zoom()
 	    .on("zoom", function () {
+			that.zoomify = d3.event.transform;
 	      that.view.attr("transform", d3.event.transform)
 			});
 
