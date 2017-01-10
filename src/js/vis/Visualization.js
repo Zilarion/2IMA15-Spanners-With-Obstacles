@@ -34,9 +34,9 @@ class Visualization extends EventEmitter {
 	}
 
 	size(dimensions) {
-		console.log(dimensions)
   	this.svg
 			.attr("viewBox", dimensions.xmin + " " + dimensions.ymin + " " + dimensions.xmax + " " + dimensions.ymax)
+			this.settings.dim = dimensions;
 	}
 
 	setupListeners() {
@@ -93,6 +93,7 @@ class Visualization extends EventEmitter {
 	// Update the visualization
 	update(debug) {
 		var data = this.data;
+		var width = this.settings.dim.xmax - this.settings.dim.xmin;
 
 		//obstacles
 		var obstacle = this.view
@@ -109,7 +110,7 @@ class Visualization extends EventEmitter {
 		 		str += d.getNode(0).x + "," + d.getNode(0).y;
 		 		return str;
 		 	})
-		 	.attr("stroke-width", "1px")
+		 	.attr("stroke-width", width/800)
 		 	.attr("stroke", "rgb(100,100,100)")
 		 	.attr("fill", "rgb(220,220,220)")
 			.attr( "opacity", 0.3 )
@@ -121,7 +122,7 @@ class Visualization extends EventEmitter {
 			.append("circle")
 			.attr("cx", function (d) { return d.x; })
 			.attr("cy", function (d) { return d.y; })
-			.attr("r", function (d) { return 2; })
+			.attr("r", function (d) { return width/400; })
 			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
 		var edges = this.view
@@ -142,11 +143,11 @@ class Visualization extends EventEmitter {
 				.data(data.nodes)
 				.enter()
 				.append("text")
-				.attr("x", function(d) { return d.x + 3; })
-				.attr("y", function(d) { return d.y - 4; })
+				.attr("x", function(d) { return d.x + (width/1200); })
+				.attr("y", function(d) { return d.y - (width/1600); })
 				.text( function (d) { return d.id; })
 				.attr("font-family", "sans-serif")
-				.attr("font-size", "18px")
+				.attr("font-size", (9*width)/400)
 				.attr("fill", "red")
 				.classed("ids", true);
 

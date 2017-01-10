@@ -104,6 +104,7 @@ class Controller {
 	  this.obstacle.changed = true;
 
 	  var newDim = this.dimensions();
+	  this.settings.dim = newDim;
 	  this.settings.w = newDim.xmax - newDim.xmin;
 	  this.settings.h = newDim.ymax - newDim.ymin;
 		this.visualization.size(newDim);
@@ -171,7 +172,6 @@ class Controller {
   dimensions() {
   	var dimg = this.g.dimensions();
   	var dimo = this.obstacle.dimensions();
-	console.log(dimg, dimo);
   	if (dimo.xmax > dimg.xmax) {
   		dimg.xmax = dimo.xmax
   	}
