@@ -10,7 +10,7 @@ var Graph = require('../core/Graph');
 
 class Visibility {
 	static compute(g, obstacle) {
-		return Visibility.sweepline(g.nodes, [obstacle]);
+		return Visibility.greedy(g, obstacle);
 	}
 
 	static angle(x1, y1, x2, y2){
