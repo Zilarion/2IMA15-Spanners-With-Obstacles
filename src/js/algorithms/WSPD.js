@@ -134,7 +134,7 @@ class WSPD {
 		} else if (WSPD.seperated(u, v, s)) {
 			return [{u: u, v: v}];
 		} else {
-			if (u._depth > v._depth) {
+			if (u._depth > v._depth && !WSPD.isLeaf(v)) {
 				var temp = v;
 				v = u;
 				u = temp;

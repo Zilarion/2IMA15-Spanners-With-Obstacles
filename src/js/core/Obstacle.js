@@ -21,6 +21,29 @@ class Obstacle {
 	size() {
 		return this.nodes.length;
 	}
+
+	dimensions() {
+		var maxX = 0;
+		var maxY = 0;
+		var minX = 999999999999999999999;
+		var minY = 999999999999999999999;
+		for (var key in this.nodes) {
+			var node = this.nodes[key];
+			if (node.x > maxX) {
+				maxX = node.x;
+			}
+			if (node.y > maxY) {
+				maxY = node.y;
+			}
+			if (node.x < minX) {
+				minX = node.x;
+			}
+			if (node.y < minY) {
+				minY = node.y;
+			}
+		}
+		return {xmax: maxX, ymax: maxY, xmin: minX, ymin: minY}
+	}
 	
 	inObstacle(varX, varY) {
 		var result = false;

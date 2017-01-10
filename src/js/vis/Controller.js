@@ -25,9 +25,10 @@ class Controller {
 		};
 		algorithms.val(this.settings.algorithm);
 
-		this.g = new Graph();
-		this.obstacle = generator.createSimplePolygon(this.g, 5, this.settings);
-		this.g = generator.createNodes(this.g, 5, this.obstacle, this.settings);
+		var obstacle = generator.createSimplePolygon(this.g, 10, this.settings);
+		var graph = generator.createNodes(new Graph(), 10, obstacle, this.settings);
+
+		this.newData(graph, obstacle)
 		
 		this.recalculate();
 
@@ -51,11 +52,10 @@ class Controller {
 		  console.log("Loading new dataset");
 		  this.dm.addDataset(data);
 			var dataset = this.dm.getLastDataset();
-		  this.g = new Graph();
-		  this.g.load(dataset);
-		  this.obstacle = dataset.obstacle;
-		  console.log("Done loading new dataset");
-		  this.recalculate();
+		  var graph = new Graph();
+		  graph.load(dataset);
+		  this.newData(graph, dataset.obstacle);
+	  	console.log("Done loading new dataset");
 		});		
 
 		$('#dataset_runmass').on('click', (e) => {
@@ -98,6 +98,19 @@ class Controller {
 		});
 	}
 
+	newData(graph, obstacle) {
+		this.g = graph;
+		this.obstacle = obstacle;
+	  this.obstacle.changed = true;
+
+	  var newDim = this.dimensions();
+	  this.settings.dim = newDim;
+	  this.settings.w = newDim.xmax - newDim.xmin;
+	  this.settings.h = newDim.ymax - newDim.ymin;
+		this.visualization.size(newDim);
+	  this.recalculate();
+	}
+
 	// Update the settings based on the input values
 	updateSettings() {
 		var tvalue = parseFloat(document.getElementById('tvalue').value);	
@@ -106,6 +119,7 @@ class Controller {
 		if (tvalue != NaN && tvalue >= 1) {
 			this.settings.t = tvalue;
 		}
+		//this.worker = this.settings.algorithms[this.settings.algorithm].worker;
 		this.recalculate();
 	}
 
@@ -134,14 +148,15 @@ class Controller {
 		  	that.g.clearEdges();
 			  // Run algorithm
 		  	var t0 = performance.now();
-		  	console.log("Computing visibility graph");
-				var vg = Visibility.compute(that.g, that.obstacle);
-		  	console.log("Done computing visibility graph")
+		  	if (that.obstacle.changed) {
+		  		console.log("Computing visibility graph");
+					that.vg = Visibility.compute(that.g, that.obstacle);
+		  		that.obstacle.changed = false;
+		  	}
 		  	console.log("Computing t-spanner");
-			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, vg, that.settings);
+			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.vg, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
-		  	console.log("Done computing");
 
 			  // Update the visualization
 				that.updateData();
@@ -150,6 +165,25 @@ class Controller {
 				resolve(); 
 		 	});
 	  });
+  }
+
+  dimensions() {
+  	var dimg = this.g.dimensions();
+  	var dimo = this.obstacle.dimensions();
+  	if (dimo.xmax > dimg.xmax) {
+  		dimg.xmax = dimo.xmax
+  	}
+  	if (dimo.ymax > dimg.ymax) {
+  		dimg.ymax = dimo.ymax;
+  	}
+
+  	if (dimo.ymin < dimg.ymin) {
+  		dimg.ymin = dimo.ymin;
+  	}
+  	if (dimo.xmin < dimg.xmin) {
+  		dimg.xmin = dimo.xmin;
+  	}
+  	return dimg;
   }
 
 	updateData() {
