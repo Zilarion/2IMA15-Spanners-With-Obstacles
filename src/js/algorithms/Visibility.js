@@ -1,7 +1,7 @@
 'use strict';
 
 var Heap = require('heap');
-var RBTree = require('bintrees').RBTree;
+//var RBTree = require('bintrees').RBTree;
 
 var Util = require('../core/Util');
 var Graph = require('../core/Graph');
