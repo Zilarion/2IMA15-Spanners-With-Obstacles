@@ -200,7 +200,6 @@ class Visibility {
 					}
 				}
 			}
-			console.log(p, "/", points.length)
 		}
 		console.log("Done regular");
 		console.log("Starting obstacle edges");

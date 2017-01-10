@@ -2,6 +2,7 @@
 
 var Util = require('../core/Util');
 var astar = require('./Astar');
+var Combinatorics = require('js-combinatorics');
 // var Worker = require('webworker-threads').Worker;
 
 class Greedy {
@@ -18,20 +19,17 @@ class Greedy {
 		var node_pairs = [];
 		var t = settings.t;
 		var debug = {edges: vgraph.edges};
+		return;
 
 		// Calculate all possible pairs
-		for (var i in nodes) {
-				for (var j = i; j < nodes.length; j++) {
-					if (i != j) {
-						// If they don't match, calculate distance and add
-						var n1 = vgraph.nodes[i];
-						var n2 = vgraph.nodes[j];
-						var path = astar.calculate(n1, n2, vgraph);
-						if (!n1.isObstacle() && !n2.isObstacle()){
-							node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id - 1], n2: nodes[n2.id - 1]} );
-						}
-					}
-				}
+		cmb = Combinatorics.combination(['a','b','c','d'], 2)
+		while(a = cmb.next()) {
+			var n1 = a[0];
+			var n2 = a[1];
+			var path = astar.calculate(n1, n2, vgraph);
+			if (!n1.isObstacle() && !n2.isObstacle()){
+				node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id - 1], n2: nodes[n2.id - 1]} );
+			}
 		}
 
 		// Sort based on distance
