@@ -34,6 +34,7 @@ class Visualization extends EventEmitter {
 	}
 
 	size(dimensions) {
+		console.log(dimensions)
   	this.svg
 			.attr("viewBox", dimensions.xmin + " " + dimensions.ymin + " " + dimensions.xmax + " " + dimensions.ymax)
 	}

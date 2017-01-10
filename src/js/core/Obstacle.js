@@ -30,12 +30,14 @@ class Obstacle {
 		for (var key in this.nodes) {
 			var node = this.nodes[key];
 			if (node.x > maxX) {
+				console.log(node.x, ">", maxX);
 				maxX = node.x;
 			}
 			if (node.y > maxY) {
 				maxY = node.y;
 			}
 			if (node.x < minX) {
+				console.log(node.x, "<", minX);
 				minX = node.x;
 			}
 			if (node.y < minY) {
