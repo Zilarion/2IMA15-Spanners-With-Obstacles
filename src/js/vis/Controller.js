@@ -26,8 +26,8 @@ class Controller {
 		algorithms.val(this.settings.algorithm);
 
 		this.g = new Graph();
-		this.obstacle = generator.createSimplePolygon(this.g, 10, this.settings);
-		this.g = generator.createNodes(this.g, 1, this.obstacle, this.settings);
+		this.obstacle = generator.createSimplePolygon(this.g, 5, this.settings);
+		this.g = generator.createNodes(this.g, 5, this.obstacle, this.settings);
 		
 		this.recalculate();
 
