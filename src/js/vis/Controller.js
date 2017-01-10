@@ -150,12 +150,12 @@ class Controller {
 		  	var t0 = performance.now();
 		  	if (that.obstacle.changed) {
 		  		console.log("Computing visibility graph");
-					//that.vg = Visibility.compute(that.g, that.obstacle);
+					that.vg = Visibility.compute(that.g, that.obstacle);
 		  		that.obstacle.changed = false;
 		  		console.log("Done computing visibility graph");
 		  	}
 		  	console.log("Computing t-spanner");
-			  //that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.vg, that.settings);
+			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.vg, that.settings);
 				var t1 = performance.now();
 				that.lastRun = t1 - t0;
 		  	console.log("Done computing");

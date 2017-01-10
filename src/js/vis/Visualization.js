@@ -135,6 +135,7 @@ class Visualization extends EventEmitter {
 			.attr("x2", function (d) { return d.target.x; })
 			.attr("y2", function (d) { return d.target.y; })
 			.style("stroke", "grey" )
+			.attr("stroke-width", width/800)
 			.attr( "opacity", 1 )
 
 	  if (debug) {	  	
