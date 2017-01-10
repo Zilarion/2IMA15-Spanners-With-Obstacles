@@ -114,6 +114,7 @@ class Visualization extends EventEmitter {
 		 	.attr("stroke", "rgb(100,100,100)")
 		 	.attr("fill", "rgb(220,220,220)")
 			.attr( "opacity", 0.3 )
+		
 
 		var nodes = this.view
 			.selectAll("circle")
@@ -141,7 +142,7 @@ class Visualization extends EventEmitter {
 	  if (debug) {	  	
 			//Add the SVG Text Element to the svgContainer
 			var text = this.view.selectAll("text.ids")
-				.data(data.nodes)
+				.data(data.nodes.concat(data.obstacle.nodes))
 				.enter()
 				.append("text")
 				.attr("x", function(d) { return d.x + (width/1200); })
