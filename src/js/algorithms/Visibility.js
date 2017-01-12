@@ -10,8 +10,8 @@ var Graph = require('../core/Graph');
 
 class Visibility {
 	static compute(g, obstacle) {
-		// return Visibility.sweepline(g.nodes, [obstacle]);
-		return Visibility.greedy(g, obstacle);
+		return Visibility.sweepline(g.nodes, [obstacle]);
+		//return Visibility.greedy(g, obstacle);
 	}
 
 	static angle(x1, y1, x2, y2){
@@ -50,6 +50,7 @@ class Visibility {
 		var B = undefined;
 		var closestDistance = 1000000;//TODO: max_number?
 		for (var index_e in edges){
+			console.log("Test");
 			var e = edges[index_e];
 			var q = e.source;
 			var dist = Util.distance(sweepPoint, q);
