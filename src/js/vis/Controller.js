@@ -7,6 +7,7 @@ var Visibility = require('../algorithms/Visibility');
 var generator = require('../data/Generator');
 var $ = require('jquery')
 var DataManager = require('../data/DataManager')
+var JSON = require('json3')
 
 class Controller {
 	constructor(visualization, settings) {
@@ -25,12 +26,10 @@ class Controller {
 		};
 		algorithms.val(this.settings.algorithm);
 
-		var obstacle = generator.createSimplePolygon(this.g, 10, this.settings);
-		var graph = generator.createNodes(new Graph(), 10, obstacle, this.settings);
+		var obstacle = generator.createSimplePolygon(10, this.settings);
+		var nodes = generator.createNodes(10, obstacle, this.settings);
 
-		this.newData(graph, obstacle)
-		
-		this.recalculate();
+		this.newData(nodes, obstacle)
 
 		// Listeners
 		visualization.on('click', (position) => {
@@ -52,9 +51,7 @@ class Controller {
 		  console.log("Loading new dataset");
 		  this.dm.addDataset(data);
 			var dataset = this.dm.getLastDataset();
-		  var graph = new Graph();
-		  graph.load(dataset);
-		  this.newData(graph, dataset.obstacle);
+		  this.newData(dataset.nodes, dataset.obstacle);
 	  	console.log("Done loading new dataset");
 		});		
 
@@ -98,11 +95,11 @@ class Controller {
 		});
 	}
 
-	newData(graph, obstacle) {
-		this.g = graph;
+	newData(nodes, obstacle) {
 		this.obstacle = obstacle;
+		this.nodes = nodes;
 
-	  var newDim = this.dimensions();
+	  var newDim = this.dimensions(nodes, obstacle);
 	  this.settings.dim = newDim;
 	  this.settings.w = newDim.xmax - newDim.xmin;
 	  this.settings.h = newDim.ymax - newDim.ymin;
@@ -118,77 +115,68 @@ class Controller {
 		if (tvalue != NaN && tvalue >= 1) {
 			this.settings.t = tvalue;
 		}
-		//this.worker = this.settings.algorithms[this.settings.algorithm].worker;
 		this.recalculate();
 	}
 
 	recalculate() {
 	  // Set loading to true
 	  this.visualization.loading(true);
-
-	  // Store the current promise
-	  this.promise = this.asyncCompute();
-
 	  var that = this;
-		this.promise.then(function() {
-			// We are done, stop loading
-			that.visualization.loading(false);
-		})
 
-		// Remove promise
-		this.promise = undefined;
-  }
-
-  asyncCompute() {
-	  var that = this;
-		return new Promise((resolve, reject) => {
-			setTimeout(function() { 
-				// Clear previous result
-		  	that.g.clearEdges();
-			  // Run algorithm
-		  	var t0 = performance.now();
-	  		console.log("Computing visibility graph");
-				that.vg = Visibility.compute(that.g, that.obstacle);
-		  	console.log("Computing t-spanner");
-			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.vg, that.settings);
-				var t1 = performance.now();
-				that.lastRun = t1 - t0;
-
-			  // Update the visualization
-				that.updateData();
-			  that.visualization.update(that.settings.debug);
-
-				resolve(); 
-		 	});
+	  // Send our query
+	  var data = JSON.stringify({
+	  	"nodes": this.nodes, 
+	  	"obstacle": this.obstacle.toJSON(),
+	  	"settings": {t: this.settings.t}
+	  });
+		$.ajax({
+      type: "POST",
+      contentType: "application/json",
+      url: "query",
+      data: data
+    })
+		.done(function(data) {
+	  	that.result = data;
+	  	that.updateData();
+	  }).always(function() {
+	  	that.visualization.loading(false);
 	  });
   }
 
-  dimensions() {
-  	var dimg = this.g.dimensions();
-  	var dimo = this.obstacle.dimensions();
-  	if (dimo.xmax > dimg.xmax) {
-  		dimg.xmax = dimo.xmax
-  	}
-  	if (dimo.ymax > dimg.ymax) {
-  		dimg.ymax = dimo.ymax;
-  	}
+  dimensions(nodes, obstacle) {
+  	var dimo = obstacle.dimensions();
 
-  	if (dimo.ymin < dimg.ymin) {
-  		dimg.ymin = dimo.ymin;
+  	for (var key in nodes) {
+  		var node = nodes[key];
+  		if (node.x > dimo.xmax) {
+  			dimo.xmax = node.x;
+  		}
+  		if (node.y > dimo.ymax) {
+  			dimo.ymax = node.y;
+  		}
+  		if (node.x < dimo.xmin) {
+  			dimo.xmin = node.x;
+  		}
+  		if (node.y < dimo.ymin) {
+  			dimo.ymin = node.y;
+  		}
   	}
-  	if (dimo.xmin < dimg.xmin) {
-  		dimg.xmin = dimo.xmin;
-  	}
-  	return dimg;
+  	return dimo;
   }
 
 	updateData() {
-	  this.visualization.setData({nodes: this.g.nodes, edges: this.g.edges, debug: this.debug, obstacle: this.obstacle})
+	  this.visualization.setData({
+	  	nodes: this.result.graph.nodes, 
+	  	edges: this.result.graph.edges, 
+	  	debug: this.result.debug,
+	  	obstacle: this.obstacle
+	  });
 
-	  $("#d_nodes").html(this.g.nodes.length);
-	  $("#d_edges").html(this.g.edges.length);
-	  $("#d_weight").html(this.g.totalWeight().toFixed(3));
-	  $("#d_time").html(this.lastRun.toFixed(0) + " ms");
+	  $("#d_nodes").html(this.result.graph.nodes.length);
+	  $("#d_edges").html(this.result.graph.edges.length);
+	  $("#d_weight").html(this.result.meta.totalWeight);
+	  $("#d_time").html(this.result.meta.runTime + " ms");
+
 	  if (this.settings.debug) {
 	  	var valid = this.validTSpanner(this.g, this.settings.t);
 		  $("#d_valid").html(valid ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");

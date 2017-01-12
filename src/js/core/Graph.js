@@ -43,6 +43,14 @@ class Graph {
 		this.edges.push(newEdge);
 	}
 
+	totalWeight() {
+		var sum = 0;
+		for (var key in this.edges) {
+			sum += this.edges[key].weight
+		}
+		return sum;
+	}
+
 	dimensions() {
 		var maxX = 0;
 		var maxY = 0;
@@ -66,14 +74,6 @@ class Graph {
 		return {xmax: maxX, ymax: maxY, xmin: minX, ymin: minY}
 	}
 
-	totalWeight() {
-		var sum = 0;
-		for (var key in this.edges) {
-			sum += this.edges[key].weight
-		}
-		return sum;
-	}
-	
 	clearEdges() {
 		for (var key in this.nodes) {
 			var n = this.nodes[key];
@@ -101,9 +101,16 @@ class Graph {
   		var node = this.nodes[key];
   		nodes.push({id: node.id, x: node.x, y: node.y})
   	}
-  	return {
-  		nodes: nodes,
+  	var edges = [];
+  	for (var key in this.edges) {
+  		var edge = this.edges[key];
+  		edges.push({source: edge.source.id, target: edge.target.id, weight: edge.weight});
   	}
+
+		return {
+			nodes: nodes,
+			edges: edges
+		}
   }
 };
 

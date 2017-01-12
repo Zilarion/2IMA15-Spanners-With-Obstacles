@@ -26,7 +26,6 @@ class Visualization extends EventEmitter {
 
 	 	this.view = this.svg.append("g");
 
-
 		this.data = {nodes: [], edges: []};
 		this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.svg, id: "loader"});
 
@@ -46,12 +45,10 @@ class Visualization extends EventEmitter {
 			var coords = d3.mouse(this);
 			var svg = d3.select(".svg-element");
 
-
 		  var position = {
 				x: Math.round(coords[0]),
 		    	y: Math.round(coords[1])
 		  };
-
 
 		  if (that.zoomify){
 				//transform mouse coords to graph space
@@ -91,8 +88,9 @@ class Visualization extends EventEmitter {
 	}
 
 	// Update the visualization
-	update(debug) {
+	update() {
 		var data = this.data;
+		var debug = data.debug;
 		var width = this.settings.dim.xmax - this.settings.dim.xmin;
 
 		//obstacles
@@ -231,14 +229,9 @@ class Visualization extends EventEmitter {
 		this.svg.selectAll(".loader").raise();
 	}
 
-	// Clear all points from the graph
-	clearPoints(){
-		this.g.nodes = [];
-		this.recalculate();
-	}
-
 	setData(data) {
 		this.data = data;
+		this.update();
 	}
 
 	get height() {

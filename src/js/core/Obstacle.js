@@ -6,8 +6,13 @@ var Node = require('./Node');
 class Obstacle {
 	constructor() {
 		this.nodes = [];
-		this.x = 0;
-		this.y = 0;
+	}
+
+	load(nodes) {
+		for(var key in nodes) {
+			var node = nodes[key];
+			this.addNode(node.id, +node.x, +node.y);
+		}
 	}
 	
 	addNode(id, x, y) {
@@ -59,6 +64,24 @@ class Obstacle {
 			result = true;
 		}
 		return result;
+	}
+
+	toJSON() {
+  	var nodes = [];
+  	for (var key in this.nodes) {
+  		var node = this.nodes[key];
+  		nodes.push({id: node.id, x: node.x, y: node.y})
+  	}
+  	var edges = [];
+  	for (var key in this.edges) {
+  		var edge = this.edges[key];
+  		edges.push({source: edge.source.id, target: edge.target.id, weight: edge.weight});
+  	}
+
+		return {
+			nodes: nodes,
+			edges: edges
+		}
 	}
 };
 

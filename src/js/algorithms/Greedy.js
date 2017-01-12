@@ -3,23 +3,13 @@
 var Util = require('../core/Util');
 var astar = require('./Astar');
 var Combinatorics = require('js-combinatorics');
-// var Worker = require('webworker-threads').Worker;
 
 class Greedy {
-	// constructor() {
-	// 	this.worker = new Worker({
-	// 		this.onmessage = function(event) {
-				
-	// 		};
- // 		});
-	// }
-	
 	static calculate(graph, vgraph, settings) {
 		var nodes = graph.nodes;
 		var node_pairs = [];
 		var t = settings.t;
 		var debug = {edges: vgraph.edges};
-		//return;
 
 		// Calculate all possible pairs
 		var cmb = Combinatorics.combination(nodes, 2)
@@ -43,6 +33,7 @@ class Greedy {
 
 			// Find shortest path in current graph
 			var newPath = astar.calculate(nodes[n1.id-1], nodes[n2.id-1], graph);
+			console.log(newPath.length, pair.dist);
 			
 			// If this is to large, add this pair as edge
 			if (newPath.length > t * pair.dist) {
@@ -58,7 +49,7 @@ class Greedy {
 				}
 			}
 		}
-		return debug;
+		return {graph: graph, debug: debug};
 	}
 };
 
