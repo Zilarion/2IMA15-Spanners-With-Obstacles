@@ -33,7 +33,7 @@ app.post('/query', function(req, res) {
 
 		// Load data
 		graph.load(data);
-		obstacle.load(data.obstacle.nodes);
+		obstacle.load(data.obstacle);
 
 		// Run algorithm
 		var t0 = process.hrtime();

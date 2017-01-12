@@ -11,10 +11,14 @@ class Obstacle {
 		this.y = 0;
 	}
 
-	load(nodes) {
-		for(var key in nodes) {
-			var node = nodes[key];
-			this.addNode(node.id, +node.x, +node.y);
+	load(graph) {
+		for(var key in graph.nodes) {
+			var node = graph.nodes[key];
+			this.addNode(node.id, +node.x, +node.y, true);
+		}
+		for(var key in graph.edges) {
+			var edge = graph.edges[key];
+			this.addEdge(this.nodes[edge.source], this.nodes[edge.target], edge.weight);
 		}
 	}
 	
