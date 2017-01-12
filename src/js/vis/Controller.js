@@ -128,7 +128,6 @@ class Controller {
 	recalculate() {
 	  // Set loading to true
 	  this.visualization.loading(true);
-	  console.log('load on');
 	  var that = this;
 
 	  // Send our query
@@ -151,7 +150,6 @@ class Controller {
 		.done(function(data) {
 	  	that.result = data;
 	  	that.updateData();
-	  	console.log("load off");
 	  	that.visualization.loading(false);
 	  });
   }

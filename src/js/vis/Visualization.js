@@ -168,35 +168,8 @@ class Visualization extends EventEmitter {
 								.style("stroke", "red" )
 							.attr( "opacity", 0.2 )
 				}
-
-				if (data.debug.circles) {
-					var circles = this.view
-						.selectAll("wspd_circle")
-						.data(data.debug.circles)
-						.enter()
-						.append("circle")
-						.attr("cx", function (d) { return d.x; })
-						.attr("cy", function (d) { return d.y; })
-						.attr("r", function (d) { return d.r == 0 ? 15 : d.r; })
-						.style("stroke", function(d) { return d.color ? d.color : "black" } )
-						.style("fill", "none" ) 
-			   //  	.attr( "opacity", 0 )
-						// .transition()
-						// 	.delay(function(d, i) {
-						// 		var isEven = (i%2 == 0);
-						// 		var delay = isEven ? (i * dur) : (i-1) * dur;
-						// 		return delay;
-						// 	})
-				  //   	.duration(dur/2)
-				  //   	.attr( "opacity", 1 )
-			   //  	.transition()
-			   //  		.delay(dur)
-				  //   	.duration(dur)
-				  //   	.attr( "opacity", 0 );
-		    }
 		  }
 	  }
-		this.svg.selectAll(".loader").raise();
 	}
 
 	setData(data) {
