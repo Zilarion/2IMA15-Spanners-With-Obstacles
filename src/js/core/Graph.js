@@ -95,10 +95,14 @@ class Graph {
   get edges() {
   	return this._edges;
   }
-  toJson() {
+  toJSON() {
+  	var nodes = [];
+  	for (var key in this.nodes) {
+  		var node = this.nodes[key];
+  		nodes.push({id: node.id, x: node.x, y: node.y})
+  	}
   	return {
-  		nodes: this.nodes,
-  		edges: this.edges
+  		nodes: nodes,
   	}
   }
 };
