@@ -179,7 +179,7 @@ class Controller {
 	  this.visualization.setData({
 	  	nodes: this.result.graph.nodes, 
 	  	edges: this.result.graph.edges, 
-	  	debug: this.settings.debug ? {vgraph: this.result.vgraph} : {},
+	  	debug: this.settings.debug ? {vgraph: this.result.vgraph} : undefined,
 	  	obstacle: this.obstacle
 	  });
 
