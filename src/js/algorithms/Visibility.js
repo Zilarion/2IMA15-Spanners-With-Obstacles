@@ -10,8 +10,8 @@ var Graph = require('../core/Graph');
 
 class Visibility {
 	static compute(g, obstacle) {
-		// return Visibility.sweepline(g.nodes, [obstacle]);
-		return Visibility.greedy(g, obstacle);
+		return Visibility.sweepline(g, obstacle);
+		//return Visibility.greedy(g, obstacle);
 	}
 
 	static angle(x1, y1, x2, y2){
@@ -205,15 +205,15 @@ class Visibility {
 		return visible;
 	}
 
-	static sweepline(g, obstacles){
+	static sweepline(g, obstacle){
 		console.log("sweep");
 		var graph = new Graph();
-		// Copy nodes from graph to the new graph
-		graph.copy(g, false);
-		// Copy obstacle nodes to the new graph
-		for (var i=0; i<obstacles.length; i++) {
-			graph.copy(obstacles[i], true);
+		for (var node in obstacle.nodes) {
+			var obstNode = obstacle.getNode(node);
+			graph.addObstacleNode(obstNode.id, obstNode.x, obstNode.y);
 		}
+		graph.copy(g, false);
+		
 		var points = graph.nodes;
 		for (var index = 0; index < points.length; index++){
 			//calc visible among point pairs not yet checked (offset by index+1)
