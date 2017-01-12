@@ -49,7 +49,7 @@ app.post('/query', function(req, res) {
 				result = wspd.calculate(graph, vgraph, settings);
 				break;
 			default:
-				// error
+				res.status(400).send({error: "Invalid algorithm"});
 				break;
 		}
 
