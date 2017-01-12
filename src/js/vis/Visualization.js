@@ -89,6 +89,20 @@ class Visualization extends EventEmitter {
 	update() {
 		var data = this.data;
 		var width = this.settings.dim.xmax - this.settings.dim.xmin;
+		var height = this.settings.dim.ymax - this.settings.dim.ymin;
+
+		
+		// Bound view
+		var bound = this.view
+			.append("rect")
+			.attr("x", this.settings.dim.xmin)
+			.attr("y", this.settings.dim.ymin)
+			.attr("width", width)
+			.attr("height", height)
+			.style("fill", "none" )
+			.style("stroke", "grey" )
+			.style("stroke-width", width/800 );
+
 
 		//obstacles
 		var obstacle = this.view
@@ -109,7 +123,6 @@ class Visualization extends EventEmitter {
 		 	.attr("stroke", "rgb(100,100,100)")
 		 	.attr("fill", "rgb(220,220,220)")
 			.attr( "opacity", 0.3 )
-		
 
 		var nodes = this.view
 			.selectAll("circle")

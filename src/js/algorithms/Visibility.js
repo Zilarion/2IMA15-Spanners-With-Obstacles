@@ -10,16 +10,8 @@ var Graph = require('../core/Graph');
 
 class Visibility {
 	static compute(g, obstacle) {
-		return Visibility.sweepline(g, obstacle);
-		//return Visibility.greedy(g, obstacle);
-	}
-
-	static angle(x1, y1, x2, y2){
-		var a = Math.atan2(y2, x2) - Math.atan2(y1, x1);
-		if (a < 0){
-			a += Math.PI*2;
-		}
-		return a;
+		return Visibility.sweep(g, obstacle);
+		// return Visibility.greedy(g, obstacle);
 	}
 
 	static linePosOnAngle(start, end, sweepPoint, handlePoint){
@@ -31,244 +23,196 @@ class Visibility {
 		dx = sweepPoint.x + dx/l * stretch;
 		dy = sweepPoint.y + dy/l * stretch;
 		return Util.intersect(start.x, start.y, end.x, end.y, 
-						   	   sweepPoint.x,   sweepPoint.y,   dx, dy, true);
+						   	   sweepPoint.x, sweepPoint.y, dx, dy, true);
 	}
 
-	static debugLog(msg){
-		if (true){
-			var err = new Error(msg);
-			console.log(msg);
-			console.log(err);
-		}
+	static angle(center, point) {
+		var dx = point.x - center.x
+    var dy = point.y - center.y
+    if (dx == 0 ){
+      if (dy < 0)
+          return Math.PI * 3 / 2
+      return Math.PI / 2
+    }
+    if (dy == 0){
+      if (dx < 0)
+        return Math.PI
+      return 0
+    }
+    if (dx < 0)
+        return Math.PI + Math.atan(dy / dx)
+    if (dy < 0)
+        return 2 * Math.PI + Math.atan(dy / dx)
+    return Math.atan(dy / dx)
 	}
 
-	static radialSweepPoint(sweepPoint, points, pointsOffset, edges){
-		var visible = [];
-		var that = this;
-		//find B
-		//TODO: for obstacle points, B == p
-		var B = undefined;
-		var closestDistance = 1000000;//TODO: max_number?
-		for (var index_e in edges){
-			var e = edges[index_e];
-			var q = e.source;
-			var dist = Util.distance(sweepPoint, q);
-			if (dist < closestDistance){
-				closestDistance = dist;
-				B = q;
-			} 
-			q = e.target;
-			var dist = Util.distance(sweepPoint, q);
-			if (dist < closestDistance){
-				closestDistance = dist;
-				B = q;
-			} 
-		}
-		//check B is found
-		if (!B){
-			console.log("FATAL: COULDNT FIND B");
-			return visible;
-		}
-		
-		var handleEvent = function(node) {
-			var result = [];
-			if (node.obstacle) { // Obstacle node
-				for (var edge in node.edges) {
-					if (status.find(node.edges[edge]) === null) {
-						status.insert(node.edges[edge]);
-					} else {
-						status.remove(node.edges[edge]);
-					}
-				}
-			} // Else Normal node
-			var min = status.min();
-			if (!(Util.linesIntersect(sweepPoint, node, min.source, min.target))) {
-				console.log(sweepPoint.id, node.id, min.source.id, min.target.id);
-				visible.push(node);
-			}
-			return;
-		}
-
-		var angleA = function(point){
-			return that.angle(B.x - sweepPoint.x, B.y - sweepPoint.y, point.x - sweepPoint.x, point.y - sweepPoint.y)
-		}
-		//construct queue
-		var queue = new Heap(function(node1, node2) {
-			return angleA(node1) - angleA(node2);
-	    });
-
-		var initialized = false;
-		if (!initialized) {
-			for (var p = 0; p<points.length; p++) {
-				queue.push(points[p]);
-			}
-			queue.heapify();
-			initialized = true;
-		}
-		
-		//construct infinite line from p through B, call Bdir
-		var Bdir = {};
-		Bdir.x = (B.x - sweepPoint.x);
-		Bdir.y = (B.y - sweepPoint.y);
-		//console.log(sweepPoint, B, Bdir);
-		var dir_len = Math.sqrt(Bdir.x * Bdir.x + Bdir.y * Bdir.y);
-		if (dir_len == 0){
-			//if B == p, choose at random
-			Bdir.x = 1;
-			Bdir.y = 0;
-			dir_len = 1;
-		}
-		//normalize
-		Bdir.x /= dir_len;
-		Bdir.y /= dir_len;
-		//scale to "infinity"
-		Bdir.x *= 100000;
-		Bdir.y *= 100000;
-		Bdir.x += sweepPoint.x;
-		Bdir.y += sweepPoint.y;
-		//construct status with lines intersecting dir
-		var status = new RBTree(function(e1, e2) {
-			if (e1.source.id === e2.source.id && e1.target.id === e2.target.id){
-				//console.log("EQ", e1.source.id, e1.target.id, e2.source.id, e2.target.id);
-				return 0;
-			}
-			//console.log("cmp", e1.source.id, e1.target.id, e2.source.id, e2.target.id);
-			
-			var p1 = that.linePosOnAngle(e1.source, e1.target, sweepPoint, that.currentNode);
-			var p2 = that.linePosOnAngle(e2.source, e2.target, sweepPoint, that.currentNode); 
-			if (!p1){
-				if (that.currentNode === e1.source) p1 = e1.source;
-				if (that.currentNode === e1.target) p1 = e1.target;
-			}
-			if (!p2){
-				if (that.currentNode === e2.source) p2 = e2.source;
-				if (that.currentNode === e2.target) p2 = e2.target;
-			}
-			//console.log(p1, p2);
-			var d1 = Util.distance(sweepPoint, p1);
-			var d2 = Util.distance(sweepPoint, p2);
-			return d1 - d2;
-		});
-
-		var getOther = function(edge, point){
-			if (point === edge.source){
-				return edge.target;
-			} else if (point === edge.target){
-				return edge.source;
-			}else{
-				throw new Error();
-			}
-		}
-
-		var getEdgeAngleDiff = function(edge, point){
-			var other = getOther(edge, point);
-			var angle = angleA(point);
-			var otherAngle = angleA(other);
-			var angleDiff = Math.abs(otherAngle - angle);
-			return angleDiff;
-		}
-
-		//TODO: change this to non-"global"
-		//console.log(sweepPoint, Bdir)
-		that.currentNode = B;
-		loop:
-		for (var index_e in edges){
-			var e = edges[index_e];
-			if (Util.intersect(e.source, e.target, sweepPoint, Bdir)){
-				//add clockwise closest to B
-				if (e === B.edge1 && getEdgeAngleDiff(B.edge1, B) < Math.PI){
-					continue loop;
-				}
-				if (e === B.edge2 && getEdgeAngleDiff(B.edge2, B) < Math.PI){
-					continue loop;
-				}
-				//console.log("STATUS INSERT", e.source.id, e.target.id);
-				status.insert(e);
-			}
-		}
-		//console.log("POINT:" +	sweepPoint.id);
-		//console.log("B:" + 		B.id);
-		//console.log(points);
-		//sweep algorithm
-		//console.log("EDGES", edges);
-		while (!queue.empty()) {
-			that.currentNode = queue.pop();
-			handleEvent(that.currentNode);
-			
-			
-			var currentAngle = angleA(that.currentNode);
-			//console.log(that.currentNode.id, currentAngle);
-			//check if q is from an obstacle
-			
-		}
-		return visible;
+	static segmentDist(segment, center, node) {
+		var pOnSegment = Visibility.linePosOnAngle(segment.source, segment.target, center, node);
+		return Util.distance(pOnSegment, center);
 	}
 
-	static sweepline(g, obstacle){
-		console.log("sweep");
+	static sweep(g, obstacle) {
+		console.log("Sweeping")
 		var graph = new Graph();
 		graph.copy(obstacle, true);
 		graph.copy(g, false);
-		
-		var points = graph.nodes;
-		for (var index = 0; index < points.length; index++){
-			//calc visible among point pairs not yet checked (offset by index+1)
-			var p = points[index];
-			var visible = this.radialSweepPoint(p, points, index+1, graph.edges);
-			console.log("VISIBLE from node " + p.id);
-			console.log(visible);
-			for (var v in visible){
-				var s = p;
-				var e = visible[v];
-				//graph.addEdge(s, e, Util.distance(s, e));
+
+		for (var i = 0; i < graph.nodes.length; i++){
+			var p = graph.nodes[i]
+			var visible = Visibility.sweepPoint(p, graph, obstacle);
+
+			for (var key in visible) {
+				var visibleP = visible[key];
+				graph.addEdge(p, visibleP);
 			}
-			//console.log(graph.edges);
-			//TODO: temp return for debugging
 			return graph;
 		}
-		return graph;		
-	}
-
-	static greedy(g, obstacle){
-		console.log("Computing visibility");
-		var graph = new Graph();
-		for (var node in obstacle.nodes) {
-			var obstNode = obstacle.getNode(node);
-			graph.addObstacleNode(obstNode.id, obstNode.x, obstNode.y);
-		}
-		graph.copy(g, false);
-
-		var points = graph.nodes;
-		for (var p = 0; p < points.length; p++){
-			for (var q = p+1; q < points.length; q++){
-				if (!Util.lineIntersectsObstacle(points[p], points[q], obstacle)){
-					var pp = points[p];
-					var qq = points[q];
-					//check for boundary lines, which lie inside but do not intersect the polygon
-					var midpoint = {};
-					midpoint.x = pp.x + (qq.x - pp.x)/2;
-					midpoint.y = pp.y + (qq.y - pp.y)/2;
-					if (!Util.pointInsideObstacle(midpoint.x, midpoint.y, obstacle)){
-						graph.addEdge(points[p], points[q], Util.distance(points[p], points[q]));
-					}
-				}
-			}
-		}
-
-		// :TODO: find a decent solution for adding all edges instead
-		var prev = undefined;
-		for (var key in obstacle.nodes) {
-			var p = obstacle.nodes[key]
-			if (prev) {
-				graph.addEdge(prev, p, Util.distance(prev, p));
-			}
-			prev = p;
-		}
-		graph.addEdge(prev, obstacle.nodes[0], Util.distance(prev, obstacle.nodes[0]));
-		console.log("Done computing visibility");
 
 		return graph;
 	}
+
+	static sweepPoint(point, graph, obstacle) {
+		// S = obstacle edges
+		// Vs = obstacle nodes
+		// Gs = endpoint nodes of S
+		// Vs = nodes with set of edges Es
+
+		var status = new RBTree(function(n1, n2) {
+			if (n1.id === n2.id) {
+				return 0;
+			}
+			var n1Dist = Util.distance(n1.data.node, point);
+			var n2Dist = Util.distance(n2.data.node, point);
+			return n1Dist - n2Dist;
+		});
+
+		// Initialize event queue
+		var events = this.initEvents(point, graph, obstacle);
+
+		var visible = [];
+		while (events.size > 0) {
+			var event = events.min();
+			Visibility.handleEvent(point, event, status, visible);
+			events.remove(event);
+		}
+		// console.log(visible);
+		return visible;
+	}
+
+	static handleEvent(center, e, status, visible) {
+		var eventType = e.event;
+		var node = e.node;
+
+		switch(eventType) {
+			case "point":
+				var min = status.min();
+				if(min == null) {
+					visible.push(node);
+				} else {
+					var distToSegment = Visibility.segmentDist(min.data.segment, center, node);
+					var distToNode = Util.distance(node, center);
+
+					if (distToSegment > distToNode) {
+						visible.push(node);
+					}
+				}
+			break;
+			case "start":
+				status.insert({id: node.id, data: {node: node, segment: e.segment}});
+				var min = status.min();
+				if(min == null || min.id == node.id) {
+					visible.push(node);
+				}
+			break;
+			case "end":
+				status.remove({id: e.startNode.id, data: {node: e.startNode}});
+				var min = status.min();
+				if(min == null || min.id == node.id) {
+					visible.push(node)
+				}
+			break;
+		}
+	}
+
+	static initEvents(point, graph, obstacle) {
+		var eventQueue = new RBTree(function(n1, n2) {
+			var e1 = n1.node;
+			var e2 = n2.node;
+			if (e1.id == e2.id) {
+				return 0;
+			}
+
+			// Sort on angle
+			var e1Angle = Visibility.angle(point, e1);
+			var e2Angle = Visibility.angle(point, e2);
+
+			if (e1Angle == e2Angle) {
+				// If equal, sort on distance to this segment
+				e1Dist = Util.distance(e1, point);
+				e2Dist = Util.distance(e2, point);
+				return (e1Dist - e2Dist);
+			}
+			return (e1Angle - e2Angle);
+		});
+
+		// Insert all points
+		for (var key in graph.nodes) {
+			var node = graph.nodes[key];
+			if (!node.isObstacle()) {
+				eventQueue.insert({event: "point", node: node});
+			}
+		}
+
+		// Insert all obstacle segments
+		for (var key in obstacle.edges) {
+			var edge = obstacle.edges[key];
+			var source = edge.source;
+			var target = edge.target;
+			var endEvent = {event: "end", node: graph.nodes[target.id], startNode: graph.nodes[source.id]};
+			eventQueue.insert(endEvent);
+			eventQueue.insert({event: "start", node: graph.nodes[source.id], segment: edge});
+		}
+
+		return eventQueue;
+	}
+
+	// static greedy(g, obstacle){
+	// 	console.log("Computing visibility");
+	// 	var graph = new Graph();
+	// 	graph.copy(obstacle, true);
+	// 	graph.copy(g, false);
+
+	// 	var points = graph.nodes;
+	// 	for (var p = 0; p < points.length; p++){
+	// 		for (var q = p+1; q < points.length; q++){
+	// 			if (!Util.lineIntersectsObstacle(points[p], points[q], obstacle)){
+	// 				var pp = points[p];
+	// 				var qq = points[q];
+	// 				//check for boundary lines, which lie inside but do not intersect the polygon
+	// 				var midpoint = {};
+	// 				midpoint.x = pp.x + (qq.x - pp.x)/2;
+	// 				midpoint.y = pp.y + (qq.y - pp.y)/2;
+	// 				if (!Util.pointInsideObstacle(midpoint.x, midpoint.y, obstacle)){
+	// 					graph.addEdge(points[p], points[q], Util.distance(points[p], points[q]));
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+
+	// 	// :TODO: find a decent solution for adding all edges instead
+	// 	var prev = undefined;
+	// 	for (var key in obstacle.nodes) {
+	// 		var p = obstacle.nodes[key]
+	// 		if (prev) {
+	// 			graph.addEdge(prev, p, Util.distance(prev, p));
+	// 		}
+	// 		prev = p;
+	// 	}
+	// 	graph.addEdge(prev, obstacle.nodes[0], Util.distance(prev, obstacle.nodes[0]));
+	// 	console.log("Done computing visibility");
+
+	// 	return graph;
+	// }
 }
 
 module.exports = Visibility;
