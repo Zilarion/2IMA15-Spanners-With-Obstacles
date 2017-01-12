@@ -50,7 +50,7 @@ class Controller {
 
 		$('#dataset_export').on('click', (e) => {
 		  e.preventDefault();
-		  $('#dataset_data').val(DataManager.export(this.g.nodes, this.obstacle, this.settings.t));
+		  $('#dataset_data').val(DataManager.export(this.nodes, this.obstacle, this.settings.t));
 		});		
 
 		$('#dataset_import').on('click', (e) => {
