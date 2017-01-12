@@ -23,6 +23,8 @@ class Greedy {
 			var n2 = vgraph.nodes[a[1].id];
 			var path = astar.calculate(n1, n2);
 			if (!n1.isObstacle() && !n2.isObstacle()){
+				if (nodes[n2.id] == undefined || nodes[n1.id] == undefined)
+					console.log(a[0].id, a[1].id);
 				node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id], n2: nodes[n2.id]} );
 			}
 			a = cmb.next();
@@ -34,6 +36,7 @@ class Greedy {
 			var pair = node_pairs[key];
 			var n1 = pair.n1;
 			var n2 = pair.n2;
+
 
 			// Find shortest path in current graph
 			var newPath = astar.calculate(nodes[n1.id], nodes[n2.id], graph);

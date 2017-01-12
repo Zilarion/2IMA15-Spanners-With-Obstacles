@@ -45,7 +45,7 @@ class Generator {
 				y: varY
 			}
 			fails = 0;
-			obstacle.addNode(obstacle.nodes.length,p.x,p.y);
+			obstacle.addNode(obstacle.nodes.length, p.x, p.y);
 			old = p;
 		}
 		for (var i=0; i<obstacleSize; i++) {
@@ -63,7 +63,7 @@ class Generator {
 			var varY = Util.getRandomArbitrary(0, settings.h);
 			
 			if (!obstacle.inObstacle(varX, varY)) {
-				nodes.push({id: nodes.length, x: varX, y: varY});
+				nodes.push({id: obstacle.nodes.length + nodes.length, x: varX, y: varY});
 			}
 		}
 		return nodes;

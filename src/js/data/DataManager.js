@@ -25,7 +25,7 @@ class DataManager {
 		// Load all nodes
 		for(var i = 3; i < 3 + +numNodes; i++){
 			var node = lines[i].split(' ');
-			nodes.push({id: i-2, x: +node[0], y: +node[1]});
+			nodes.push({id: numObstacles + i-2, x: +node[0], y: +node[1]});
 		}
 
 		// Load all obstacles

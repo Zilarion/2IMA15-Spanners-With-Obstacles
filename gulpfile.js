@@ -68,5 +68,5 @@ gulp.task('server', function () {
  
     gulp.watch(['app/scripts/**/*.js'], ['jshint']);
     gulp.watch(['app/images/**/*'], server.notify);
-    gulp.watch(['app.js', 'routes/**/*.js'], [server.run]);
+    gulp.watch(['app.js', 'routes/**/*.js', 'src/**/*.js'], ['js', server.run]);
 });

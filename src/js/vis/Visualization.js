@@ -4,7 +4,6 @@ var d3 = require('d3');
 var $ = require('jquery');
 const EventEmitter = require('events');
 var Spinner = require('spin');
-var Loader = require('./Loader')
 
 class Visualization extends EventEmitter {
 
@@ -27,7 +26,6 @@ class Visualization extends EventEmitter {
 	 	this.view = this.svg.append("g");
 
 		this.data = {nodes: [], edges: []};
-		// this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.view, id: "loader"});
 
 		this.setupListeners();
 	}
@@ -42,7 +40,6 @@ class Visualization extends EventEmitter {
 		// On click
 	  	var that = this;
 		this.svg.on("click", function() {
-			console.log("CLIIIICKCKK");
 			var coords = d3.mouse(this);
 			var svg = d3.select(".svg-element");
 
@@ -91,7 +88,6 @@ class Visualization extends EventEmitter {
 	// Update the visualization
 	update() {
 		var data = this.data;
-		var debug = data.debug;
 		var width = this.settings.dim.xmax - this.settings.dim.xmin;
 
 		//obstacles
@@ -137,39 +133,35 @@ class Visualization extends EventEmitter {
 			.style("stroke", "grey" )
 			.attr("stroke-width", width/800)
 			.attr( "opacity", 1 )
+	
+		if (data.debug) {
+			// Add the SVG Text Element to the svgContainer
+			var text = this.view.selectAll("text.ids")
+				.data(data.nodes.concat(data.obstacle.nodes))
+				.enter()
+				.append("text")
+				.attr("x", function(d) { return d.x + (width/1200); })
+				.attr("y", function(d) { return d.y - (width/1600); })
+				.text( function (d) { return d.id; })
+				.attr("font-family", "sans-serif")
+				.attr("font-size", (9*width)/400)
+				.attr("fill", "red")
+				.classed("ids", true);
 
-	  if (debug) {	  	
-			//Add the SVG Text Element to the svgContainer
-			// var text = this.view.selectAll("text.ids")
-			// 	.data(data.nodes.concat(data.obstacle.nodes))
-			// 	.enter()
-			// 	.append("text")
-			// 	.attr("x", function(d) { return d.x + (width/1200); })
-			// 	.attr("y", function(d) { return d.y - (width/1600); })
-			// 	.text( function (d) { return d.id; })
-			// 	.attr("font-family", "sans-serif")
-			// 	.attr("font-size", (9*width)/400)
-			// 	.attr("fill", "red")
-			// 	.classed("ids", true);
-
-			if (data.debug) {
-				var dur = 500;
-
-				if (data.debug.vgraph) {
-					var vnodes = data.debug.vgraph.nodes;
-					this.view
-								.selectAll("line")
-								.data(data.debug.vgraph.edges)
-								.enter()
-								.append("line")
-								.attr("x1", function (d) { return d.source.x; })
-								.attr("y1", function (d) { return d.source.y; })
-								.attr("x2", function (d) { return d.target.x; })
-								.attr("y2", function (d) { return d.target.y; })
-								.style("stroke", "red" )
-							.attr( "opacity", 0.2 )
-				}
-		  }
+			if (data.debug.vgraph) {
+				var vnodes = data.debug.vgraph.nodes;
+				this.view
+							.selectAll("line")
+							.data(data.debug.vgraph.edges)
+							.enter()
+							.append("line")
+							.attr("x1", function (d) { return d.source.x; })
+							.attr("y1", function (d) { return d.source.y; })
+							.attr("x2", function (d) { return d.target.x; })
+							.attr("y2", function (d) { return d.target.y; })
+							.style("stroke", "red" )
+						.attr( "opacity", 0.2 )
+			}
 	  }
 	}
 
