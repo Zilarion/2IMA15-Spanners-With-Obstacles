@@ -187,7 +187,7 @@ class Controller {
 
 	clicked(position) {
 		if (!this.obstacle.inObstacle(position.x, position.y)) {
-			this.g.addNode(this.g.nodes.length + 1, position.x, position.y);
+			this.nodes.push({id: this.nodes.length + 1, x: position.x, y: position.y});
 			this.recalculate();
 		}
 	}
