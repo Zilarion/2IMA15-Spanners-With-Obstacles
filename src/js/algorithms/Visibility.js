@@ -10,7 +10,7 @@ var Graph = require('../core/Graph');
 
 class Visibility {
 	static compute(g, obstacle) {
-		return Visibility.greedy(g, obstacle);
+		return Visibility.sweepline(g.nodes, [obstacle]);
 	}
 
 	static angle(x1, y1, x2, y2){
@@ -108,14 +108,26 @@ class Visibility {
 		Bdir.y += sweepPoint.y;
 		//construct status with lines intersecting dir
 		var status = new RBTree(function(e1, e2) {
-			if (e1 === e2){
+			if (e1.s.id === e2.s.id && e1.e.id === e2.e.id){
+				console.log("EQ", e1.s.id, e1.e.id, e2.s.id, e2.e.id);
 				return 0;
 			}
-			 var p1 = that.linePosOnAngle(e1.s, e1.e, sweepPoint, that.currentNode);
-			 var p2 = that.linePosOnAngle(e2.s, e2.e, sweepPoint, that.currentNode); 
-			 var d1 = Util.distance(sweepPoint, p1);
-			 var d2 = Util.distance(sweepPoint, p2);
-			 return d1 - d2;
+			console.log("cmp", e1.s.id, e1.e.id, e2.s.id, e2.e.id);
+			
+			var p1 = that.linePosOnAngle(e1.s, e1.e, sweepPoint, that.currentNode);
+			var p2 = that.linePosOnAngle(e2.s, e2.e, sweepPoint, that.currentNode); 
+			if (!p1){
+				if (that.currentNode === e1.s) p1 = e1.s;
+				if (that.currentNode === e1.e) p1 = e1.e;
+			}
+			if (!p2){
+				if (that.currentNode === e2.s) p2 = e2.s;
+				if (that.currentNode === e2.e) p2 = e2.e;
+			}
+			console.log(p1, p2);
+			var d1 = Util.distance(sweepPoint, p1);
+			var d2 = Util.distance(sweepPoint, p2);
+			return d1 - d2;
 		});
 
 		var getOther = function(edge, point){
@@ -132,8 +144,8 @@ class Visibility {
 			var other = getOther(edge, point);
 			var angle = angleA(point);
 			var otherAngle = angleA(other);
-			var angleDiff = otherAngle - angle;
-			return otherAngle;
+			var angleDiff = Math.abs(otherAngle - angle);
+			return angleDiff;
 		}
 
 		//TODO: change this to non-"global"
@@ -147,7 +159,7 @@ class Visibility {
 				if (e === B.edge1 && getEdgeAngleDiff(B.edge1, B) < Math.PI){
 					continue;
 				}
-				if (e === B.edge2 && getEdgeAngleDiff(B.edge1, B) < Math.PI){
+				if (e === B.edge2 && getEdgeAngleDiff(B.edge2, B) < Math.PI){
 					continue;
 				}
 				console.log("STATUS INSERT", e.s.id, e.e.id);
@@ -167,8 +179,19 @@ class Visibility {
 			if (!!that.currentNode.edge1 || !!that.currentNode.edge2){
 				//update status
 				var handleEdge = function(edge){
+					var str = "before: ";
+					status.each(function(el){
+						var add = "(" + el.s.id + " " + el.e.id + ")"
+						if (str.includes(add)){
+							console.log("DUPE");
+						}
+						str += add;
+					});
+					console.log(str);
 					//check if status already has edge
-					if (status.find(edge) != null){
+					console.log("          find");
+					if (!(status.find(edge) === null)){
+						console.log("          found");
 						//if this edge is also min, q is visible
 						if (status.min() === edge){
 							console.log("deleted as min ", edge.s.id, edge.e.id);
@@ -178,7 +201,9 @@ class Visibility {
 						}
 						//this point is the endpoint of the edge
 						status.remove(edge);
+						console.log("removed");
 					}else{
+						console.log("          not found");
 						//this point is the startpoint of the edge
 						status.insert(edge);
 						if (status.min() === edge){
@@ -189,6 +214,11 @@ class Visibility {
 							console.log("inserted ", edge.s.id, edge.e.id);
 						}
 					}
+					str = "after:  ";
+					status.each(function(el){
+						str += "(" + el.s.id + " " + el.e.id + ")"
+					});
+					console.log(str);
 				}
 				handleEdge(that.currentNode.edge1);
 				handleEdge(that.currentNode.edge2);
