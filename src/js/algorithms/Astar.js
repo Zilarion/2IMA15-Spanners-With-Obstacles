@@ -4,7 +4,7 @@ var Util = require('../core/Util');
 var Heap = require('heap');
 
 class Astar {
-	static calculate(start, goal, graph) {
+	static calculate(start, goal) {
 		var heuristic = Util.distance;
 
     var gScore = new Map();

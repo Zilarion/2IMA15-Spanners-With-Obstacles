@@ -101,7 +101,6 @@ class Controller {
 	newData(graph, obstacle) {
 		this.g = graph;
 		this.obstacle = obstacle;
-	  this.obstacle.changed = true;
 
 	  var newDim = this.dimensions();
 	  this.settings.dim = newDim;
@@ -148,11 +147,8 @@ class Controller {
 		  	that.g.clearEdges();
 			  // Run algorithm
 		  	var t0 = performance.now();
-		  	if (that.obstacle.changed) {
-		  		console.log("Computing visibility graph");
-					that.vg = Visibility.compute(that.g, that.obstacle);
-		  		that.obstacle.changed = false;
-		  	}
+	  		console.log("Computing visibility graph");
+				that.vg = Visibility.compute(that.g, that.obstacle);
 		  	console.log("Computing t-spanner");
 			  that.debug = that.settings.algorithms[that.settings.algorithm](that.g, that.vg, that.settings);
 				var t1 = performance.now();

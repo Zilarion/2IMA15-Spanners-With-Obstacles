@@ -27,7 +27,7 @@ class Greedy {
 		while(a != null) {
 			var n1 = vgraph.nodes[a[0].id-1];
 			var n2 = vgraph.nodes[a[1].id-1];
-			var path = astar.calculate(n1, n2, vgraph);
+			var path = astar.calculate(n1, n2);
 			if (!n1.isObstacle() && !n2.isObstacle()){
 				node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id - 1], n2: nodes[n2.id - 1]} );
 			}
