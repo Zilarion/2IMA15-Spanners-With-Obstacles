@@ -261,7 +261,6 @@ class Visibility {
 			var p = obstacle.nodes[key]
 			if (prev) {
 				graph.addEdge(prev, p, Util.distance(prev, p));
-				console.log(prev.id, p.id)
 			}
 			prev = p;
 		}
