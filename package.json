@@ -2,7 +2,7 @@
   "name": "2ima15-spanners-with-obstacles",
   "version": "1.0.0",
   "description": "Computing t-spanners with obstacles",
-  "main": "index.js",
+  "main": "src/js/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -17,10 +17,14 @@
   },
   "homepage": "https://github.com/Zilarion/2IMA15-Spanners-With-Obstacles#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "d3": "^4.4.0",
+    "express": "^4.14.0",
     "heap": "^0.2.6",
+    "http-server": "^0.9.0",
     "jquery": "^3.1.1",
     "js-combinatorics": "^0.5.2",
+    "json3": "^3.3.2",
     "spin": "0.0.1",
     "webworker-threads": "^0.7.10"
   },
@@ -29,6 +33,7 @@
     "browserify": "^13.1.1",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
+    "gulp-express": "^0.3.5",
     "gulp-inject": "^4.2.0",
     "gulp-nunjucks": "^2.3.0",
     "gulp-sass": "^3.0.0",
