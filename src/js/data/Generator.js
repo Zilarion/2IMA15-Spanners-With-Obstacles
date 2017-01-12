@@ -45,9 +45,14 @@ class Generator {
 				y: varY
 			}
 			fails = 0;
-			obstacle.addNode(obstacle.nodes.length+100,p.x,p.y);
+			obstacle.addNode(obstacle.nodes.length,p.x,p.y);
 			// graph.addNode(graph.nodes.length+1,p.x,p.y);
 			old = p;
+		}
+		for (var i=0; i<obstacleSize; i++) {
+			var source = obstacle.getNode(i);
+			var target = obstacle.getNode((i+1)%obstacleSize);
+			obstacle.addEdge(source, target, Util.distance(source, target));
 		}
 		return obstacle;
 	}
@@ -58,7 +63,7 @@ class Generator {
 			var varY = Util.getRandomArbitrary(0, settings.h);
 			
 			if (!obstacle.inObstacle(varX, varY)) {
-				graph.addNode(graph.nodes.length+1,varX,varY);
+				graph.addNode(graph.nodes.length,varX,varY);
 			}
 		}
 		return graph;

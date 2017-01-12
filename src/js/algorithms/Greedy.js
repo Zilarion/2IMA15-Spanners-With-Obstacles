@@ -25,11 +25,11 @@ class Greedy {
 		var cmb = Combinatorics.combination(nodes, 2)
 		var a = cmb.next();
 		while(a != null) {
-			var n1 = vgraph.nodes[a[0].id-1];
-			var n2 = vgraph.nodes[a[1].id-1];
+			var n1 = vgraph.nodes[a[0].id];
+			var n2 = vgraph.nodes[a[1].id];
 			var path = astar.calculate(n1, n2);
 			if (!n1.isObstacle() && !n2.isObstacle()){
-				node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id - 1], n2: nodes[n2.id - 1]} );
+				node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id], n2: nodes[n2.id]} );
 			}
 			a = cmb.next();
 		}
@@ -42,7 +42,7 @@ class Greedy {
 			var n2 = pair.n2;
 
 			// Find shortest path in current graph
-			var newPath = astar.calculate(nodes[n1.id-1], nodes[n2.id-1], graph);
+			var newPath = astar.calculate(nodes[n1.id], nodes[n2.id], graph);
 			
 			// If this is to large, add this pair as edge
 			if (newPath.length > t * pair.dist) {
@@ -50,8 +50,8 @@ class Greedy {
 				for (var p in pair.path.sequence){
 					var point = pair.path.sequence[p];
 					if (prev){
-						var source = graph.nodes[prev.id - 1] ? graph.nodes[prev.id- 1] : prev;
-						var target = graph.nodes[point.id- 1] ? graph.nodes[point.id- 1] : point;
+						var source = graph.nodes[prev.id] ? graph.nodes[prev.id] : prev;
+						var target = graph.nodes[point.id] ? graph.nodes[point.id] : point;
 						graph.addEdge(source, target, Util.distance(prev, point));
 					}
 					prev = point;

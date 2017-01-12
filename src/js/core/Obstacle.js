@@ -6,6 +6,7 @@ var Node = require('./Node');
 class Obstacle {
 	constructor() {
 		this.nodes = [];
+		this.edges = [];
 		this.x = 0;
 		this.y = 0;
 	}
@@ -20,6 +21,13 @@ class Obstacle {
 
 	size() {
 		return this.nodes.length;
+	}
+	
+	addEdge(source, target, weight) {
+		var newEdge = {source: source, target: target, weight: weight};
+		source.addEdge(newEdge)
+		target.addEdge(newEdge)
+		this.edges.push(newEdge);
 	}
 
 	dimensions() {
