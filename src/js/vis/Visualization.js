@@ -27,7 +27,7 @@ class Visualization extends EventEmitter {
 	 	this.view = this.svg.append("g");
 
 		this.data = {nodes: [], edges: []};
-		this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.svg, id: "loader"});
+		// this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.view, id: "loader"});
 
 		this.setupListeners();
 	}
@@ -80,10 +80,10 @@ class Visualization extends EventEmitter {
 
 	loading(status) {
 		if (status) {
-			this.view.selectAll("*:not(.loader)").remove();
-			this.loader.opacity(1);
+			this.view.selectAll("*").remove();
+			$(".spinner").show();
 		} else {
-			this.loader.opacity(0);
+			$(".spinner").hide();
 		}
 	}
 
@@ -139,26 +139,26 @@ class Visualization extends EventEmitter {
 
 	  if (debug) {	  	
 			//Add the SVG Text Element to the svgContainer
-			var text = this.view.selectAll("text.ids")
-				.data(data.nodes.concat(data.obstacle.nodes))
-				.enter()
-				.append("text")
-				.attr("x", function(d) { return d.x + (width/1200); })
-				.attr("y", function(d) { return d.y - (width/1600); })
-				.text( function (d) { return d.id; })
-				.attr("font-family", "sans-serif")
-				.attr("font-size", (9*width)/400)
-				.attr("fill", "red")
-				.classed("ids", true);
+			// var text = this.view.selectAll("text.ids")
+			// 	.data(data.nodes.concat(data.obstacle.nodes))
+			// 	.enter()
+			// 	.append("text")
+			// 	.attr("x", function(d) { return d.x + (width/1200); })
+			// 	.attr("y", function(d) { return d.y - (width/1600); })
+			// 	.text( function (d) { return d.id; })
+			// 	.attr("font-family", "sans-serif")
+			// 	.attr("font-size", (9*width)/400)
+			// 	.attr("fill", "red")
+			// 	.classed("ids", true);
 
 			if (data.debug) {
 				var dur = 500;
 
-
-				if (data.debug.edges) {
-					var edges = this.view
+				if (data.debug.vgraph) {
+					var vnodes = data.debug.vgraph.nodes;
+					this.view
 								.selectAll("line")
-								.data(data.debug.edges)
+								.data(data.debug.vgraph.edges)
 								.enter()
 								.append("line")
 								.attr("x1", function (d) { return d.source.x; })
@@ -167,36 +167,6 @@ class Visualization extends EventEmitter {
 								.attr("y2", function (d) { return d.target.y; })
 								.style("stroke", "red" )
 							.attr( "opacity", 0.2 )
-				}
-
-
-			  if (data.debug.rects) {
-					var rects = this.view
-						.selectAll("rect")
-						.data(data.debug.rects)
-						.enter()
-						.append("rect")
-						.attr("x", function (d) { return d.x; })
-						.attr("y", function (d) { return d.y; })
-						.attr("width", function (d) { return d.width; })
-						.attr("height", function (d) { return d.height; })
-						.style("stroke", "grey" )
-			    	.style( "fill", "none" )
-			    	.style( "opacity", 0.1 )
-						.transition()
-							.delay(function(d, i) {
-								var isEven = (i%2 == 0);
-								var delay = isEven ? (i * dur) : (i-1) * dur;
-								return delay;
-							})
-				    	.duration(dur/2)
-				    	.style( "fill", function(d,i) {
-				    		return (i%2 == 0) ? "red" : "green"
-				    	})
-			    	.on("end", function(d,i) {
-			    		d3.select(this).transition()
-							.delay(500).style("fill", "none");
-			    	});
 				}
 
 				if (data.debug.circles) {

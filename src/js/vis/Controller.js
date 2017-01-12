@@ -22,7 +22,8 @@ class Controller {
 
 		var algorithms = $('#algorithms');
 		for ( var key in this.settings.algorithms ) {
-	    algorithms.append($("<option />").val(key).text(key));
+			var alg = this.settings.algorithms[key]
+	    algorithms.append($("<option />").val(alg).text(alg));
 		};
 		algorithms.val(this.settings.algorithm);
 
@@ -39,6 +40,12 @@ class Controller {
 		$('#recalculate').on('click', (e) => {
 		  e.preventDefault();
 			this.updateSettings();
+		});	
+
+		$('#clearPoints').on('click', (e) => {
+		  e.preventDefault();
+		  this.nodes = [];
+		  this.recalculate();
 		});	
 
 		$('#dataset_export').on('click', (e) => {
@@ -121,6 +128,7 @@ class Controller {
 	recalculate() {
 	  // Set loading to true
 	  this.visualization.loading(true);
+	  console.log('load on');
 	  var that = this;
 
 	  // Send our query
@@ -138,7 +146,7 @@ class Controller {
 		.done(function(data) {
 	  	that.result = data;
 	  	that.updateData();
-	  }).always(function() {
+	  	console.log("load off");
 	  	that.visualization.loading(false);
 	  });
   }
@@ -168,7 +176,7 @@ class Controller {
 	  this.visualization.setData({
 	  	nodes: this.result.graph.nodes, 
 	  	edges: this.result.graph.edges, 
-	  	debug: this.result.debug,
+	  	debug: this.settings.debug ? {vgraph: this.result.vgraph} : {},
 	  	obstacle: this.obstacle
 	  });
 
@@ -177,12 +185,12 @@ class Controller {
 	  $("#d_weight").html(this.result.meta.totalWeight);
 	  $("#d_time").html(this.result.meta.runTime + " ms");
 
-	  if (this.settings.debug) {
-	  	var valid = this.validTSpanner(this.g, this.settings.t);
-		  $("#d_valid").html(valid ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
-		} else {
+	  // if (this.settings.debug) {
+	  	// var valid = this.validTSpanner(this.g, this.settings.t);
+		  // $("#d_valid").html(valid ? "<div class=\"light light-valid\"></div>" : "<div class=\"light light-invalid\"></div>");
+		// } else {
 			$("#d_valid").html("<div class=\"light\"></div>");
-		}
+		// }
 	}
 
 	clicked(position) {
@@ -190,10 +198,6 @@ class Controller {
 			this.nodes.push({id: this.nodes.length + 1, x: position.x, y: position.y});
 			this.recalculate();
 		}
-	}
-
-	get algorithms() {
-		return this.settings.algorithms;
 	}
 
 	validTSpanner(graph, t) {

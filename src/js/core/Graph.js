@@ -104,7 +104,11 @@ class Graph {
   	var edges = [];
   	for (var key in this.edges) {
   		var edge = this.edges[key];
-  		edges.push({source: edge.source.id, target: edge.target.id, weight: edge.weight});
+  		edges.push({
+  			source: {id: edge.source.id, x: edge.source.x, y: edge.source.y}, 
+  			target: {id: edge.target.id, x: edge.target.x, y: edge.target.y}, 
+  			weight: edge.weight
+  		});
   	}
 
 		return {

@@ -11,6 +11,10 @@ class Greedy {
 		var t = settings.t;
 		var debug = {edges: vgraph.edges};
 
+		if (nodes.length <= 1) {
+			return {graph: graph, debug: debug};
+		}
+
 		// Calculate all possible pairs
 		var cmb = Combinatorics.combination(nodes, 2)
 		var a = cmb.next();
@@ -33,7 +37,6 @@ class Greedy {
 
 			// Find shortest path in current graph
 			var newPath = astar.calculate(nodes[n1.id-1], nodes[n2.id-1], graph);
-			console.log(newPath.length, pair.dist);
 			
 			// If this is to large, add this pair as edge
 			if (newPath.length > t * pair.dist) {
