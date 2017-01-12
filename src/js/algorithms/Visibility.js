@@ -50,7 +50,6 @@ class Visibility {
 		var B = undefined;
 		var closestDistance = 1000000;//TODO: max_number?
 		for (var index_e in edges){
-			console.log("Test");
 			var e = edges[index_e];
 			var q = e.source;
 			var dist = Util.distance(sweepPoint, q);
@@ -73,16 +72,19 @@ class Visibility {
 		
 		var handleEvent = function(node) {
 			var result = [];
-			for (var edge in node.edges) {
-				if (!(status.find(node.edges[edge]) === null)) {
-					status.insert(node.edges[edge]);
-				} else {
-					status.remove(node.edges[edge]);
+			if (node.obstacle) { // Obstacle node
+				for (var edge in node.edges) {
+					if (status.find(node.edges[edge]) === null) {
+						status.insert(node.edges[edge]);
+					} else {
+						status.remove(node.edges[edge]);
+					}
 				}
-				var min = status.min();
-				if (!(Util.linesIntersect(sweepPoint, node, min.source, min.target))) {
-					visible.push(node);
-				}
+			} // Else Normal node
+			var min = status.min();
+			if (!(Util.linesIntersect(sweepPoint, node, min.source, min.target))) {
+				console.log(sweepPoint.id, node.id, min.source.id, min.target.id);
+				visible.push(node);
 			}
 			return;
 		}
@@ -94,16 +96,15 @@ class Visibility {
 		var queue = new Heap(function(node1, node2) {
 			return angleA(node1) - angleA(node2);
 	    });
-		//only add points beyond offset
-		//console.log(points);
-		for (var p = pointsOffset; p < points.length; p++){
-			queue.push(points[p]);
-		}	
-		for (var index_e in edges){
-			var e = edges[index_e];
-			queue.push(e.source);
+
+		var initialized = false;
+		if (!initialized) {
+			for (var p = 0; p<points.length; p++) {
+				queue.push(points[p]);
+			}
+			queue.heapify();
+			initialized = true;
 		}
-		queue.heapify();
 		
 		//construct infinite line from p through B, call Bdir
 		var Bdir = {};
@@ -190,8 +191,6 @@ class Visibility {
 		//console.log(points);
 		//sweep algorithm
 		//console.log("EDGES", edges);
-		console.log("QUEUE");
-		console.log(queue);
 		while (!queue.empty()) {
 			that.currentNode = queue.pop();
 			handleEvent(that.currentNode);
@@ -208,10 +207,7 @@ class Visibility {
 	static sweepline(g, obstacle){
 		console.log("sweep");
 		var graph = new Graph();
-		for (var node in obstacle.nodes) {
-			var obstNode = obstacle.getNode(node);
-			graph.addObstacleNode(obstNode.id, obstNode.x, obstNode.y);
-		}
+		graph.copy(obstacle, true);
 		graph.copy(g, false);
 		
 		var points = graph.nodes;
@@ -228,7 +224,7 @@ class Visibility {
 			}
 			//console.log(graph.edges);
 			//TODO: temp return for debugging
-			//return graph;
+			return graph;
 		}
 		return graph;		
 	}
