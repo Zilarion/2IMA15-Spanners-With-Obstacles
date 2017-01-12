@@ -19,7 +19,7 @@ class Obstacle {
 	}
 	
 	addNode(id, x, y) {
-		this.nodes.push(new Node(id, x, y, this));
+		this.nodes.push(new Node(id, x, y, this, true));
 	}
 	
 	getNode(id) {

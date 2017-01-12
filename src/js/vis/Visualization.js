@@ -160,7 +160,7 @@ class Visualization extends EventEmitter {
 							.attr("x2", function (d) { return d.target.x; })
 							.attr("y2", function (d) { return d.target.y; })
 							.style("stroke", "red" )
-						.attr( "opacity", 0.2 )
+						.attr( "opacity", 1 )
 			}
 	  }
 	}

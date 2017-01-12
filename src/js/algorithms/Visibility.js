@@ -236,11 +236,11 @@ class Visibility {
 	static greedy(g, obstacle){
 		console.log("Computing visibility");
 		var graph = new Graph();
-		graph.copy(g, false);
 		for (var node in obstacle.nodes) {
 			var obstNode = obstacle.getNode(node);
 			graph.addObstacleNode(obstNode.id, obstNode.x, obstNode.y);
 		}
+		graph.copy(g, false);
 
 		var points = graph.nodes;
 		for (var p = 0; p < points.length; p++){
@@ -265,11 +265,13 @@ class Visibility {
 			var p = obstacle.nodes[key]
 			if (prev) {
 				graph.addEdge(prev, p, Util.distance(prev, p));
+				console.log(prev.id, p.id)
 			}
 			prev = p;
 		}
 		graph.addEdge(prev, obstacle.nodes[0], Util.distance(prev, obstacle.nodes[0]));
 		console.log("Done computing visibility");
+
 		return graph;
 	}
 }

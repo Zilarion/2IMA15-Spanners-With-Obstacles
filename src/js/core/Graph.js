@@ -24,23 +24,22 @@ class Graph {
 	}
 
 	copy(graph, obstacle) {
-		var size = this.nodes.length;
 		for (var key in graph.nodes) {
 			var node = graph.nodes[key];
 			var id = node.id;
 			var x = node.x;
 			var y = node.y;
 			if (obstacle) {
-				this.addObstacleNode(size + id, x, y);
+				this.addObstacleNode(id, x, y);
 			} else {
-				this.addNode(size + id, x, y);
+				this.addNode(id, x, y);
 			}
 		}
 
 		for (var key in graph.edges) {
 			var edge = graph.edges[key];
-			var source = this.nodes[size + edge.source.id];
-			var target = this.nodes[size + edge.target.id];
+			var source = this.nodes[edge.source.id];
+			var target = this.nodes[edge.target.id];
 			var weight = edge.weight;
 			this.addEdge(source, target, weight);
 		}

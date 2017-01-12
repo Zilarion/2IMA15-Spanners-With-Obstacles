@@ -148,6 +148,7 @@ class Controller {
       data: data
     })
 		.done(function(data) {
+			console.log(data);
 	  	that.result = data;
 	  	that.updateData();
 	  	that.visualization.loading(false);
