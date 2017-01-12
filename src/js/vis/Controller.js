@@ -135,7 +135,12 @@ class Controller {
 	  var data = JSON.stringify({
 	  	"nodes": this.nodes, 
 	  	"obstacle": this.obstacle.toJSON(),
-	  	"settings": {t: this.settings.t}
+	  	"settings": {
+	  		t: this.settings.t,
+	  	 	algorithm: this.settings.algorithm,
+	  	 	w: this.settings.w,
+	  	 	h: this.settings.h
+	  	}
 	  });
 		$.ajax({
       type: "POST",

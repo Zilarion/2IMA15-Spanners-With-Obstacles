@@ -1,10 +1,17 @@
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser');
+
+// Load algorithms
 var greedy = require('./src/js/algorithms/Greedy');
+var wspd = require('./src/js/algorithms/WSPD');
 var visibility = require('./src/js/algorithms/Visibility');
+
+// Load core
 var Graph = require('./src/js/core/Graph');
 var Obstacle = require('./src/js/core/Obstacle');
+
+// Load threading
 var Worker = require('webworker-threads').Worker;
 var activeWorker;
 
@@ -31,7 +38,21 @@ app.post('/query', function(req, res) {
 		// Run algorithm
 		var t0 = process.hrtime();
 		var vgraph = visibility.compute(graph, obstacle);
-		var result = greedy.calculate(graph, vgraph, settings);
+
+		switch (settings.algorithm) {
+			case "greedy":
+				console.log("Running greedy")
+				result = greedy.calculate(graph, vgraph, settings);
+				break;
+			case "WSPD":
+				console.log("Running WSPD")
+				result = wspd.calculate(graph, vgraph, settings);
+				break;
+			default:
+				// error
+				break;
+		}
+
 		t1 = process.hrtime(t0);
 
 		// Constructor metadata
