@@ -19,17 +19,19 @@ class Greedy {
 		var node_pairs = [];
 		var t = settings.t;
 		var debug = {edges: vgraph.edges};
-		return;
+		//return;
 
 		// Calculate all possible pairs
-		cmb = Combinatorics.combination(['a','b','c','d'], 2)
-		while(a = cmb.next()) {
-			var n1 = a[0];
-			var n2 = a[1];
-			var path = astar.calculate(n1, n2, vgraph);
+		var cmb = Combinatorics.combination(nodes, 2)
+		var a = cmb.next();
+		while(a != null) {
+			var n1 = vgraph.nodes[a[0].id-1];
+			var n2 = vgraph.nodes[a[1].id-1];
+			var path = astar.calculate(n1, n2);
 			if (!n1.isObstacle() && !n2.isObstacle()){
 				node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id - 1], n2: nodes[n2.id - 1]} );
 			}
+			a = cmb.next();
 		}
 
 		// Sort based on distance
@@ -40,10 +42,10 @@ class Greedy {
 			var n2 = pair.n2;
 
 			// Find shortest path in current graph
-			var path = astar.calculate(n1, n2, graph);
-
+			var newPath = astar.calculate(nodes[n1.id-1], nodes[n2.id-1], graph);
+			
 			// If this is to large, add this pair as edge
-			if (path.length > t * pair.dist) {
+			if (newPath.length > t * pair.dist) {
 				var prev = undefined;
 				for (var p in pair.path.sequence){
 					var point = pair.path.sequence[p];
