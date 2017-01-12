@@ -45,7 +45,7 @@ class Generator {
 				y: varY
 			}
 			fails = 0;
-			obstacle.addNode(obstacle.nodes.length,p.x,p.y);
+			obstacle.addNode(obstacle.nodes.length, p.x, p.y);
 			old = p;
 		}
 		for (var i=0; i<obstacleSize; i++) {

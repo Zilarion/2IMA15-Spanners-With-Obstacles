@@ -35,7 +35,6 @@ class Controller {
 		// Listeners
 		visualization.on('click', (position) => {
 			this.clicked(position)
-			console.log("CLIEEEK");
 		})
 
 		$('#recalculate').on('click', (e) => {
@@ -199,7 +198,7 @@ class Controller {
 
 	clicked(position) {
 		if (!this.obstacle.inObstacle(position.x, position.y)) {
-			this.nodes.push({id: this.nodes.length + 1, x: position.x, y: position.y});
+			this.nodes.push({id: this.nodes.length, x: position.x, y: position.y});
 			this.recalculate();
 		}
 	}

@@ -4,7 +4,6 @@ var d3 = require('d3');
 var $ = require('jquery');
 const EventEmitter = require('events');
 var Spinner = require('spin');
-var Loader = require('./Loader')
 
 class Visualization extends EventEmitter {
 
@@ -27,7 +26,6 @@ class Visualization extends EventEmitter {
 	 	this.view = this.svg.append("g");
 
 		this.data = {nodes: [], edges: []};
-		// this.loader = new Loader({width: this.settings.w, height: this.settings.h, svg: this.view, id: "loader"});
 
 		this.setupListeners();
 	}
@@ -42,7 +40,6 @@ class Visualization extends EventEmitter {
 		// On click
 	  	var that = this;
 		this.svg.on("click", function() {
-			console.log("CLIIIICKCKK");
 			var coords = d3.mouse(this);
 			var svg = d3.select(".svg-element");
 
