@@ -1,3 +1,5 @@
+'use strict'
+
 var Node = require('./Node');
 
 class Graph {
@@ -51,6 +53,14 @@ class Graph {
 		this.edges.push(newEdge);
 	}
 
+	totalWeight() {
+		var sum = 0;
+		for (var key in this.edges) {
+			sum += this.edges[key].weight
+		}
+		return sum;
+	}
+
 	dimensions() {
 		var maxX = 0;
 		var maxY = 0;
@@ -74,14 +84,6 @@ class Graph {
 		return {xmax: maxX, ymax: maxY, xmin: minX, ymin: minY}
 	}
 
-	totalWeight() {
-		var sum = 0;
-		for (var key in this.edges) {
-			sum += this.edges[key].weight
-		}
-		return sum;
-	}
-	
 	clearEdges() {
 		for (var key in this.nodes) {
 			var n = this.nodes[key];
@@ -103,11 +105,26 @@ class Graph {
   get edges() {
   	return this._edges;
   }
-  toJson() {
-  	return {
-  		nodes: this.nodes,
-  		edges: this.edges
+  toJSON() {
+  	var nodes = [];
+  	for (var key in this.nodes) {
+  		var node = this.nodes[key];
+  		nodes.push({id: node.id, x: node.x, y: node.y})
   	}
+  	var edges = [];
+  	for (var key in this.edges) {
+  		var edge = this.edges[key];
+  		edges.push({
+  			source: {id: edge.source.id, x: edge.source.x, y: edge.source.y}, 
+  			target: {id: edge.target.id, x: edge.target.x, y: edge.target.y}, 
+  			weight: edge.weight
+  		});
+  	}
+
+		return {
+			nodes: nodes,
+			edges: edges
+		}
   }
 };
 

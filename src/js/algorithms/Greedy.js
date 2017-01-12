@@ -3,23 +3,17 @@
 var Util = require('../core/Util');
 var astar = require('./Astar');
 var Combinatorics = require('js-combinatorics');
-// var Worker = require('webworker-threads').Worker;
 
 class Greedy {
-	// constructor() {
-	// 	this.worker = new Worker({
-	// 		this.onmessage = function(event) {
-				
-	// 		};
- // 		});
-	// }
-	
 	static calculate(graph, vgraph, settings) {
 		var nodes = graph.nodes;
 		var node_pairs = [];
 		var t = settings.t;
 		var debug = {edges: vgraph.edges};
-		//return;
+
+		if (nodes.length <= 1) {
+			return {graph: graph, debug: debug};
+		}
 
 		// Calculate all possible pairs
 		var cmb = Combinatorics.combination(nodes, 2)
@@ -58,7 +52,7 @@ class Greedy {
 				}
 			}
 		}
-		return debug;
+		return {graph: graph, debug: debug};
 	}
 };
 

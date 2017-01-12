@@ -1,7 +1,7 @@
 'use strict';
 
 var Util = require('../core/Util');
-var Quadtree = require('../core/Quadtree');
+var QuadTree = require('../core/Quadtree');
 var shortest = require('./Dijkstra');
 var debug;
 
@@ -40,7 +40,7 @@ class WSPD {
 			graph.addEdge(repu, repv, Util.distance(repu, repv));
 		}
 		// console.log(map)
-		return debug;
+		return {graph: graph, debug: debug};
 	}
 
 	// Check if this node is a leaf

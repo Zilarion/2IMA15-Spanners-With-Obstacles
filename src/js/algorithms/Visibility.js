@@ -10,7 +10,8 @@ var Graph = require('../core/Graph');
 
 class Visibility {
 	static compute(g, obstacle) {
-		return Visibility.sweepline(g, [obstacle]);
+		// return Visibility.sweepline(g.nodes, [obstacle]);
+		return Visibility.greedy(g, obstacle);
 	}
 
 	static angle(x1, y1, x2, y2){
@@ -232,15 +233,13 @@ class Visibility {
 	}
 
 	static greedy(g, obstacle){
-		console.log("Starting copy");
+		console.log("Computing visibility");
 		var graph = new Graph();
 		graph.copy(g, false);
 		for (var node in obstacle.nodes) {
 			var obstNode = obstacle.getNode(node);
 			graph.addObstacleNode(obstNode.id, obstNode.x, obstNode.y);
 		}
-		console.log("Done with copy");
-		console.log("Starting regular");
 
 		var points = graph.nodes;
 		for (var p = 0; p < points.length; p++){
@@ -258,8 +257,6 @@ class Visibility {
 				}
 			}
 		}
-		console.log("Done regular");
-		console.log("Starting obstacle edges");
 
 		// :TODO: find a decent solution for adding all edges instead
 		var prev = undefined;
@@ -271,7 +268,7 @@ class Visibility {
 			prev = p;
 		}
 		graph.addEdge(prev, obstacle.nodes[0], Util.distance(prev, obstacle.nodes[0]));
-		console.log("Done.");
+		console.log("Done computing visibility");
 		return graph;
 	}
 }
