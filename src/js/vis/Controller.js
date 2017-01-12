@@ -55,11 +55,10 @@ class Controller {
 
 		$('#dataset_import').on('click', (e) => {
 		  var data = $("#dataset_data").val();
-		  console.log("Loading new dataset");
 		  this.dm.addDataset(data);
 			var dataset = this.dm.getLastDataset();
 		  this.newData(dataset.nodes, dataset.obstacle);
-	  	console.log("Done loading new dataset");
+	  	console.log("Loaded new dataset");
 		});		
 
 		$('#dataset_runmass').on('click', (e) => {

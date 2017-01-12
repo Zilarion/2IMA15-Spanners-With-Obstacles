@@ -35,8 +35,6 @@ class Greedy {
 			var n1 = pair.n1;
 			var n2 = pair.n2;
 
-			// console.log(n1.id, n2.id);
-
 			// Find shortest path in current graph
 			var newPath = astar.calculate(n1, n2);
 			
