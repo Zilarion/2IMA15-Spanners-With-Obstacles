@@ -9,11 +9,10 @@ class Greedy {
 		var nodes = graph.nodes;
 		var node_pairs = [];
 		var t = settings.t;
-		var debug = {edges: vgraph.edges};
 		var nObst = vgraph.nodes.length - graph.nodes.length;
 
 		if (nodes.length <= 1) {
-			return {graph: graph, debug: debug};
+			return graph;
 		}
 
 		// Calculate all possible pairs
@@ -56,7 +55,7 @@ class Greedy {
 				}
 			}
 		}
-		return {graph: graph, debug: debug};
+		return graph;
 	}
 };
 

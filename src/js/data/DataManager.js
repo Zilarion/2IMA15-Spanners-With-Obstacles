@@ -3,6 +3,7 @@
 var $ = require('jquery');
 var Node = require('../core/Node')
 var Obstacle = require('../core/Obstacle')
+var Util = require('../core/Util')
 
 class DataManager {
 	constructor(element_id) {
@@ -15,24 +16,30 @@ class DataManager {
 		var lines = data.split('\n');
 
 		// Read in all basic values
-		var numNodes = lines[0];
-		var numObstacles = lines[1];
+		var numNodes = +lines[0];
+		var numObstacles = +lines[1];
 		var tvalLine = lines[2].split(' ');
 		var tval = +tvalLine[0] / +tvalLine[1];
 
 		var nodes = [];
 
 		// Load all nodes
-		for(var i = 3; i < 3 + +numNodes; i++){
+		for(var i = 3; i < 3 + numNodes; i++){
 			var node = lines[i].split(' ');
-			nodes.push({id: numObstacles + i-2, x: +node[0], y: +node[1]});
+			nodes.push({id: numObstacles + i - 3, x: +node[0], y: +node[1]});
 		}
 
 		// Load all obstacles
 		var obstacle = new Obstacle();
-		for(var i = 3 + +numNodes; i < 3 + +numNodes + +numObstacles; i++) {
+		for(var i = 3 + numNodes; i < 3 + numNodes + numObstacles; i++) {
 			var oNode = lines[i].split(' ');
-			obstacle.addNode(i - 2 - numNodes, +oNode[0], +oNode[1]);
+			obstacle.addNode(i - 3 - numNodes, +oNode[0], +oNode[1]);
+		}
+		var obstacleSize = obstacle.nodes.length;
+		for (var i=0; i<obstacleSize; i++) {
+			var source = obstacle.getNode(i);
+			var target = obstacle.getNode((i+1)%obstacleSize);
+			obstacle.addEdge(source, target, Util.distance(source, target));
 		}
 
 		// Construct data

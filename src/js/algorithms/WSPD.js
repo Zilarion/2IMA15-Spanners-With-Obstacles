@@ -40,7 +40,7 @@ class WSPD {
 			graph.addEdge(repu, repv, Util.distance(repu, repv));
 		}
 		// console.log(map)
-		return {graph: graph, debug: debug};
+		return graph;
 	}
 
 	// Check if this node is a leaf

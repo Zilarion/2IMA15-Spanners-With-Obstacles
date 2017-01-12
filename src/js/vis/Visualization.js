@@ -122,7 +122,7 @@ class Visualization extends EventEmitter {
 			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
 		var edges = this.view
-			.selectAll("line")
+			.selectAll("line.gedge")
 			.data(data.edges)
 			.enter()
 			.append("line")
@@ -133,6 +133,7 @@ class Visualization extends EventEmitter {
 			.style("stroke", "grey" )
 			.attr("stroke-width", width/800)
 			.attr( "opacity", 1 )
+			.classed("gedge", true);
 	
 		if (data.debug) {
 			// Add the SVG Text Element to the svgContainer
@@ -149,9 +150,8 @@ class Visualization extends EventEmitter {
 				.classed("ids", true);
 
 			if (data.debug.vgraph) {
-				var vnodes = data.debug.vgraph.nodes;
 				this.view
-							.selectAll("line")
+							.selectAll("line.vedge")
 							.data(data.debug.vgraph.edges)
 							.enter()
 							.append("line")
@@ -160,7 +160,8 @@ class Visualization extends EventEmitter {
 							.attr("x2", function (d) { return d.target.x; })
 							.attr("y2", function (d) { return d.target.y; })
 							.style("stroke", "red" )
-						.attr( "opacity", 1 )
+							.attr( "opacity", 0.5 )
+							.classed('vedge', true)
 			}
 	  }
 	}

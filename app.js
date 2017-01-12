@@ -57,10 +57,10 @@ app.post('/query', function(req, res) {
 
 		// Constructor metadata
 		var meta = {
-			totalWeight: result.graph.totalWeight(),
+			totalWeight: result.totalWeight(),
 			runTime: t1[1]/1000000
 		}
-		return {graph: result.graph.toJSON(), vgraph: vgraph.toJSON(), meta: meta};
+		return {graph: result.toJSON(), vgraph: vgraph.toJSON(), meta: meta};
 	}
 
 	var data = req.body;
