@@ -188,11 +188,11 @@ class Visibility {
 			switch(e.event) {
 				case "start":
 					var inserted = status.insert({id: e.segment.source.id, segment: e.segment});
-					// console.log("ins ", [e.segment.source.id, e.segment.target.id], ": ", inserted)
+					console.log("ins ", e.node.id, [e.segment.source.id, e.segment.target.id], ": ", inserted)
 				break;
 				case "end":
 					var removed = status.remove({id: e.segment.source.id, segment: e.segment});
-					// console.log("rem ", [e.segment.source.id, e.segment.target.id], ": ", removed)
+					console.log("rem ", e.node.id, [e.segment.source.id, e.segment.target.id], ": ", removed)
 				break;
 			}
 		}
@@ -217,9 +217,18 @@ class Visibility {
 			var edge = obstacle.edges[key];
 			var source = edge.source;
 			var target = edge.target;
-			// This doesn't work, the start points are the points which we see first! Then we get the end points. :TODO:
-			eventQueue.push({event: "end", node: graph.nodes[target.id], segment: edge});
-			eventQueue.push({event: "start", node: graph.nodes[source.id], segment: edge});
+
+			// Calculate which of these points is the start node based on sweep direction
+			console.log([source.id, target.id], Visibility.angle(point, source), Visibility.angle(point, target))
+			var sAngle = Visibility.angle(point, source);
+			var tAngle = Visibility.angle(point, target)
+			var sourceIsStart = math.abs(sAngle - tAngle) >= math.PI; // ?????? dit klopt nog niet
+			var start = sourceIsStart ? graph.nodes[source.id] : graph.nodes[target.id];
+			var end = sourceIsStart ? graph.nodes[target.id] : graph.nodes[source.id];
+
+			// Add the events correctly
+			eventQueue.push({event: "start", node: start, segment: edge});
+			eventQueue.push({event: "end", node: end, segment: edge});
 		}
 
 		eventQueue.sort(function(e1, e2) {
