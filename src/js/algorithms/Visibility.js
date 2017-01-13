@@ -82,7 +82,6 @@ class Visibility {
 	static sweep(g, obstacle) {
 		console.log("Sweeping")
 		var graph = new Graph();
-		graph.copy(obstacle, true);
 		graph.copy(g, false);
 
 		for (var i = 0; i < graph.nodes.length; i++){
@@ -91,7 +90,7 @@ class Visibility {
 				var visible = Visibility.sweepPoint(p, graph, obstacle);
 				for (var key in visible) {
 					var visibleP = visible[key];
-					graph.addEdge(p, visibleP);
+					graph.addEdge(p, visibleP, Util.distance(p, visibleP));
 				}
 				// return graph;
 			}
@@ -123,8 +122,8 @@ class Visibility {
 	static handleEvent(sweepPoint, e, status, visible) {
 		var eventType = e.event;
 		var node = e.node;
-		console.log('-------------')
-		console.log(eventType, node.id);
+		// console.log('-------------')
+		// console.log(eventType, node.id);
 		switch(eventType) {
 			case "point":
 				var min = status.min();
@@ -138,16 +137,16 @@ class Visibility {
 			break;
 			case "segment":
 				if(status.find({id: e.segment.source.id, segment: e.segment}) == null) {
-					console.log("Add:", [e.segment.source.id, e.segment.target.id])
+					// console.log("Add:", [e.segment.source.id, e.segment.target.id])
 					status.insert({id: e.segment.source.id, segment: e.segment});
 				} else {
-					console.log("Remove:", [e.segment.source.id, e.segment.target.id])
+					// console.log("Remove:", [e.segment.source.id, e.segment.target.id])
 					status.remove({id: e.segment.source.id, segment: e.segment});
 				}
 
 				var min = status.min();
 				if(min == null || min.id == node.id) {
-					console.log("null or after min equal", min != null ? [min.segment.source.id, min.segment.target.id] : "")
+					// console.log("null or after min equal", min != null ? [min.segment.source.id, min.segment.target.id] : "")
 					visible.push(node);
 				}
 			break;
@@ -180,7 +179,7 @@ class Visibility {
 				initial.push([segment.source.id, segment.target.id]);
 			}
 		}
-		console.log(initial);
+		// console.log(initial);
 
 		return status;
 	}
@@ -215,7 +214,7 @@ class Visibility {
 			var e1Angle = Visibility.angle(point, n1);
 			var e2Angle = Visibility.angle(point, n2);
 
-			if (e1Angle == e2Angle) {
+			if (e1Angle == e2Angle && e1.segment && e2.segment) {
 				// If equal, sort on distance to this segment
 				var e1Dist = Visibility.pDistance(e1.segment, point);
 				var e2Dist = Visibility.pDistance(e2.segment, point);
