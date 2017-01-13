@@ -39,27 +39,43 @@ class Visibility {
 		return ccw(a,c,d) != ccw(b,c,d) && ccw(a,b,c) != ccw(a,b,d);
 	}
 
-	// Calculates if a segment intersects with the segment between two points
-	static intersects(segment, sweepPoint, node) {
-		// This should give a point on which the segment and the line between sweepPoint -> node cross
-		var p = math.intersect(
-			[segment.source.x, segment.source.y], 
-			[segment.target.x, segment.target.y], 
-			[sweepPoint.x, sweepPoint.y],
-			[node.x, node.y]
-		);  
+	static pDistance(segment, p) {
+		var x = p.x;
+		var y = p.y;
+		var x1 = segment.source.x;
+		var y1 = segment.source.y;
+		var x2 = segment.target.x;
+		var y2 = segment.target.y;
 
-		// If p is null, then we know the segments do not cross and hence p is in front of the segment
-		console.log(p, [segment.source.x, segment.source.y], [segment.target.x, segment.target.y], [sweepPoint.x, sweepPoint.y], [node.x,node.y]);
-		return p == null ? p : {x: p[0], y: p[1]};
-	}
+	  var A = x - x1;
+	  var B = y - y1;
+	  var C = x2 - x1;
+	  var D = y2 - y1;
 
-	static distanceToSegment(segment, p) {
-		var s1 = segment.source;
-		var s2 = segment.target;
-		var top = math.abs((s2.y - s1.y) * p.x - (s2.x - s1.x) * p.y + s2.x * s1.y - s2.y * s1.x)
-		var bottom = math.sqrt(math.pow(s2.y - s1.y ,2) + math.pow(s2.x - s1.x, 2));
-		return top/bottom;
+	  var dot = A * C + B * D;
+	  var len_sq = C * C + D * D;
+	  var param = -1;
+	  if (len_sq != 0) //in case of 0 length line
+	      param = dot / len_sq;
+
+	  var xx, yy;
+
+	  if (param < 0) {
+	    xx = x1;
+	    yy = y1;
+	  }
+	  else if (param > 1) {
+	    xx = x2;
+	    yy = y2;
+	  }
+	  else {
+	    xx = x1 + param * C;
+	    yy = y1 + param * D;
+	  }
+
+	  var dx = x - xx;
+	  var dy = y - yy;
+	  return Math.sqrt(dx * dx + dy * dy);
 	}
 
 	// Runs sweepPoint all points in g given an obstacle
@@ -77,7 +93,7 @@ class Visibility {
 					var visibleP = visible[key];
 					graph.addEdge(p, visibleP);
 				}
-				return graph;
+				// return graph;
 			}
 		}
 
@@ -118,7 +134,6 @@ class Visibility {
 					if (!Visibility.segIntersect(min.segment.source, min.segment.target, sweepPoint, node)) {
 						visible.push(node);						
 					}
-					return;
 				}
 			break;
 			case "segment":
@@ -129,9 +144,10 @@ class Visibility {
 					console.log("Remove:", [e.segment.source.id, e.segment.target.id])
 					status.remove({id: e.segment.source.id, segment: e.segment});
 				}
+
 				var min = status.min();
-				if(min == null || min.id == e.segment.source.id) {
-					console.log("min == null or id's are equal")
+				if(min == null || min.id == node.id) {
+					console.log("null or after min equal", min != null ? [min.segment.source.id, min.segment.target.id] : "")
 					visible.push(node);
 				}
 			break;
@@ -144,16 +160,27 @@ class Visibility {
 			if (n1.id == n2.id) {
 				return 0;
 			}
-			return Visibility.distanceToSegment(n1.segment, sweepPoint) - Visibility.distanceToSegment(n2.segment, sweepPoint);
+			// var d1 = Util.distance(n1.segment, sweepPoint)
+			// var d2 = Util.distance(n2.segment, sweepPoint)
+			// if (d1 != d2) {
+				// return d1 - d2;
+			// }
+			// If the distance is equal to the segments, calculate distance to the other point they do not share.
+			var id1 = n1.segment.source.id != n2.segment.source.id ? n1.segment.source : n1.segment.target;
+			var id2 = n1.segment.source.id != n2.segment.source.id ? n2.segment.source : n2.segment.target;
+			return Util.distance(id1, sweepPoint) - Util.distance(id2, sweepPoint);
 		});
 
 		// Go through all segments and insert all segments that we currently intersect
+		var initial = [];
 		for (var key in obstacle.edges) {
 			var segment = obstacle.edges[key];
-			if (Visibility.segIntersect(segment.source, segment.target, sweepPoint, {x: 10000000, y: 0})) {
+			if (Visibility.segIntersect(segment.source, segment.target, sweepPoint, {x: 100000000000, y: 0})) {
 				status.insert({id: segment.source.id, segment: segment})
+				initial.push([segment.source.id, segment.target.id]);
 			}
 		}
+		console.log(initial);
 
 		return status;
 	}
@@ -190,8 +217,8 @@ class Visibility {
 
 			if (e1Angle == e2Angle) {
 				// If equal, sort on distance to this segment
-				var e1Dist = Util.distance(n1, point);
-				var e2Dist = Util.distance(n2, point);
+				var e1Dist = Visibility.pDistance(e1.segment, point);
+				var e2Dist = Visibility.pDistance(e2.segment, point);
 				return (e1Dist - e2Dist);
 			}
 			return (e1Angle - e2Angle);
