@@ -30,9 +30,10 @@ app.post('/query', function(req, res) {
 		var graph = new Graph()
 		var obstacle = new Obstacle()
 		var settings = data.settings;
-
+		console.log(data.nodes);
 		// Load data
-		graph.load(data);
+		graph.copy(data.obstacle, true, true);
+		graph.copy(data, false, true);
 		obstacle.load(data.obstacle);
 
 		// Run algorithm

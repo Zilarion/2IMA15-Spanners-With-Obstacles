@@ -23,7 +23,7 @@ class Graph {
 		this.nodes.push(new Node(id, x, y, this, true));
 	}
 
-	copy(graph, obstacle) {
+	copy(graph, obstacle, useDirect) {
 		for (var key in graph.nodes) {
 			var node = graph.nodes[key];
 			var id = node.id;
@@ -38,8 +38,13 @@ class Graph {
 
 		for (var key in graph.edges) {
 			var edge = graph.edges[key];
-			var source = this.nodes[edge.source.id];
-			var target = this.nodes[edge.target.id];
+			if (useDirect) {
+				var source = this.nodes[edge.source];
+				var target = this.nodes[edge.target];
+			} else {
+				var source = this.nodes[edge.source.id];
+				var target = this.nodes[edge.target.id];
+			}
 			var weight = edge.weight;
 			this.addEdge(source, target, weight);
 		}
