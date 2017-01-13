@@ -82,7 +82,7 @@ class Visibility {
 	static sweep(g, obstacle) {
 		console.log("Sweeping")
 		var graph = new Graph();
-		graph.copy(g, false);
+		graph.fullcopy(g, false);
 
 		for (var i = 0; i < graph.nodes.length; i++){
 			var p = graph.nodes[i]

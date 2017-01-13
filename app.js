@@ -30,7 +30,7 @@ app.post('/query', function(req, res) {
 		var graph = new Graph()
 		var obstacle = new Obstacle()
 		var settings = data.settings;
-		console.log(data.nodes);
+
 		// Load data
 		graph.copy(data.obstacle, true, true);
 		graph.copy(data, false, true);
@@ -61,6 +61,7 @@ app.post('/query', function(req, res) {
 			totalWeight: result.totalWeight(),
 			runTime: t1[1]/1000000
 		}
+		console.log("All done!");
 		return {graph: result.toJSON(), vgraph: vgraph.toJSON(), meta: meta};
 	}
 

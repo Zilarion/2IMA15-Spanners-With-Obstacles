@@ -23,6 +23,28 @@ class Graph {
 		this.nodes.push(new Node(id, x, y, this, true));
 	}
 
+	fullcopy(graph) {
+		for (var key in graph.nodes) {
+			var node = graph.nodes[key];
+			var id = node.id;
+			var x = node.x;
+			var y = node.y;
+			if (node.isObstacle()) {
+				this.addObstacleNode(id, x, y);
+			} else {
+				this.addNode(id, x, y);
+			}
+		}
+
+		for (var key in graph.edges) {
+			var edge = graph.edges[key];
+			var source = this.nodes[edge.source.id];
+			var target = this.nodes[edge.target.id];
+			var weight = edge.weight;
+			this.addEdge(source, target, weight);
+		}
+	}
+
 	copy(graph, obstacle, useDirect) {
 		for (var key in graph.nodes) {
 			var node = graph.nodes[key];
@@ -113,7 +135,9 @@ class Graph {
   	var nodes = [];
   	for (var key in this.nodes) {
   		var node = this.nodes[key];
-  		nodes.push({id: node.id, x: node.x, y: node.y})
+  		if (!node.isObstacle()) {
+  			nodes.push({id: node.id, x: node.x, y: node.y})
+  		}
   	}
   	var edges = [];
   	for (var key in this.edges) {
