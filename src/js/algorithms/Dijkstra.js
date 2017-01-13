@@ -24,10 +24,12 @@ class Dijkstra {
 
 			while (!Q.empty()) {
 				var u = Q.pop();
+				if (u.edges.length == 0 && u.id == start.id) {
+					break;
+				}
 				for (var key in u.edges) {
 					var e = u.edges[key];
 					var v = e.target.id == u.id ? e.source : e.target;
-
 					var alt = dist[u.id] + e.weight;
 					if (alt < dist[v.id]) {
 						dist[v.id] = alt;
@@ -36,7 +38,7 @@ class Dijkstra {
 					}
 				}
 			}
-			return dist[goal.id];
+			return {length: dist[goal.id], sequence: seq};
 	}
 }
 
