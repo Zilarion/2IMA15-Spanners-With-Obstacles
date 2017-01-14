@@ -10,6 +10,9 @@ var visibility = require('./src/js/algorithms/Visibility');
 // Load core
 var Graph = require('./src/js/core/Graph');
 var Obstacle = require('./src/js/core/Obstacle');
+var DataManager = require('./src/js/data/DataManager');
+
+const fs = require('fs');
 
 app.use(express.static('www'))
 app.use(bodyParser.json({ // to support JSON-encoded bodies
@@ -27,6 +30,63 @@ app.use(function(err, req, res, next) {
     });
  });
 
+
+function run(dm, files) {
+	const algorithms = {greedy: greedy.calculate, wspd: wspd.calculate};
+	var datasets = dm.getDatasets();
+	var num = 0;
+	for (var key in datasets){
+		var ds = datasets[key];
+		for (var key in algorithms) {
+			var alg = algorithms[key]; 
+			var graph = new Graph();
+			graph.copy(ds.obstacle, true);
+			graph.copy(ds, false);
+
+			console.log("Running ", key, "on dataset: ", files[num]);
+
+			var t0 = process.hrtime();
+			var vgraph = visibility.compute(graph, ds.obstacle);
+			var result = alg(graph, vgraph, {t: ds.t});
+			var t1 = process.hrtime(t0);
+			var meta = {
+				alg: key,
+				totalWeight: result.totalWeight(),
+				runTime: t1[1]/1000000
+			}
+			results.push(meta);
+			num++;
+		}
+	}
+}
+
+const folder = './src/data/';
+app.get('/run', function(req, res) {
+	var results = [];
+	var dm = new DataManager();
+	var filesNames = [];
+	var itemsProcessed = 1;
+	fs.readdir(folder, (err, files) => {
+	  files.forEach(file => {
+	  	if (file != ".DS_Store") {	 
+		  	fs.readFile(folder + file, function(err, data) {
+		  		filesNames.push(file);
+		  		if (err) {
+				    throw err; 
+				  }
+				  dm.addDataset(data.toString());
+				  itemsProcessed++;
+				  console.log(itemsProcessed, files.length)
+			    if(itemsProcessed === files.length) {
+			    	console.log("Run");
+			      run(dm, filesNames);
+						res.send(results);
+			    }
+		  	}); 		
+	  	}
+	  });
+	})
+});
 
 app.post('/query', function(req, res) {
 	function calculate(data) {
