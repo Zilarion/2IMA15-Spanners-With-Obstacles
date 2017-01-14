@@ -117,7 +117,7 @@ class Visibility {
 		}
 		return visible;
 	}
-	
+
 	// Handles an event e given a sweepPoint for a certain status. Fills up visible array with visible points from center
 	static handleEvent(sweepPoint, e, status, visible) {
 		var eventType = e.event;
@@ -126,6 +126,14 @@ class Visibility {
 
 		console.log('-------------')
 		console.log(eventType, node.id);
+
+		var newStatus = new RBTree(Visibility.statusOrder);
+		status.each(function(d) {
+			d.p2 = node;
+			newStatus.insert(d);
+		});
+		status = newStatus;
+		
 		switch(eventType) {
 			case "point":
 				var min = status.min();
@@ -164,9 +172,7 @@ class Visibility {
 		}
 	}
 
-	// Initialize the status given a sweepPoint, graph and the obstacle
-	static initStatus(sweepPoint, graph, obstacle, events) {
-		var status = new RBTree(function(n1, n2) {
+	static statusOrder(n1, n2) {
 			if (n1.segment.source.id == n2.segment.source.id && n1.segment.target.id == n2.segment.target.id) {
 				return 0; // equal
 			}
@@ -196,7 +202,11 @@ class Visibility {
             return -1
         return 1;
       }
-		});
+		}
+
+	// Initialize the status given a sweepPoint, graph and the obstacle
+	static initStatus(sweepPoint, graph, obstacle, events) {
+		var status = new RBTree(Visibility.statusOrder);
 
 		// Go through all segments and insert all segments that we currently intersect
 		var initial = [];
