@@ -92,7 +92,6 @@ class Visibility {
 					var visibleP = visible[key];
 					graph.addEdge(p, visibleP, Util.distance(p, visibleP));
 				}
-				// return graph;
 			}
 		}
 
@@ -122,31 +121,40 @@ class Visibility {
 	static handleEvent(sweepPoint, e, status, visible) {
 		var eventType = e.event;
 		var node = e.node;
-		// console.log('-------------')
-		// console.log(eventType, node.id);
+		console.log('-------------')
+		console.log(eventType, node.id);
 		switch(eventType) {
 			case "point":
 				var min = status.min();
 				if(min == null) {
+					console.log("visible min==null");
 					visible.push(node);
 				} else {
 					if (!Visibility.segIntersect(min.segment.source, min.segment.target, sweepPoint, node)) {
+						console.log("no intersect: ", [min.segment.source.id, min.segment.target.id], [sweepPoint.id, node.id])
 						visible.push(node);						
 					}
 				}
 			break;
 			case "segment":
-				if(status.find({id: e.segment.source.id, segment: e.segment}) == null) {
-					// console.log("Add:", [e.segment.source.id, e.segment.target.id])
-					status.insert({id: e.segment.source.id, segment: e.segment});
+				var min = status.min();
+				if (min != null)
+					console.log("old min: ", [min.segment.source.id, min.segment.target.id])
+
+				if(status.find({id: e.segment.source.id, segment: e.segment, node: node}) == null) {
+					console.log("Add:", [e.segment.source.id, e.segment.target.id])
+				 	var gNode = (node.id === e.segment.source.id)? e.segment.target : e.segment.source;
+					status.insert({id: e.segment.source.id, segment: e.segment, node: gNode });
 				} else {
-					// console.log("Remove:", [e.segment.source.id, e.segment.target.id])
-					status.remove({id: e.segment.source.id, segment: e.segment});
+					console.log("Remove:", [e.segment.source.id, e.segment.target.id])
+					status.remove({id: e.segment.source.id, segment: e.segment, node: node});
 				}
 
 				var min = status.min();
+				if (min != null)
+					console.log("current min: ", [min.segment.source.id, min.segment.target.id])
 				if(min == null || min.id == node.id) {
-					// console.log("null or after min equal", min != null ? [min.segment.source.id, min.segment.target.id] : "")
+					console.log(min != null ? ("id equal: ", [min.segment.source.id, min.segment.target.id, min.id, node.id]) : "null")
 					visible.push(node);
 				}
 			break;
@@ -156,14 +164,10 @@ class Visibility {
 	// Initialize the status given a sweepPoint, graph and the obstacle
 	static initStatus(sweepPoint, graph, obstacle, events) {
 		var status = new RBTree(function(n1, n2) {
-			if (n1.id == n2.id) {
+			if (n1.segment.source.id == n2.segment.source.id && n1.segment.target.id == n2.segment.target.id) {
 				return 0;
 			}
-			// var d1 = Util.distance(n1.segment, sweepPoint)
-			// var d2 = Util.distance(n2.segment, sweepPoint)
-			// if (d1 != d2) {
-				// return d1 - d2;
-			// }
+
 			// If the distance is equal to the segments, calculate distance to the other point they do not share.
 			var id1 = n1.segment.source.id != n2.segment.source.id ? n1.segment.source : n1.segment.target;
 			var id2 = n1.segment.source.id != n2.segment.source.id ? n2.segment.source : n2.segment.target;
@@ -179,7 +183,7 @@ class Visibility {
 				initial.push([segment.source.id, segment.target.id]);
 			}
 		}
-		// console.log(initial);
+		console.log(initial);
 
 		return status;
 	}
