@@ -11,10 +11,6 @@ var visibility = require('./src/js/algorithms/Visibility');
 var Graph = require('./src/js/core/Graph');
 var Obstacle = require('./src/js/core/Obstacle');
 
-// Load threading
-var Worker = require('webworker-threads').Worker;
-var activeWorker;
-
 app.use(express.static('www'))
 app.use(bodyParser.json({ // to support JSON-encoded bodies
   limit: '50mb'
@@ -22,7 +18,15 @@ app.use(bodyParser.json({ // to support JSON-encoded bodies
 
 app.listen(3000, function () {
   console.log('Listening on port 3000!')
-})
+});
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message, 
+        error: err
+    });
+ });
+
 
 app.post('/query', function(req, res) {
 	function calculate(data) {
@@ -67,4 +71,6 @@ app.post('/query', function(req, res) {
 
 	var data = req.body;
 	res.send(calculate(data));
+}).on('error', function(e) {
+   console.log("error connecting" + e.message);
 });
