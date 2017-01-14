@@ -1,5 +1,7 @@
 'use strict';
 
+var math = require('mathjs');
+
 class Util {
 	static getRandomArbitrary(min, max) {
 	  return Math.random() * (max - min) + min;
@@ -12,6 +14,19 @@ class Util {
     return 0
   }
 
+	// Given three colinear points p, q, r, the function checks if point q lies on line segment pr
+	static on_segment(p, q, r){
+    if ((q.x <= math.max(p.x, r.x)) && (q.x >= math.min(p.x, r.x))) { 
+      if ((q.y <= math.max(p.y, r.y)) && (q.y >= math.min(p.y, r.y))) {
+        return true
+      }
+    }
+    return false
+	}
+
+  static intersects_point(p1, p2, edge) {
+  	return Util.intersect_point(p1, p2, edge) == undefined;
+  }
   // Return intersect Point where the edge from p1, p2 intersects edge
   static intersect_point(p1, p2, edge){
     if (p1.id == edge.source.id || p1.id == edge.target.id) return p1
@@ -45,14 +60,14 @@ class Util {
     var b = Util.distance(point_a, point_c)
     var c = Util.distance(point_a, point_b)
     var x = (a*a + c*c - b*b) / (2 * a * c)
-    return Math.acos(x)
+    return math.acos(x)
   }
 
 	static distance(n1, n2) {
 		var dx = n1.x - n2.x;
 		var dy = n1.y - n2.y;
 
-		return Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+		return math.sqrt(math.pow(dx, 2) + math.pow(dy, 2));
 	}
 
 	static dynamicSort(property) {

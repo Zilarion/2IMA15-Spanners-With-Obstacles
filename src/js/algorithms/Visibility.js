@@ -92,6 +92,7 @@ class Visibility {
 					var visibleP = visible[key];
 					graph.addEdge(p, visibleP, Util.distance(p, visibleP));
 				}
+				// return graph;
 			}
 		}
 
@@ -116,15 +117,7 @@ class Visibility {
 		}
 		return visible;
 	}
-	//Given three colinear points p, q, r, the function checks if point q lies on line segment pr
-	static on_segment(p, q, r){
-    if ((q.x <= math.max(p.x, r.x)) && (q.x >= math.min(p.x, r.x))) { 
-      if ((q.y <= math.max(p.y, r.y)) && (q.y >= math.min(p.y, r.y))) {
-        return true
-      }
-    }
-    return false
-	}
+	
 	// Handles an event e given a sweepPoint for a certain status. Fills up visible array with visible points from center
 	static handleEvent(sweepPoint, e, status, visible) {
 		var eventType = e.event;
@@ -140,7 +133,7 @@ class Visibility {
 					console.log("visible min==null");
 					visible.push(node);
 				} else {
-					if (!Visibility.segIntersect(min.segment.source, min.segment.target, sweepPoint, node)) {
+					if (Util.intersects_point(sweepPoint, node, min.segment)) {
 						console.log("no intersect: ", [min.segment.source.id, min.segment.target.id], [sweepPoint.id, node.id])
 						visible.push(node);						
 					}
@@ -159,14 +152,6 @@ class Visibility {
 					console.log("Remove:", [e.segment.source.id, e.segment.target.id])
 					status.remove(key);
 				}
-
-				// if(status.find({id: e.segment.source.id, segment: e.segment, node: node}) == null) {
-				//  	var gNode = (node.id === e.segment.source.id)? e.segment.target : e.segment.source;
-				// 	status.insert({id: e.segment.source.id, segment: e.segment, node: gNode });
-				// } else {
-				// 	console.log("Remove:", [e.segment.source.id, e.segment.target.id])
-				// 	status.remove({id: e.segment.source.id, segment: e.segment, node: node});
-				// }
 
 				var min = status.min();
 				if (min != null)
@@ -194,10 +179,10 @@ class Visibility {
       if (self_dist > other_dist) {
       	return 1; // This is more
       } 
-      else if (self_dist < other_dist) {
+      if (self_dist < other_dist) {
       	return -1;
       }
-      else if (self_dist == other_dist) {
+      if (self_dist == other_dist) {
       	// We have to compare the angles
         if (n1.segment.source.id == n2.segment.source.id || n1.segment.source.id == n2.segment.target.id) {
           var same_point = n1.segment.source;
@@ -220,8 +205,8 @@ class Visibility {
 			var segment = obstacle.edges[key];
 			if (sweepPoint.id == segment.source.id || sweepPoint.id == segment.target.id) continue;
 			if (Visibility.segIntersect(segment.source, segment.target, sweepPoint, point_inf)) {
-				if (Visibility.on_segment(sweepPoint, segment.source, point_inf)) continue;
-				if (Visibility.on_segment(sweepPoint, segment.target, point_inf)) continue;
+				if (Util.on_segment(sweepPoint, segment.source, point_inf)) continue;
+				if (Util.on_segment(sweepPoint, segment.target, point_inf)) continue;
 
 				var key = {p1: sweepPoint, p2: point_inf, segment: segment};
 				status.insert(key)
