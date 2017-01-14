@@ -151,6 +151,8 @@ class Visibility {
 				var min = status.min();
 				if (min != null)
 					console.log("old min: ", [min.segment.source.id, min.segment.target.id])
+				else 
+					console.log("old min: null")
 
 				var key = {p1: sweepPoint, p2: node, segment: segment};
 				if (status.find(key) == null) {
@@ -164,7 +166,9 @@ class Visibility {
 				var min = status.min();
 				if (min != null)
 					console.log("current min: ", [min.segment.source.id, min.segment.target.id])
-				if(min == null || min.id == node.id) {
+				else 
+					console.log("old min: null")
+				if(min == null || min.p2 == node.id) {
 					console.log(min != null ? ("id equal: ", [min.segment.source.id, min.segment.target.id, min.id, node.id]) : "null")
 					visible.push(node);
 				}
