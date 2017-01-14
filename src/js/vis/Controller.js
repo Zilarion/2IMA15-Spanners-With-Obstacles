@@ -1,9 +1,6 @@
 'use strict';
 
 var Graph = require('../core/Graph');
-var Util = require('../core/Util');
-var dijkstra = require('../algorithms/Dijkstra');
-var Visibility = require('../algorithms/Visibility');
 var generator = require('../data/Generator');
 var $ = require('jquery')
 var DataManager = require('../data/DataManager')
@@ -28,7 +25,7 @@ class Controller {
 		algorithms.val(this.settings.algorithm);
 
 		var obstacle = generator.createSimplePolygon(5, this.settings);
-		var nodes = generator.createNodes(6, obstacle, this.settings);
+		var nodes = generator.createNodes(16, obstacle, this.settings);
 
 		this.newData(nodes, obstacle)
 
@@ -201,21 +198,6 @@ class Controller {
 			this.nodes.push({id: this.nodes.length, x: position.x, y: position.y});
 			this.recalculate();
 		}
-	}
-
-	validTSpanner(graph, t) {
-		for (var k1 in graph.nodes) {
-			var v1 = graph.nodes[k1];
-			for (var k2 in graph.nodes) {
-				var v2 = graph.nodes[k2];
-				var dist = dijkstra.calculate(v1, v2, graph)
-				var bestDist = Util.distance(v1, v2);
-				if (dist > bestDist * t) {
-					return false;
-				}
-			}
-		}
-		return true;
 	}
 }
 

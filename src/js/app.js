@@ -2,8 +2,6 @@
 
 var Visualization = require('./vis/Visualization');
 var Controller = require('./vis/Controller');
-var greedy = require('./algorithms/Greedy');
-var wspd = require('./algorithms/WSPD');
 
 var vis_settings = {
 	w: 1920,
