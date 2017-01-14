@@ -4,6 +4,49 @@ class Util {
 	static getRandomArbitrary(min, max) {
 	  return Math.random() * (max - min) + min;
 	}
+	
+	static point_edge_distance(p1, p2, edge){
+    var ip = Util.intersect_point(p1, p2, edge)
+    if (ip != undefined)
+        return Util.distance(p1, ip)
+    return 0
+  }
+
+  // Return intersect Point where the edge from p1, p2 intersects edge
+  static intersect_point(p1, p2, edge){
+    if (p1.id == edge.source.id || p1.id == edge.target.id) return p1
+    if (p2.id == edge.source.id || p2.id == edge.target.id) return p2
+    if (edge.source.x == edge.target.x) {
+      if (p1.x == p2.x)
+        return undefined
+      var pslope = (p1.y - p2.y) / (p1.x - p2.x)
+      var intersect_x = edge.source.x
+      var intersect_y = pslope * (intersect_x - p1.x) + p1.y
+      return {x: intersect_x, y: intersect_y}
+    }
+    if (p1.x == p2.x) {
+      var eslope = (edge.source.y - edge.target.y) / (edge.source.x - edge.target.x)
+     	var intersect_x = p1.x
+      var intersect_y = eslope * (intersect_x - edge.source.x) + edge.source.y
+      return {x: intersect_x, y: intersect_y}
+    }
+
+    var pslope = (p1.y - p2.y) / (p1.x - p2.x)
+    var eslope = (edge.source.y - edge.target.y) / (edge.source.x - edge.target.x)
+    if (eslope == pslope)
+        return undefined;
+    var intersect_x = (eslope * edge.source.x - pslope * p1.x + p1.y - edge.source.y) / (eslope - pslope)
+    var intersect_y = eslope * (intersect_x - edge.source.x) + edge.source.y
+    return {x: intersect_x, y: intersect_y}
+  }
+
+  static angle2(point_a, point_b, point_c){
+    var a = Util.distance(point_b, point_c)
+    var b = Util.distance(point_a, point_c)
+    var c = Util.distance(point_a, point_b)
+    var x = (a*a + c*c - b*b) / (2 * a * c)
+    return Math.acos(x)
+  }
 
 	static distance(n1, n2) {
 		var dx = n1.x - n2.x;
@@ -23,6 +66,13 @@ class Util {
         return result * sortOrder;
     }
 	}
+
+	static get_adjacent(segment, point) {
+    if (point.id == segment.source.id)
+      return segment.target;
+    return segment.source;
+  }
+
 
 	//stolen from online, multiple sources
 	static intersect(x1,  y1,  x2,  y2,  x3,  y3,  x4,  y4, returnPoint){

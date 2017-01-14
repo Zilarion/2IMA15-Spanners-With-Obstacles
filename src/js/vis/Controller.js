@@ -25,7 +25,7 @@ class Controller {
 		algorithms.val(this.settings.algorithm);
 
 		var obstacle = generator.createSimplePolygon(5, this.settings);
-		var nodes = generator.createNodes(16, obstacle, this.settings);
+		var nodes = generator.createNodes(5, obstacle, this.settings);
 
 		this.newData(nodes, obstacle)
 
