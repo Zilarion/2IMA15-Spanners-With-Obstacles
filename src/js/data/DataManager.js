@@ -23,6 +23,7 @@ class DataManager {
 
 		var nodes = [];
 		var positionMap = {};
+		var numdup = 0;
 
 		// Load all nodes
 		for(var i = 3; i < 3 + numNodes; i++){
@@ -39,6 +40,7 @@ class DataManager {
 					}
 				}
 				if (found) {
+					numdup++;
 					continue;
 				}
 			}
@@ -50,9 +52,6 @@ class DataManager {
 			}
 			nodes.push({id: numObstacles + i - 3, x: x, y: y});
 		}
-		console.log(positionMap)
-
-		positionMap = {};
 
 		// Load all obstacles
 		var obstacle = new Obstacle();
@@ -70,6 +69,7 @@ class DataManager {
 					}
 				}
 				if (found) {
+					numdup++;
 					continue;
 				}
 			}
@@ -82,6 +82,7 @@ class DataManager {
 
 			obstacle.addNode(i - 3 - numNodes, x, y);
 		}
+		console.log(numdup);
 		var obstacleSize = obstacle.nodes.length;
 		for (var i=0; i<obstacleSize; i++) {
 			var source = obstacle.getNode(i);

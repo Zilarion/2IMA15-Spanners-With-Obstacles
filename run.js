@@ -13,7 +13,7 @@ const fs = require('fs');
 
 
 function run(dm, files) {
-	const algorithms = {greedy: greedy.calculate};//, wspd: wspd.calculate 
+	const algorithms = {wspd: wspd.calculate};//, wspd: wspd.calculate 
 	var datasets = dm.getDatasets();
 	var num = 0;
 	var results = [];
