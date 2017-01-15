@@ -86,27 +86,31 @@ class Visibility {
 
 		for (var i = 0; i < graph.nodes.length; i++){
 			var p = graph.nodes[i]
-			// if (!p.isObstacle()) {
-				var visible = Visibility.sweepPoint(p, graph, obstacle);
-				for (var key in visible) {
-					var visibleP = visible[key];
-					//if obs, check we aren't inside poly
-					if (p.isObstacle()){
-						var midpoint = {};
-						midpoint.x = p.x + (visibleP.x - p.x)/2;
-						midpoint.y = p.y + (visibleP.y - p.y)/2;
-						if (!Util.pointInsideObstacle(midpoint.x, midpoint.y, obstacle)){
-							graph.addEdge(p, visibleP, Util.distance(p, visibleP));
-						}
-					}else{
-						graph.addEdge(p, visibleP, Util.distance(p, visibleP));
-					}
-				}
-				// return graph;//debug return for only 1 pt
-			// }
+			var visible = Visibility.sweepPoint(p, graph, obstacle);
+			for (var key in visible) {
+				var visibleP = visible[key];
+				graph.addEdge(p, visibleP, Util.distance(p, visibleP));
+			}
+			// return graph;//debug return for only 1 pt
 		}
 
 		return graph;
+	}
+
+	static rightOfLine(point, start, end){
+		var det = (end.x - start.x) * (point.y - start.y) - (end.y - start.y) * (point.x - start.x);
+		if (det == 0){
+			return false;//on the line
+		}
+		var result = false;
+		if (det < 0){
+			result = true;;
+		}
+		//check vertical line for some reason
+		if (start.x == end.x){
+			result != result;
+		}
+		return result;
 	}
 
 	// Sweeps a single point given a graph and obstacle
@@ -119,7 +123,19 @@ class Visibility {
 		// Initialize the status and event queue
 		var events = this.initEvents(point, graph, obstacle);
 		var status = this.initStatus(point, graph, obstacle, events);
-
+		if (point.isObstacle()){
+			//check incident edge
+			var inc = point.incidentEdge;
+			var ant = point.antecedentEdge;
+			var right1 = Visibility.rightOfLine( {x: 100000000000, y: 0}, inc.source, inc.target);
+			var right2 = Visibility.rightOfLine( {x: 100000000000, y: 0}, ant.source, ant.target);
+			var e1Angle = Visibility.angle(point, inc.source);
+			var e2Angle = Visibility.angle(point, ant.target);
+			Visibility.ignoreNewPoints = e1Angle < e2Angle;
+			point.incidentEdge = undefined;//cleanup?
+		}else{
+			Visibility.ignoreNewPoints = false;
+		}
 		var visible = [];
 		for (var key in events) {
 			var event = events[key];
@@ -127,6 +143,12 @@ class Visibility {
 			Visibility.handleEvent(point, event, status, visible);
 		}
 		return visible;
+	}
+
+	static pushVisible(visible, node){
+		if (!Visibility.ignoreNewPoints){
+			visible.push(node);
+		}	
 	}
 
 	// Handles an event e given a sweepPoint for a certain status. Fills up visible array with visible points from center
@@ -139,16 +161,19 @@ class Visibility {
 			case "point":
 				var min = status.min();
 				if(min == null) {
-					// console.log("visible min==null");
-					visible.push(node);
+					console.log("visible min==null");
+					Visibility.pushVisible(visible, node);
 				} else {
 					if (!Visibility.segIntersect(min.segment.source, min.segment.target, sweepPoint, node)) {
-						// console.log("no intersect: ", [min.segment.source.id, min.segment.target.id], [sweepPoint.id, node.id])
-						visible.push(node);						
+						console.log("no intersect: ", [min.segment.source.id, min.segment.target.id], [sweepPoint.id, node.id])
+						Visibility.pushVisible(visible, node);						
 					}
 				}
 			break;
 			case "segment":
+				if (sweepPoint.isObstacle() && (e.segment.source.id === sweepPoint.id || e.segment.target.id === sweepPoint.id)){
+					Visibility.ignoreNewPoints = !Visibility.ignoreNewPoints;
+				}
 				var min = status.min();
 				// if (min != null)
 				// 	console.log("old min: ", [min.segment.source.id, min.segment.target.id])
@@ -156,7 +181,7 @@ class Visibility {
 					console.log("old min: ", [min.segment.source.id, min.segment.target.id])
 				}else{
 					console.log("new min!");
-					visible.push(node);
+					Visibility.pushVisible(visible, node);
 				}
 
 				if(status.find({id: e.segment.source.id, segment: e.segment, node: node}) == null) {
@@ -167,7 +192,7 @@ class Visibility {
 					// console.log("Remove:", [e.segment.source.id, e.segment.target.id])
 					status.remove({id: e.segment.source.id, segment: e.segment, node: node});
 					if (min != null && (min.segment.source.id === node.id || min.segment.target.id === node.id)){
-						visible.push(node);
+						Visibility.pushVisible(visible, node);
 					}
 				}
 
@@ -176,31 +201,11 @@ class Visibility {
 					// console.log("current min: ", [min.segment.source.id, min.segment.target.id])
 				if(min == null || min.id == node.id) {
 					// console.log(min != null ? ("id equal: ", [min.segment.source.id, min.segment.target.id, min.id, node.id]) : "null")
-					visible.push(node);
+					 Visibility.pushVisible(visible, node);
 				}
 			break;
 		}
 	}
-
-	static getStart(sweepPoint, segment){
-		var asource = this.angle(sweepPoint, segment.source);
-		var atarget = this.angle(sweepPoint, segment.target);
-		if (Math.abs(asource - atarget) > Math.PI){
-			if (asource < atarget){
-				return segment.target;
-			}else{
-				return segment.source;
-			}
-		}else{
-			if (asource < atarget){
-				return segment.source;
-			}else{
-				return segment.target;
-			}
-		}
-	}
-
-		
 	
 	
 	// Initialize the status given a sweepPoint, graph and the obstacle
@@ -300,6 +305,12 @@ class Visibility {
 			var edge = obstacle.edges[key];
 			eventQueue.push({event: "segment", node: edge.source, segment: edge});
 			eventQueue.push({event: "segment", node: edge.target, segment: edge});
+			if (edge.target.id === point.id){
+				point.incidentEdge = edge;
+			}
+			if (edge.source.id === point.id){
+				point.antecedentEdge = edge;// #pedantic_errors
+			}
 		}
 
 		eventQueue.sort(function(e1, e2) {
