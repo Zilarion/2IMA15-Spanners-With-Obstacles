@@ -32,9 +32,10 @@ app.use(function(err, req, res, next) {
 
 
 function run(dm, files) {
-	const algorithms = {greedy: greedy.calculate, wspd: wspd.calculate};
+	const algorithms = {greedy: greedy.calculate};//, wspd: wspd.calculate 
 	var datasets = dm.getDatasets();
 	var num = 0;
+	var results = [];
 	for (var key in datasets){
 		var ds = datasets[key];
 		for (var key in algorithms) {
@@ -52,17 +53,18 @@ function run(dm, files) {
 			var meta = {
 				alg: key,
 				totalWeight: result.totalWeight(),
-				runTime: t1[1]/1000000
+				runTime: (t1[0] * 1e9 + t1[1])/1000000,
 			}
+			console.log(meta);
 			results.push(meta);
 			num++;
 		}
 	}
+	return results;
 }
 
 const folder = './src/data/';
 app.get('/run', function(req, res) {
-	var results = [];
 	var dm = new DataManager();
 	var filesNames = [];
 	var itemsProcessed = 1;
@@ -79,7 +81,7 @@ app.get('/run', function(req, res) {
 				  console.log(itemsProcessed, files.length)
 			    if(itemsProcessed === files.length) {
 			    	console.log("Run");
-			      run(dm, filesNames);
+			      var results = run(dm, filesNames);
 						res.send(results);
 			    }
 		  	}); 		
@@ -123,7 +125,7 @@ app.post('/query', function(req, res) {
 		// Constructor metadata
 		var meta = {
 			totalWeight: result.totalWeight(),
-			runTime: t1[1]/1000000
+			runTime: (t1[0] * 1e9 + t1[1])/1000000,
 		}
 		console.log("All done!");
 		return {graph: result.toJSON(), vgraph: vgraph.toJSON(), meta: meta};
