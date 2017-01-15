@@ -42,6 +42,7 @@ function run(dm, files) {
 				n: n,
 				k: k,
 				alg: key,
+				file: files[num],
 				totalWeight: result.totalWeight(),
 				runTime: (t1[0] * 1e9 + t1[1])/1000000,
 			}

@@ -5,7 +5,11 @@ var Heap = require('heap');
 
 class Astar {
 	static calculate(start, goal) {
-		var heuristic = Util.distance;
+		var heuristic = function(n1, n2) {
+			var x = Math.pow(n2.x - n1.x, 2.0);
+			var y = Math.pow(n2.y - n1.y, 2.0);
+			return x + y;
+		}
 
     var gScore = new Map();
     gScore.set(start.id, 0);
