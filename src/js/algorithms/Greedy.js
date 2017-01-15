@@ -17,12 +17,14 @@ class Greedy {
 		console.log("Calculating pairs");
 		for (var i = 0; i < nodes.length; i++) {
 			for (var j = i; j < nodes.length; j++) {
-				var n1 = vgraph.nodes[i];
-				var n2 = vgraph.nodes[j];
+				if (i!=j) {
+					var n1 = vgraph.nodes[i];
+					var n2 = vgraph.nodes[j];
 
-				if (!n1.isObstacle() && !n2.isObstacle()){
-					var path = astar.calculate(n1, n2);
-					node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id], n2: nodes[n2.id]} );
+					if (!n1.isObstacle() && !n2.isObstacle()){
+						var path = astar.calculate(n1, n2);
+						node_pairs.push( {dist: path.length, path: path, n1: nodes[n1.id], n2: nodes[n2.id]} );
+					}
 				}
 			}
 		}
@@ -33,8 +35,7 @@ class Greedy {
 			var pair = node_pairs[key];
 			var n1 = pair.n1;
 			var n2 = pair.n2;
-
-			// console.log(n1.id, n2.id);
+			
 			// Find shortest path in current graph
 			var newPath = astar.calculate(n1, n2);
 			

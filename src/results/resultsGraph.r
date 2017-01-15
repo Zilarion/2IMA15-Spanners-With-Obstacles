@@ -1,4 +1,4 @@
-data = read.table("C:/Users/Hein/Documents/TUe/Master Q6/Geometric Algorithms (2IMA15)/results.dat", header=T, sep=",")
+data = read.table("./results.dat", header=T, sep=",")
 dataSize = length(rownames(data))
 xlabels = 1:dataSize
 for(i in 1:dataSize){
