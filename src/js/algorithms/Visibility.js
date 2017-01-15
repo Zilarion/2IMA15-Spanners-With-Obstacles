@@ -80,7 +80,7 @@ class Visibility {
 
 	// Runs sweepPoint all points in g given an obstacle
 	static sweep(g, obstacle) {
-		console.log("Sweeping")
+		// console.log("Sweeping")
 		var graph = new Graph();
 		graph.fullcopy(g, false);
 
@@ -121,40 +121,40 @@ class Visibility {
 	static handleEvent(sweepPoint, e, status, visible) {
 		var eventType = e.event;
 		var node = e.node;
-		console.log('-------------')
-		console.log(eventType, node.id);
+		// console.log('-------------')
+		// console.log(eventType, node.id);
 		switch(eventType) {
 			case "point":
 				var min = status.min();
 				if(min == null) {
-					console.log("visible min==null");
+					// console.log("visible min==null");
 					visible.push(node);
 				} else {
 					if (!Visibility.segIntersect(min.segment.source, min.segment.target, sweepPoint, node)) {
-						console.log("no intersect: ", [min.segment.source.id, min.segment.target.id], [sweepPoint.id, node.id])
+						// console.log("no intersect: ", [min.segment.source.id, min.segment.target.id], [sweepPoint.id, node.id])
 						visible.push(node);						
 					}
 				}
 			break;
 			case "segment":
 				var min = status.min();
-				if (min != null)
-					console.log("old min: ", [min.segment.source.id, min.segment.target.id])
+				// if (min != null)
+				// 	console.log("old min: ", [min.segment.source.id, min.segment.target.id])
 
 				if(status.find({id: e.segment.source.id, segment: e.segment, node: node}) == null) {
-					console.log("Add:", [e.segment.source.id, e.segment.target.id])
+					// console.log("Add:", [e.segment.source.id, e.segment.target.id])
 				 	var gNode = (node.id === e.segment.source.id)? e.segment.target : e.segment.source;
 					status.insert({id: e.segment.source.id, segment: e.segment, node: gNode });
 				} else {
-					console.log("Remove:", [e.segment.source.id, e.segment.target.id])
+					// console.log("Remove:", [e.segment.source.id, e.segment.target.id])
 					status.remove({id: e.segment.source.id, segment: e.segment, node: node});
 				}
 
 				var min = status.min();
-				if (min != null)
-					console.log("current min: ", [min.segment.source.id, min.segment.target.id])
+				// if (min != null)
+					// console.log("current min: ", [min.segment.source.id, min.segment.target.id])
 				if(min == null || min.id == node.id) {
-					console.log(min != null ? ("id equal: ", [min.segment.source.id, min.segment.target.id, min.id, node.id]) : "null")
+					// console.log(min != null ? ("id equal: ", [min.segment.source.id, min.segment.target.id, min.id, node.id]) : "null")
 					visible.push(node);
 				}
 			break;
@@ -183,7 +183,7 @@ class Visibility {
 				initial.push([segment.source.id, segment.target.id]);
 			}
 		}
-		console.log(initial);
+		// console.log(initial);
 
 		return status;
 	}
