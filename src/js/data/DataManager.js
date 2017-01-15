@@ -23,7 +23,8 @@ class DataManager {
 
 		var nodes = [];
 		var positionMap = {};
-		var numdup = 0;
+
+		var id = 0;
 
 		// Load all nodes
 		for(var i = 3; i < 3 + numNodes; i++){
@@ -40,7 +41,6 @@ class DataManager {
 					}
 				}
 				if (found) {
-					numdup++;
 					numNodes--;
 					continue;
 				}
@@ -51,12 +51,14 @@ class DataManager {
 			} else {
 				positionMap[x].push(y);
 			}
-			nodes.push({id: numObstacles + i - 3 - numdup, x: x, y: y});
+			nodes.push({id: id, x: x, y: y});
+			id++;
 		}
 
 		// Load all obstacles
 		var obstacle = new Obstacle();
-		var numodup = 0;
+		id = 0;
+		var dubObst = 0;
 		for(var i = 3 + numNodes; i < 3 + numNodes + numObstacles; i++) {
 			var oNode = lines[i].split(' ');
 			var x = +oNode[0];
@@ -71,8 +73,8 @@ class DataManager {
 					}
 				}
 				if (found) {
-					numodup++;
 					numObstacles--;
+					dubObst++;
 					continue;
 				}
 			}
@@ -83,7 +85,8 @@ class DataManager {
 				positionMap[x].push(y);
 			}
 
-			obstacle.addNode(i - 3 - numNodes - numodup, x, y);
+			obstacle.addNode(id, x, y);
+			id++;
 		}
 
 		var obstacleSize = obstacle.nodes.length;
@@ -91,6 +94,9 @@ class DataManager {
 			var source = obstacle.getNode(i);
 			var target = obstacle.getNode((i+1)%obstacleSize);
 			obstacle.addEdge(source, target, Util.distance(source, target));
+		}
+		for (var key in nodes) {
+			nodes[key].id += (numObstacles - dubObst);
 		}
 
 		// Construct data
