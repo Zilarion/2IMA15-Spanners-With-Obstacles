@@ -33,7 +33,7 @@ function dimensions(nodes, obstacle) {
 }
 
 function run(dm, files) {
-	const algorithms = {wspd: wspd.calculate};//, wspd: wspd.calculate 
+	const algorithms = {greedy: greedy.calculate, wspd: wspd.calculate };
 	var datasets = dm.getDatasets();
 	var num = 0;
 	var results = [];
@@ -43,12 +43,12 @@ function run(dm, files) {
 		var n = ds.nodes.length;
 		var dim = dimensions(ds.nodes, ds.obstacle);
 		if (n > 800 || k > 800) {
-			console.log("Skipping large dataset: ", files[num]);
+			console.log("Skipping large dataset: ", k, n);
 			continue;
 		}
 		for (var key in algorithms) {
 			var alg = algorithms[key]; 
-			console.log("Running", key, "on dataset:", files[num]);
+			console.log("Running", key, "on", n, k);
 			var graph = new Graph();
 			graph.copy(ds.obstacle, true);
 			graph.copy(ds, false);
@@ -62,7 +62,6 @@ function run(dm, files) {
 				n: n,
 				k: k,
 				alg: key,
-				file: files[num],
 				totalWeight: result.totalWeight(),
 				runTime: (t1[0] * 1e9 + t1[1])/1000000,
 			}

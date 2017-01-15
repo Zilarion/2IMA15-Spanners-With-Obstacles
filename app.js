@@ -30,28 +30,37 @@ app.use(function(err, req, res, next) {
     });
  });
 
-
 function run(dm, files) {
-	const algorithms = {greedy: greedy.calculate};//, wspd: wspd.calculate 
+	const algorithms = {greedy: greedy.calculate, wspd: wspd.calculate}
 	var datasets = dm.getDatasets();
 	var num = 0;
 	var results = [];
 	for (var key in datasets){
 		var ds = datasets[key];
+		var k = ds.obstacle.nodes.length;
+		var n = ds.nodes.length;
+		var dim = dimensions(ds.nodes, ds.obstacle);
+		if (n > 800 || k > 800) {
+			console.log("Skipping large dataset: ", files[num]);
+			continue;
+		}
 		for (var key in algorithms) {
 			var alg = algorithms[key]; 
+			console.log("Running", key, "on dataset:", files[num]);
 			var graph = new Graph();
 			graph.copy(ds.obstacle, true);
 			graph.copy(ds, false);
 
-			console.log("Running ", key, "on dataset: ", files[num]);
 
 			var t0 = process.hrtime();
 			var vgraph = visibility.compute(graph, ds.obstacle);
-			var result = alg(graph, vgraph, {t: ds.t});
+			var result = alg(graph, vgraph, {t: ds.t, bounds: dim});
 			var t1 = process.hrtime(t0);
 			var meta = {
+				n: n,
+				k: k,
 				alg: key,
+				file: files[num],
 				totalWeight: result.totalWeight(),
 				runTime: (t1[0] * 1e9 + t1[1])/1000000,
 			}
@@ -113,6 +122,8 @@ app.post('/query', function(req, res) {
 				break;
 			case "WSPD":
 				console.log("Running WSPD")
+				var dim = dimensions(graph.nodes, obstacle);
+				settings.bounds = dim;
 				result = wspd.calculate(graph, vgraph, settings);
 				break;
 			default:
@@ -136,3 +147,24 @@ app.post('/query', function(req, res) {
 }).on('error', function(e) {
    console.log("error connecting" + e.message);
 });
+
+function dimensions(nodes, obstacle) {
+	var dimo = obstacle.dimensions();
+
+	for (var key in nodes) {
+		var node = nodes[key];
+		if (node.x > dimo.xmax) {
+			dimo.xmax = node.x;
+		}
+		if (node.y > dimo.ymax) {
+			dimo.ymax = node.y;
+		}
+		if (node.x < dimo.xmin) {
+			dimo.xmin = node.x;
+		}
+		if (node.y < dimo.ymin) {
+			dimo.ymin = node.y;
+		}
+	}
+	return dimo;
+}
