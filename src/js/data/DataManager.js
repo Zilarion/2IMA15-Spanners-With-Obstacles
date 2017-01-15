@@ -22,18 +22,65 @@ class DataManager {
 		var tval = +tvalLine[0] / +tvalLine[1];
 
 		var nodes = [];
+		var positionMap = {};
 
 		// Load all nodes
 		for(var i = 3; i < 3 + numNodes; i++){
 			var node = lines[i].split(' ');
-			nodes.push({id: numObstacles + i - 3, x: +node[0], y: +node[1]});
+			var x = +node[0];
+			var y = +node[1];
+			if (positionMap[x] != undefined) {
+				var found = false;
+				for (var key in positionMap[x]) {
+					var cy = positionMap[x][key];
+					if (cy == y) {
+						found = true;
+						break;
+					}
+				}
+				if (found) {
+					continue;
+				}
+			}
+			if (positionMap[x] == undefined) {
+				positionMap[x] = [];
+				positionMap[x].push(y);
+			} else {
+				positionMap[x].push(y);
+			}
+			nodes.push({id: numObstacles + i - 3, x: x, y: y});
 		}
+		console.log(positionMap)
+
+		positionMap = {};
 
 		// Load all obstacles
 		var obstacle = new Obstacle();
 		for(var i = 3 + numNodes; i < 3 + numNodes + numObstacles; i++) {
 			var oNode = lines[i].split(' ');
-			obstacle.addNode(i - 3 - numNodes, +oNode[0], +oNode[1]);
+			var x = +oNode[x];
+			var y = +oNode[y];
+			if (positionMap[x] != undefined) {
+				var found = false;
+				for (var key in positionMap[x]) {
+					var cy = positionMap[x][key];
+					if (cy == y) {
+						found = true;
+						break;
+					}
+				}
+				if (found) {
+					continue;
+				}
+			}
+			if (positionMap[x] == undefined) {
+				positionMap[x] = [];
+				positionMap[x].push(y);
+			} else {
+				positionMap[x].push(y);
+			}
+
+			obstacle.addNode(i - 3 - numNodes, x, y);
 		}
 		var obstacleSize = obstacle.nodes.length;
 		for (var i=0; i<obstacleSize; i++) {
