@@ -13,4 +13,4 @@ x = c(1:dataSize)
 y = data[,4]
 plot(x, y,type="o", col="red", xaxt = "n", xlab="", ylab="")
 axis(1, at=1:dataSize, labels=xlabels[1:dataSize], padj=0.55)
-title(name, xlab="", ylab="ms")
+title(name, xlab="t", ylab="ms")
