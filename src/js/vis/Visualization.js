@@ -158,7 +158,7 @@ class Visualization extends EventEmitter {
 				.attr("y", function(d) { return d.y - (width/1600); })
 				.text( function (d) { return d.id; })
 				.attr("font-family", "sans-serif")
-				.attr("font-size", (9*width)/400)
+				.attr("font-size", (1*width)/400)
 				.attr("fill", "red")
 				.classed("ids", true);
 

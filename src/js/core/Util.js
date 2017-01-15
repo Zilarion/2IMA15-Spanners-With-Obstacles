@@ -189,7 +189,7 @@ class Util {
 	}
 
 	static pointInsideObstacle(px, py, obstacle){
-		return this.numIntersectLineSimplePolygon(obstacle.nodes, {x:0, y:py}, {x:px, y:py}, false, obstacle.x, obstacle.y)%2 == 1;
+		return this.numIntersectLineSimplePolygon(obstacle.nodes, {x:-1, y:py}, {x:px, y:py}, false, obstacle.x, obstacle.y)%2 == 1;
 	}
 
 	static lineIntersectsObstacle(lstart, lend, obstacle){
