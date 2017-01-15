@@ -11,6 +11,26 @@ var DataManager = require('./src/js/data/DataManager');
 
 const fs = require('fs');
 
+function dimensions(nodes, obstacle) {
+	var dimo = obstacle.dimensions();
+
+	for (var key in nodes) {
+		var node = nodes[key];
+		if (node.x > dimo.xmax) {
+			dimo.xmax = node.x;
+		}
+		if (node.y > dimo.ymax) {
+			dimo.ymax = node.y;
+		}
+		if (node.x < dimo.xmin) {
+			dimo.xmin = node.x;
+		}
+		if (node.y < dimo.ymin) {
+			dimo.ymin = node.y;
+		}
+	}
+	return dimo;
+}
 
 function run(dm, files) {
 	const algorithms = {wspd: wspd.calculate};//, wspd: wspd.calculate 
@@ -21,22 +41,22 @@ function run(dm, files) {
 		var ds = datasets[key];
 		var k = ds.obstacle.nodes.length;
 		var n = ds.nodes.length;
+		var dim = dimensions(ds.nodes, ds.obstacle);
 		if (n > 800 || k > 800) {
 			console.log("Skipping large dataset: ", files[num]);
 			continue;
 		}
 		for (var key in algorithms) {
 			var alg = algorithms[key]; 
+			console.log("Running", key, "on dataset:", files[num]);
 			var graph = new Graph();
-
 			graph.copy(ds.obstacle, true);
 			graph.copy(ds, false);
 
-			console.log("Running", key, "on dataset:", files[num]);
 
 			var t0 = process.hrtime();
 			var vgraph = visibility.compute(graph, ds.obstacle);
-			var result = alg(graph, vgraph, {t: ds.t});
+			var result = alg(graph, vgraph, {t: ds.t, bounds: dim});
 			var t1 = process.hrtime(t0);
 			var meta = {
 				n: n,
@@ -68,7 +88,6 @@ fs.readdir(folder, (err, files) => {
 			  }
 			  dm.addDataset(data.toString());
 			  itemsProcessed++;
-			  console.log(itemsProcessed, files.length)
 		    if(itemsProcessed === files.length) {
 		    	console.log("Running!");
 		      var results = run(dm, filesNames);

@@ -10,10 +10,10 @@ class WSPD {
 		// Build quad tree
 		var pointQuad = true;
 		var bounds = {
-		    x:0,
-		    y:0,
-		    width: settings.w,
-		    height: settings.h
+		    x: settings.bounds.xmin,
+		    y: settings.bounds.ymin,
+		    width: settings.bounds.xmax - settings.bounds.xmin,
+		    height: settings.bounds.ymax - settings.bounds.ymin
 		}
 		debug = {circles: [], rects: []};
 		var quad = new QuadTree(bounds, pointQuad, 9999999, 1);

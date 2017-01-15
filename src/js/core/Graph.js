@@ -57,7 +57,6 @@ class Graph {
 				this.addNode(id, x, y);
 			}
 		}
-
 		for (var key in graph.edges) {
 			var edge = graph.edges[key];
 			if (useDirect) {
