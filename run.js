@@ -43,7 +43,7 @@ function run(dm, files) {
 				k: k,
 				alg: key,
 				totalWeight: result.totalWeight(),
-				runTime: (t[0] * 1e9 + t1[1])/1000000,
+				runTime: (t1[0] * 1e9 + t1[1])/1000000,
 			}
 			console.log(meta);
 			results.push(meta);
