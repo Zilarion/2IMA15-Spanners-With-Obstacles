@@ -1,6 +1,7 @@
-data = read.table("C:/Users/Hein/Documents/TUe/Master Q6/Geometric Algorithms (2IMA15)/results.dat", header=T, sep=",")
+data = read.table("./results.dat", header=T, sep=",")
 dataSize = length(rownames(data))
 xlabels = 1:dataSize
+y = array()
 for(i in 1:dataSize){
 	n = data[i,1]
 	k = data[i,2]
