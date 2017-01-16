@@ -13,6 +13,7 @@ class Greedy {
 		if (nodes.length <= 1) {
 			return graph;
 		}
+		return graph;
 		// Calculate all possible pairs
 		console.log("Calculating pairs");
 		for (var i = 0; i < nodes.length; i++) {

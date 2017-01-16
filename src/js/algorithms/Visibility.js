@@ -294,7 +294,7 @@ class Visibility {
 		for (var key in graph.nodes) {
 			var node = graph.nodes[key];
 			if (!node.isObstacle() && point.id != node.id) {
-				eventQueue.push({event: "point", node: node});
+				// eventQueue.push({event: "point", node: node});
 			}
 		}
 
