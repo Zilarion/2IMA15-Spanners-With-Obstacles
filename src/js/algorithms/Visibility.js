@@ -14,22 +14,22 @@ class Visibility {
 
 	static angle(center, point) {
 		var dx = point.x - center.x
-    var dy = point.y - center.y
-    if (dx == 0 ){
-      if (dy < 0)
-          return Math.PI * 3 / 2
-      return Math.PI / 2
-    }
-    if (dy == 0){
-      if (dx < 0)
-        return Math.PI
-      return 0
-    }
-    if (dx < 0)
-        return Math.PI + Math.atan(dy / dx)
-    if (dy < 0)
-        return 2 * Math.PI + Math.atan(dy / dx)
-    return Math.atan(dy / dx)
+		var dy = point.y - center.y
+		if (dx == 0 ){
+		if (dy < 0)
+			return Math.PI * 3 / 2
+		return Math.PI / 2
+		}
+		if (dy == 0){
+		if (dx < 0)
+			return Math.PI
+		return 0
+		}
+		if (dx < 0)
+			return Math.PI + Math.atan(dy / dx)
+		if (dy < 0)
+			return 2 * Math.PI + Math.atan(dy / dx)
+		return Math.atan(dy / dx)
 	}
 
 	static segIntersect(a, b, c, d) {
@@ -47,35 +47,35 @@ class Visibility {
 		var x2 = segment.target.x;
 		var y2 = segment.target.y;
 
-	  var A = x - x1;
-	  var B = y - y1;
-	  var C = x2 - x1;
-	  var D = y2 - y1;
+		var A = x - x1;
+		var B = y - y1;
+		var C = x2 - x1;
+		var D = y2 - y1;
 
-	  var dot = A * C + B * D;
-	  var len_sq = C * C + D * D;
-	  var param = -1;
-	  if (len_sq != 0) //in case of 0 length line
-	      param = dot / len_sq;
+		var dot = A * C + B * D;
+		var len_sq = C * C + D * D;
+		var param = -1;
+		if (len_sq != 0) //in case of 0 length line
+			param = dot / len_sq;
 
-	  var xx, yy;
+		var xx, yy;
 
-	  if (param < 0) {
-	    xx = x1;
-	    yy = y1;
-	  }
-	  else if (param > 1) {
-	    xx = x2;
-	    yy = y2;
-	  }
-	  else {
-	    xx = x1 + param * C;
-	    yy = y1 + param * D;
-	  }
+		if (param < 0) {
+			xx = x1;
+			yy = y1;
+		}
+		else if (param > 1) {
+			xx = x2;
+			yy = y2;
+		}
+		else {
+			xx = x1 + param * C;
+			yy = y1 + param * D;
+		}
 
-	  var dx = x - xx;
-	  var dy = y - yy;
-	  return Math.sqrt(dx * dx + dy * dy);
+		var dx = x - xx;
+		var dy = y - yy;
+		return Math.sqrt(dx * dx + dy * dy);
 	}
 
 	// Runs sweepPoint all points in g given an obstacle
@@ -86,13 +86,24 @@ class Visibility {
 
 		for (var i = 0; i < graph.nodes.length; i++){
 			var p = graph.nodes[i]
-			if (!p.isObstacle()) {
+			// if (!p.isObstacle()) {
 				var visible = Visibility.sweepPoint(p, graph, obstacle);
 				for (var key in visible) {
 					var visibleP = visible[key];
-					graph.addEdge(p, visibleP, Util.distance(p, visibleP));
+					//if obs, check we aren't inside poly
+					if (p.isObstacle()){
+						var midpoint = {};
+						midpoint.x = p.x + (visibleP.x - p.x)/2;
+						midpoint.y = p.y + (visibleP.y - p.y)/2;
+						if (!Util.pointInsideObstacle(midpoint.x, midpoint.y, obstacle)){
+							graph.addEdge(p, visibleP, Util.distance(p, visibleP));
+						}
+					}else{
+						graph.addEdge(p, visibleP, Util.distance(p, visibleP));
+					}
 				}
-			}
+				// return graph;//debug return for only 1 pt
+			// }
 		}
 
 		return graph;
@@ -112,6 +123,7 @@ class Visibility {
 		var visible = [];
 		for (var key in events) {
 			var event = events[key];
+			Visibility.currentEvent = event;
 			Visibility.handleEvent(point, event, status, visible);
 		}
 		return visible;
@@ -140,6 +152,12 @@ class Visibility {
 				var min = status.min();
 				// if (min != null)
 				// 	console.log("old min: ", [min.segment.source.id, min.segment.target.id])
+				if (min != null){
+					console.log("old min: ", [min.segment.source.id, min.segment.target.id])
+				}else{
+					console.log("new min!");
+					visible.push(node);
+				}
 
 				if(status.find({id: e.segment.source.id, segment: e.segment, node: node}) == null) {
 					// console.log("Add:", [e.segment.source.id, e.segment.target.id])
@@ -148,6 +166,9 @@ class Visibility {
 				} else {
 					// console.log("Remove:", [e.segment.source.id, e.segment.target.id])
 					status.remove({id: e.segment.source.id, segment: e.segment, node: node});
+					if (min != null && (min.segment.source.id === node.id || min.segment.target.id === node.id)){
+						visible.push(node);
+					}
 				}
 
 				var min = status.min();
@@ -161,18 +182,92 @@ class Visibility {
 		}
 	}
 
+	static getStart(sweepPoint, segment){
+		var asource = this.angle(sweepPoint, segment.source);
+		var atarget = this.angle(sweepPoint, segment.target);
+		if (Math.abs(asource - atarget) > Math.PI){
+			if (asource < atarget){
+				return segment.target;
+			}else{
+				return segment.source;
+			}
+		}else{
+			if (asource < atarget){
+				return segment.source;
+			}else{
+				return segment.target;
+			}
+		}
+	}
+
+		
+	
+	
 	// Initialize the status given a sweepPoint, graph and the obstacle
 	static initStatus(sweepPoint, graph, obstacle, events) {
-		var status = new RBTree(function(n1, n2) {
-			if (n1.segment.source.id == n2.segment.source.id && n1.segment.target.id == n2.segment.target.id) {
-				return 0;
+		var status = {
+			insert: function(el){
+				console.log("INSERT");
+				Visibility.statusArray.push(el);
+			},
+			find: function(el){
+				for (var key in Visibility.statusArray){
+					var obj = Visibility.statusArray[key];
+					if (obj.id === el.id){
+						return obj;
+					}
+				}
+				return null;
+			},
+			min:function(el){
+				var minDist = 1000000000;
+				var min = null;
+				for (var key in Visibility.statusArray){
+					var obj = Visibility.statusArray[key];
+					var src = obj.segment.source;
+					var tgt = obj.segment.target;
+					var ev = Visibility.currentEvent.node;
+					var dist;
+					if (ev === src || ev === tgt){
+						if (ev === src){
+							dist = Util.distance(src, sweepPoint);
+						}else if (ev === tgt){
+							dist = Util.distance(tgt, sweepPoint);
+						}
+					}else{
+						//calc dir
+						var dirx = (ev.x - sweepPoint.x);
+						var diry = (ev.y - sweepPoint.y);
+						var l = Math.sqrt(dirx*dirx + diry*diry);
+						var dirx = (dirx/l) * 100000000 + sweepPoint.x;
+						var diry = (diry/l) * 100000000 + sweepPoint.y;
+						//intersect sweepPoint - dir with segment.source - segment.end
+						var pt = Util.intersect(sweepPoint.x, sweepPoint.y, dirx, diry,
+												src.x, src.y, tgt.x, tgt.y,
+												true);
+						dist = Util.distance(pt, sweepPoint);
+					}
+					if (dist < minDist){
+						minDist = dist;
+						min = obj;
+					}
+				}
+				return min;
+			},
+			remove: function(el){
+				console.log("REMOVE");
+				for (var key in Visibility.statusArray){
+					var obj = Visibility.statusArray[key];
+					if (obj.id === el.id){
+						console.log("REM : " + Visibility.statusArray);
+						Visibility.statusArray.splice(key, 1);
+						console.log("REM : " + Visibility.statusArray);
+						return;
+					}
+				}
 			}
-
-			// If the distance is equal to the segments, calculate distance to the other point they do not share.
-			var id1 = n1.segment.source.id != n2.segment.source.id ? n1.segment.source : n1.segment.target;
-			var id2 = n1.segment.source.id != n2.segment.source.id ? n2.segment.source : n2.segment.target;
-			return Util.distance(id1, sweepPoint) - Util.distance(id2, sweepPoint);
-		});
+		}
+		Visibility.statusArray = [];
 
 		// Go through all segments and insert all segments that we currently intersect
 		var initial = [];
