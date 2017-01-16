@@ -122,17 +122,42 @@ class Visualization extends EventEmitter {
 		 	.attr("stroke-width", width/800)
 		 	.attr("stroke", "rgb(100,100,100)")
 		 	.attr("fill", "rgb(220,220,220)")
-			.attr( "opacity", 0.3 )
+			.attr( "opacity", 0.3 );
+
+		var starts = [];
+		for (var i = 0; i < data.obstacle.nodes.length; i++){
+			var s = data.obstacle.nodes[i];
+			var e = data.obstacle.nodes[(i+1)%data.obstacle.nodes.length];
+			var dirx = (e.x - s.x);
+			var diry = (e.y - s.y);
+			var start = {x: s.x + dirx*.25, y: s.y + diry*.25, color: "green"};
+			var end = {x: s.x + dirx*.75, y: s.y + diry*.75, color: "red"};
+			starts.push(start);
+			starts.push(end);
+		}
 
 		var nodes = this.view
 			.selectAll("circle")
-			.data(data.nodes)
+			.data(starts)
 			.enter()
 			.append("circle")
+			.transition()
+			.delay(500)
 			.attr("cx", function (d) { return d.x; })
 			.attr("cy", function (d) { return d.y; })
-			.attr("r", function (d) { return width/400; })
-			.style("fill", function(d) { return d.color ? d.color : "blue"});
+			.attr("r", function (d) { return width/200; })
+			.style("fill", function(d) { return d.color});
+
+
+		// var nodes = this.view
+		// 	.selectAll("circle")
+		// 	.data(data.nodes)
+		// 	.enter()
+		// 	.append("circle")
+		// 	.attr("cx", function (d) { return d.x; })
+		// 	.attr("cy", function (d) { return d.y; })
+		// 	.attr("r", function (d) { return width/400; })
+		// 	.style("fill", function(d) { return d.color ? d.color : "blue"});
 
 		var edges = this.view
 			.selectAll("line.gedge")
@@ -173,6 +198,7 @@ class Visualization extends EventEmitter {
 							.attr("x2", function (d) { return d.target.x; })
 							.attr("y2", function (d) { return d.target.y; })
 							.style("stroke", "red" )
+							.style("stroke-width", 1)
 							.attr( "opacity", 0.5 )
 							.classed('vedge', true)
 			}
