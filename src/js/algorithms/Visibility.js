@@ -83,6 +83,7 @@ class Visibility {
 		// console.log("Sweeping")
 		var graph = new Graph();
 		graph.fullcopy(g, false);
+		return graph;
 
 		for (var i = 0; i < graph.nodes.length; i++){
 			var p = graph.nodes[i]

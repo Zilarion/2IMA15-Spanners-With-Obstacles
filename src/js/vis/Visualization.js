@@ -136,28 +136,28 @@ class Visualization extends EventEmitter {
 			starts.push(end);
 		}
 
-		var nodes = this.view
-			.selectAll("circle")
-			.data(starts)
-			.enter()
-			.append("circle")
-			.transition()
-			.delay(500)
-			.attr("cx", function (d) { return d.x; })
-			.attr("cy", function (d) { return d.y; })
-			.attr("r", function (d) { return width/200; })
-			.style("fill", function(d) { return d.color});
-
-
 		// var nodes = this.view
 		// 	.selectAll("circle")
-		// 	.data(data.nodes)
+		// 	.data(starts)
 		// 	.enter()
 		// 	.append("circle")
+		// 	.transition()
+		// 	.delay(500)
 		// 	.attr("cx", function (d) { return d.x; })
 		// 	.attr("cy", function (d) { return d.y; })
-		// 	.attr("r", function (d) { return width/400; })
-		// 	.style("fill", function(d) { return d.color ? d.color : "blue"});
+		// 	.attr("r", function (d) { return width/200; })
+		// 	.style("fill", function(d) { return d.color});
+
+
+		var nodes = this.view
+			.selectAll("circle")
+			.data(data.nodes)
+			.enter()
+			.append("circle")
+			.attr("cx", function (d) { return d.x; })
+			.attr("cy", function (d) { return d.y; })
+			.attr("r", function (d) { return width/400; })
+			.style("fill", function(d) { return d.color ? d.color : "blue"});
 
 		var edges = this.view
 			.selectAll("line.gedge")
