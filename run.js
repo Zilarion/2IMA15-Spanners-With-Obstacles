@@ -44,7 +44,7 @@ function run(dm, files) {
 		var n = ds.nodes.length;
 		var dim = dimensions(ds.nodes, ds.obstacle);
 		for (var key in algorithms) {
-			if (n > 2000) {
+			if (alg == "greedy") {
 				// console.log("Skipping large dataset: ", k, n);
 				continue;
 			}
