@@ -1,0 +1,19 @@
+data = read.table("./results.dat", header=T, sep=",")
+dataSize = length(rownames(data))
+xlabels = array()
+x = array()
+y = array()
+for(i in 1:dataSize){
+	n = data[i,1]
+	k = data[i,2]
+	t = data[i,3]
+	nString = paste("n", n, sep=":")
+	kString = paste("k", k, sep=":")
+	tString = paste("t", t, sep=":")
+	xlabels[i] = paste(nString, kString, tString, sep="\n")
+	y[i] = data[i,4]
+	x[i] = ((n+k)^2)*log(n+k)
+}
+plot(x, y,type="o", col="red", xaxt = "n", xlab="", ylab="")
+axis(1, at=1:dataSize, labels=xlabels[1:dataSize], padj=0.55)
+title("Results", xlab="", ylab="ms")
