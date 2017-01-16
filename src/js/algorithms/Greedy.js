@@ -14,7 +14,7 @@ class Greedy {
 			return graph;
 		}
 		// Calculate all possible pairs
-		console.log("Calculating pairs");
+		// console.log("Calculating pairs");
 		for (var i = 0; i < nodes.length; i++) {
 			for (var j = i; j < nodes.length; j++) {
 				if (i!=j) {
@@ -28,7 +28,7 @@ class Greedy {
 				}
 			}
 		}
-		console.log("Got all the pairs");
+		// console.log("Got all the pairs");
 		// Sort based on distance
 		node_pairs.sort(Util.dynamicSort("dist"));
 		for (var key in node_pairs) {
