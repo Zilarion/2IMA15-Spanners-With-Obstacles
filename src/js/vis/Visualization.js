@@ -198,8 +198,8 @@ class Visualization extends EventEmitter {
 							.attr("x2", function (d) { return d.target.x; })
 							.attr("y2", function (d) { return d.target.y; })
 							.style("stroke", "red" )
-							.style("stroke-width", 1)
-							.attr( "opacity", 0.5 )
+							.style("stroke-width", .3)
+							.attr( "opacity", 0.2 )
 							.classed('vedge', true)
 			}
 	  }

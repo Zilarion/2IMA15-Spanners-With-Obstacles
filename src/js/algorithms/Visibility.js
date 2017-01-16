@@ -83,7 +83,8 @@ class Visibility {
 		// console.log("Sweeping")
 		var graph = new Graph();
 		graph.fullcopy(g, false);
-		return graph;
+		// return graph;
+
 
 		for (var i = 0; i < graph.nodes.length; i++){
 			var p = graph.nodes[i]
@@ -297,7 +298,7 @@ class Visibility {
 		for (var key in graph.nodes) {
 			var node = graph.nodes[key];
 			if (!node.isObstacle() && point.id != node.id) {
-				// eventQueue.push({event: "point", node: node});
+				eventQueue.push({event: "point", node: node});
 			}
 		}
 
@@ -325,11 +326,19 @@ class Visibility {
 			var e1Angle = Visibility.angle(point, n1);
 			var e2Angle = Visibility.angle(point, n2);
 
-			if (e1Angle == e2Angle && e1.segment && e2.segment) {
-				// If equal, sort on distance to this segment
-				var e1Dist = Visibility.pDistance(e1.segment, point);
-				var e2Dist = Visibility.pDistance(e2.segment, point);
-				return (e1Dist - e2Dist);
+			if (e1Angle == e2Angle){
+				if (e1.segment && e2.segment) {
+					// If equal, sort on distance to this segment
+					var e1Dist = Visibility.pDistance(e1.segment, point);
+					var e2Dist = Visibility.pDistance(e2.segment, point);
+					return (e1Dist - e2Dist);
+				}else{
+					if (e1.segment){
+						return -1;
+					}else if(e2.segment){
+						return 1;
+					}
+				}
 			}
 			return (e1Angle - e2Angle);
 		});
