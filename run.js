@@ -37,18 +37,19 @@ function run(dm, files) {
 	var datasets = dm.getDatasets();
 	var num = 0;
 	var results = [];
+	console.log("t, n, k, alg, weight, ms")
 	for (var key in datasets){
 		var ds = datasets[key];
 		var k = ds.obstacle.nodes.length;
 		var n = ds.nodes.length;
 		var dim = dimensions(ds.nodes, ds.obstacle);
-		if (n > 800 || k > 800) {
-			console.log("Skipping large dataset: ", k, n);
-			continue;
-		}
 		for (var key in algorithms) {
+			if (n > 2000 || (n > 800 && key == "greedy")) {
+				// console.log("Skipping large dataset: ", k, n);
+				continue;
+			}
 			var alg = algorithms[key]; 
-			console.log("Running", key, "on", n, k);
+			// console.log("Running", key, "on", n, k);
 			var graph = new Graph();
 			graph.copy(ds.obstacle, true);
 			graph.copy(ds, false);
@@ -65,7 +66,7 @@ function run(dm, files) {
 				totalWeight: result.totalWeight(),
 				runTime: (t1[0] * 1e9 + t1[1])/1000000,
 			}
-			console.log(n + ","+k +","+key+","+result.totalWeight()+","+(t1[0] * 1e9 + t1[1])/1000000);
+			console.log(t + "," + n + ","+k +","+key+","+result.totalWeight()+","+(t1[0] * 1e9 + t1[1])/1000000);
 			results.push(meta);
 			num++;
 		}
