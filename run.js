@@ -44,7 +44,7 @@ function run(dm, files) {
 		var n = ds.nodes.length;
 		var dim = dimensions(ds.nodes, ds.obstacle);
 		for (var key in algorithms) {
-			if (n > 2000 || (n > 800 && key == "greedy")) {
+			if (n > 2000) {
 				// console.log("Skipping large dataset: ", k, n);
 				continue;
 			}
@@ -66,7 +66,7 @@ function run(dm, files) {
 				totalWeight: result.totalWeight(),
 				runTime: (t1[0] * 1e9 + t1[1])/1000000,
 			}
-			console.log(t + "," + n + ","+k +","+key+","+result.totalWeight()+","+(t1[0] * 1e9 + t1[1])/1000000);
+			console.log(ds.t + "," + n + ","+k +","+key+","+result.totalWeight()+","+(t1[0] * 1e9 + t1[1])/1000000);
 			results.push(meta);
 			num++;
 		}
