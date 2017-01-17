@@ -1,70 +1,42 @@
-data <- read.csv("./results-wspd.csv")
+data <- read.csv("./random-wspd.csv")
 
 # setup window
 par(mfrow=c(2,2))
 
 t <- data[,1]
-n <- data[,2]
+n <- log(data[,2])
 k <- data[,3]
-ms <- data[,6]
+ms <- log(data[,6])
+n4 = function(n) { 4*n }
+n3 = function(n) { 3*n }
 
-c <- n*n*k
 plot(
-	xlim=range(0, 15),
-	ylim=range(0, 15),
+	xlim=c(0, max(n)),
+	ylim=c(0, max(ms)),
 	xlab="log(n)", ylab="log(ms)", 
 	col="red",
-	log(n), log(ms)
+	n, ms
 )
+lines(col="green", (0:400), n3(0:400))
+lines(col="red", (0:400), n4(0:400))
 title("WSPD");
-# abline(col="red", lm(ms ~ c))
+# abline(lm(log(ms) ~ log(n)))
 
-# plot(
-# 	xlab="log(k)", ylab="log(ms)", 
-# 	col="red",
-# 	log(k), log(ms)
-# )
-# c <- (n+k)*(n+k)*log(n+k)
-# points(
-# 	col="green",
-# 	c, ms
-# )
-abline(lm(log(ms) ~ log(n)))
-
-data <- read.csv("./results-greedy.csv")
+data <- read.csv("./random-greedy.csv")
 
 t <- data[,1]
-n <- data[,2]
+n <- log(data[,2])
 k <- data[,3]
-ms <- data[,6]
-
+ms <- log(data[,6])
 
 plot(
-	xlim=range(0, 15),
-	ylim=range(0, 15),
+	xlim=c(0, max(n)),
+	ylim=c(0, max(ms)),
 	xlab="log(n)", ylab="log(ms)", 
 	col="red",
-	log(n), log(ms)
+	n, ms
 )
+lines(col="green", (0:400), n3(0:400))
+lines(col="red", (0:400), n4(0:400))
 title("Greedy");
-abline(lm(log(ms) ~ log(n)))
-# plot(
-# 	xlab="log(k)", ylab="log(ms)", 
-# 	col="red",
-# 	log(k), log(ms)
-# )
-# c <- n*n*k
-# plot(
-# 	ylim=range(0, 300),
-# 	xlab="c", ylab="s", 
-# 	col="red",
-# 	c, ms
-# )
-# abline(col="red", lm(ms ~ c))
-
-# c <- (n+k)*(n+k)*log(n+k)
-# points(
-# 	col="green",
-# 	c, ms
-# )
-# abline(col="green", lm(ms ~ c))
+# abline(lm(log(ms) ~ log(n)))
