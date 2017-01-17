@@ -2,12 +2,13 @@
 
 var Util = require('../core/Util');
 var Heap = require('heap');
+var math = require('mathjs');
 
 class Astar {
 	static calculate(start, goal) {
 		var heuristic = function(n1, n2) {
-			var x = Math.pow(n2.x - n1.x, 2.0);
-			var y = Math.pow(n2.y - n1.y, 2.0);
+			var x = (n2.x - n1.x) * (n2.x - n1.x)
+			var y = (n2.y - n1.y) * (n2.y - n1.y)
 			return x + y;
 		}
 
