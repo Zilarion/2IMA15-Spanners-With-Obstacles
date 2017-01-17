@@ -12,7 +12,7 @@ n3 = function(n) { 3*n }
 n2 = function(n) { 2*n }
 
 plot(
-	xlim=c(0, max(n) + 5),
+	xlim=c(0, max(n) + 10),
 	ylim=c(0, max(ms) + 5),
 	xaxs="i",
 	yaxs="i",
@@ -21,10 +21,10 @@ plot(
 	n, ms
 )
 # lines(col="#d7191c", (0:500), n2(0:500))
-lines(col="#fdae61", (2:502), n3(0:500))
-lines(col="#abd9e9", (2:502), n4(0:500))
+lines(col="#fdae61", (0:500), n3(0:500))
+lines(col="#abd9e9", (0:500), n4(0:500))
 
-legend(7.5,17, # places a legend at the appropriate place 
+legend(11,17.2, # places a legend at the appropriate place 
 legend=c(expression(paste("n"^"3")),expression(paste("n"^"4"))), # puts text in the legend
 lty=c(1,1), # gives the legend appropriate symbols (lines)
 lwd=c(2,2),
@@ -42,7 +42,7 @@ k <- data[,3]
 ms <- log(data[,6])
 
 plot(
-	xlim=c(0, max(n) + 5),
+	xlim=c(0, max(n) + 10),
 	ylim=c(0, max(ms) + 5),
 	xaxs="i",
 	yaxs="i",
@@ -54,7 +54,7 @@ plot(
 lines(col="#fdae61", (0:500), n3(0:500))
 lines(col="#abd9e9", (0:500), n4(0:500))
 
-legend(7.5,17, # places a legend at the appropriate place 
+legend(11,17.5, # places a legend at the appropriate place 
 legend=c(expression(paste("n"^"3")),expression(paste("n"^"4"))), # puts text in the legend
 lty=c(1,1), # gives the legend appropriate symbols (lines)
 lwd=c(2,2),
